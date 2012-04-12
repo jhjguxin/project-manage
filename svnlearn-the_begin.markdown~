@@ -127,4 +127,5 @@ Subversion, once installed, has a number of different pieces. The following is a
 
 * svnsync
   A program for incrementally mirroring one repository to another over a network
+  一个通过网络增量镜像一个仓库到另一个仓库的程序
 

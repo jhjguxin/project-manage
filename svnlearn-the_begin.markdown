@@ -95,7 +95,7 @@ Some version control systems are also **software configuration management (SCM) 
 
 Figure 1, "Subversion's architecture" illustrates a "mile-high" view of Subversion's design.
 
-![Subversion's architecture](img/Figure-1_Subversion's-architecture.jpeg "Subversion's architecture")
+![Subversion's architecture](img/Figure-1-Subversion's_architecture.jpeg "Subversion's architecture")
 
 **On one end is a Subversion repository that holds all of your versioned data. On the other end is your Subversion client program, which manages local reflections of portions of that versioned data (called "working copies")**. Between these extremes are multiple routes through various Repository Access (RA) layers. Some of these routes go across computer networks and through network servers which then access the repository. Others bypass the network altogether and access the repository directly.
 
@@ -127,4 +127,5 @@ Subversion, once installed, has a number of different pieces. The following is a
 
 * svnsync
   A program for incrementally mirroring one repository to another over a network
+  一个通过网络增量镜像一个仓库到另一个仓库的程序
 
