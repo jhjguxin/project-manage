@@ -153,11 +153,9 @@ You can access Subversion repositories through many different methods---**on loc
     <tr>
         <td>svn+ssh://</td><td>Same as svn://, but through an SSH tun-nel.</td>
     </tr>
+
     <tr>
-        <td>Compiled</td><td>Not available</td><td>Compile the regular expression to an assembly. For more information, see Compiled Regular Expressions.</td>
-    </tr>
-    <tr>
-        <td>For more information on how Subversion parses URLs, see the section called "Subversion Repository URLs". For more information on the different types of network servers available for Subversion, see Chapter 6, Server Configuration.</td>
+        For more information on how Subversion parses URLs, see the section called "Subversion Repository URLs". For more information on the different types of network servers available for Subversion, see Chapter 6, Server Configuration.
     </tr>
   </tbody>
 </table>
