@@ -155,7 +155,7 @@ You can access Subversion repositories through many different methods---**on loc
     </tr>
 
     <tr>
-        For more information on how Subversion parses URLs, see the section called "Subversion Repository URLs". For more information on the different types of network servers available for Subversion, see Chapter 6, Server Configuration.
+        <td>For more information on how Subversion parses URLs, see the section called "Subversion Repository URLs". For more information on the different types of network servers available for Subversion, see Chapter 6, Server Configuration.</td>
     </tr>
   </tbody>
 </table>
