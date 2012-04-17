@@ -195,7 +195,7 @@ Enter “cap shell”. This gives you an interactive prompt from which you can e
 ### Namespaces
 
 Since Capistrano 2.x all tasks are namespaced, this simply means that tasks are separated out into logical modules... most of the tasks that ship with the default recipes are broken into either a **deploy** or a **web** namespace, the deploy namespace contains all the tasks used in the [Default Deploy Path](Default_Deploy_Path), whilst **web** contains a couple of useful helpers for showing and hiding a "Upgrade in Progress" page to your users during a deploy.
-自从 `Capistrano` 2.x 所有的任务都被名称空间包含了，其简单的意思是
+自从 `Capistrano` 2.x 所有的任务都被名称空间包含了，其简单的意思是任务被分割到逻辑模块中...
 
 ## What Now?
 

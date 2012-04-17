@@ -170,7 +170,7 @@ To add a description to a task, see the following short example:
     end
 ```
 
-### `cap invoke`
+### cap invoke
 
 Cap invoke is a simple command, when called on the command line, you can simultaneously send one command to all servers:
 Cap invoke是一个简单的命令，当其在命令行被调用的时候，你可以同时发送一个命令到所有的服务器：
@@ -182,7 +182,7 @@ If for some reason you want to run a command using sudo, you may find the follow
 
     cap invoke COMMAND="echo 'Hello World'" SUDO=1
 
-### `cap shell`
+### cap shell
 
 As nifty as “invoke” is, it has at least one significant drawback: every time you invoke a command, it has to reestablish connections to the servers. This isn’t a big deal at all if you’re only executing a single command, but if you have two or three that you want to run, it can quickly get annoying, having to wait for the connections to be made.
 如同 “invoke” 一样别致，它至少有一个显着的缺点：每次你 `invoke` 一个命令，它不得不重建连接到服务器。这不是一个大麻烦，如果你仅仅执行一个单个的命令，但是如果你有两到三个需要执行，它会变的相当烦人，不得不为产生的连接等待。
