@@ -1,11 +1,53 @@
 ### linux下svn命令大全
 
-<shell>
+<pre><shell>
 svn delete ./1/wp-content/plugins/wp-code-highlight/
 svn add ./1/wp-content/plugins/wp-code-highlight/
 svn commit -m "update 'wp-code-highlight' to 1.2.4"
 svn checkout https://svn.sinaapp.com/jhjguxin/
-</shell>
+</shell></pre>
+
+### What's with the .svn Directory?
+
+**Every directory in a working copy contains an administrative area**---a subdirectory named `.svn`. Usually, directory listing commands won't show this subdirectory, but it is nevertheless an important directory. **Whatever you do, don't delete or change any-thing in the administrative area!Subversion depends on it to manage your working copy.**
+
+NOTICE: If you accidentally remove the `.svn` subdirectory, the easiest way to fix the problem is to remove the entire containing directory (a normal system deletion, not `svn delete`), then run `svn update` from a parent directory. The Subversion client will download the directory you've deleted, with a new `.svn` area as well.
+
+### Authenticating As a Different User
+
+Since Subversion caches auth credentials by default (both username and password), it conveniently remembers who you were acting as the last time you modified your working copy. But sometimes that's not helpful—particularly if you're working in a shared working copy such as a system configuration directory or a web server document root. In this case, just pass the `--username` option on the command line, and Subversion will attempt to au-
+thenticate as that user, prompting you for a password if necessary.
+
+### Disabling Password Caching
+
+**When you perform a Subversion operation that requires you to authenticate, by default Subversion caches your authentication credentials on disk.** This is done for convenience so that you don't have to continually reenter your password for future operations. If you're concerned about caching your Subversion passwords, you can disable caching either permanently 永久 or on a case-by-case basis.
+
+To disable password caching for a particular one-time command, pass the `--no-auth-cache` option on the command line. To permanently disable caching, you can add the line `store-passwords = no` to your local machine's Subversion configuration file. See the section called “Client Credentials Caching” for details.
+
+### Basic Work Cycle
+
+The typical work cycle looks like this:
+
+1. Update your working copy.
+  * svn update
+1. Make changes.
+  * svn add
+  * svn delete
+  * svn copy
+  * svn move
+1. Examine your changes.
+  * svn status
+  * svn diff
+1. Possibly undo some changes.
+  * svn revert
+1. Resolve conflicts (merge others' changes).
+  * svn update
+  * svn resolve
+1. Commit your changes.
+  * svn commit
+
+TIPS:
+  **While your working copy is “just like any other collection of files and directories on your system,” you can edit files at will, but you must tell Subversion about everything else that you do**. For example, if you want to copy or move an item in a working copy, you should use `svn copy` or `svn move` instead of the `copy` and `move` commands provided by your operating system. We'll talk more about them later in this chapter.
 
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>

@@ -1,9 +1,31 @@
 ### linux下svn命令大全
 
+<pre><shell>
 svn delete ./1/wp-content/plugins/wp-code-highlight/
 svn add ./1/wp-content/plugins/wp-code-highlight/
 svn commit -m "update 'wp-code-highlight' to 1.2.4"
 svn checkout https://svn.sinaapp.com/jhjguxin/
+</shell></pre>
+
+### What's with the .svn Directory?
+
+**Every directory in a working copy contains an administrative area**---a subdirectory named `.svn`. Usually, directory listing commands won't show this subdirectory, but it is nevertheless an important directory. **Whatever you do, don't delete or change any-thing in the administrative area!Subversion depends on it to manage your working copy.**
+
+NOTICE: If you accidentally remove the `.svn` subdirectory, the easiest way to fix the problem is to remove the entire containing directory (a normal system deletion, not `svn delete`), then run `svn update` from a parent directory. The Subversion client will download the directory you've deleted, with a new `.svn` area as well.
+
+### Authenticating As a Different User
+
+Since Subversion caches auth credentials by default (both username and password), it conveniently remembers who you were acting as the last time you modified your working copy. But sometimes that's not helpful—particularly if you're working in a shared working copy such as a system configuration directory or a web server document root. In this case, just pass the `--username` option on the command line, and Subversion will attempt to au-
+thenticate as that user, prompting you for a password if necessary.
+
+### Disabling Password Caching
+
+**When you perform a Subversion operation that requires you to authenticate, by default Subversion caches your authentication credentials on disk.** This is done for convenience so that you don't have to continually reenter your password for future operations. If you're concerned about caching your Subversion passwords, you can disable caching either permanently 永久 or on a case-by-case basis.
+
+To disable password caching for a particular one-time command, pass the `--no-auth-cache` option on the command line. To permanently disable caching, you can add the line `store-passwords = no` to your local machine's Subversion configuration file. See the section called “Client Credentials Caching” for details.
+
+TIPS:
+  **While your working copy is “just like any other collection of files and directories on your system,” you can edit files at will, but you must tell Subversion about everything else that you do**. For example, if you want to copy or move an item in a working copy, you should use `svn copy` or `svn move` instead of the `copy` and `move` commands provided by your operating system. We'll talk more about them later in this chapter.
 
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>
@@ -79,44 +101,40 @@ svn checkout https://svn.sinaapp.com/jhjguxin/
   显示path目录下的所有属于版本库的文件和目录
   简写：`svn ls`
 
-14、创建纳入版本控制下的新目录 
-svn mkdir: 创建纳入版本控制下的新目录。
-用法: 1、mkdir PATH…
-2、mkdir URL…
-创建版本控制的目录。
-1、每一个以工作副本 PATH 指定的目录，都会创建在本地端，并且加入新增
-调度，以待下一次的提交。
-2、每个以URL指定的目录，都会透过立即提交于仓库中创建。
-在这两个情况下，所有的中间目录都必须事先存在。
+1. 创建纳入版本控制下的新目录 
+  `svn mkdir`: 创建纳入版本控制下的新目录。
+  用法:
+    1. `mkdir PATH…`
+    1. `mkdir URL…`
 
-15、恢复本地修改 
-svn revert: 恢复原始未改变的工作副本文件 (恢复大部份的本地修改)。revert:
-用法: revert PATH…
-注意: 本子命令不会存取网络，并且会解除冲突的状况。但是它不会恢复
-被删除的目录
+  创建版本控制的目录。
+    1. 每一个以工作副本 PATH 指定的目录，都会创建在本地端，并且加入新增调度，以待下一次的提交。
+    1. 每个以URL指定的目录，都会透过立即提交于仓库中创建。在这两个情况下，所有的中间目录都必须事先存在。
 
-16、代码 库URL变更 
-svn switch (sw): 更新工作副本至不同的URL。
-用法: 1、switch URL [PATH]
-2、switch –relocate FROM TO [PATH...]
+1. 恢复本地修改 
+  `svn revert`: 恢复原始未改变的工作副本文件 (恢复大部份的本地修改)。revert:
+  用法: `revert PATH…`
+注意: 本子命令不会存取网络，并且会解除冲突的状况。但是它不会恢复被删除的目录
 
-1、更新你的工作副本，映射到一个新的URL，其行为跟"svn update"很像，也会将
-服务器上文件与本地文件合并。这是将工作副本对应到同一仓库中某个分支或者标记的
+1. 代码 库URL变更 
+  `svn switch (sw)`: 更新工作副本至不同的URL。
+  用法: 
+    1. `switch URL [PATH]`
+    1. `switch –relocate FROM TO [PATH...]`
+
+  1. 更新你的工作副本，映射到一个新的URL，其行为跟"svn update"很像，也会将服务器上文件与本地文件合并。这是将工作副本对应到同一仓库中某个分支或者标记的
 方法。
-2、改写工作副本的URL元数据，以反映单纯的URL上的改变。当仓库的根URL变动
-(比如方案名或是主机名称变动)，但是工作副本仍旧对映到同一仓库的同一目录时使用
-这个命令更新工作副本与仓库的对应关系。
-我的例子：svn switch --relocate http://59.41.99.254/mytt http://www.mysvn.com/mytt 
+  1. 改写工作副本的URL元数据，以反映单纯的URL上的改变。当仓库的根URL变动(比如方案名或是主机名称变动)，但是工作副本仍旧对映到同一仓库的同一目录时使用这个命令更新工作副本与仓库的对应关系。
+    我的例子：svn switch --relocate http://59.41.99.254/mytt http://www.mysvn.com/mytt 
 
-17、解决 冲突 
-svn resolved: 移除工作副本的目录或文件的"冲突"状态。
-用法: resolved PATH…
-注意: 本子命令不会依语法来解决冲突或是移除冲突标记；它只是移除冲突的
-相关文件，然后让 PATH 可以再次提交。
+1. 解决 冲突 
+  `svn resolved`: 移除工作副本的目录或文件的"冲突"状态。
+  用法: `resolved PATH…`
+  注意: 本子命令不会依语法来解决冲突或是移除冲突标记；它只是移除冲突的相关文件，然后让 PATH 可以再次提交。
 
-18、输出指定文件或URL的内容。 
-svn cat 目标[@版本]…如果指定了版本，将从指定的版本开始查找。
-svn cat -r PREV filename > filename (PREV 是上一版本,也可以写具体版本号,这样输出结果是可以提交的)
+1. 输出指定文件或URL的内容。 
+  `svn cat` 目标[@版本]…如果指定了版本，将从指定的版本开始查找。
+  `svn cat -r PREV filename > filename` (PREV 是上一版本,也可以写具体版本号,这样输出结果是可以提交的)
 
 19、 查找工作拷贝中的所有遗留的日志文件，删除进程中的锁 。
 

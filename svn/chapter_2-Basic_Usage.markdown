@@ -147,3 +147,82 @@ Although the preceding example checks out the trunk directory, **you can just as
 
 Since Subversion uses a **copy-modify-merge model** instead of **lock-modify-unlock** (see the section called “Versioning Models”), you can immediately make changes to the files and directories in your working copy. **Your working copy is just like any other collection of files and directories on your system. You can edit and change it, move it around, even delete the entire working copy and forget about it.**
 
+WARING: **While your working copy is “just like any other collection of files and directories on your system,” you can edit files at will, but you must tell Subversion about everything else that you do**. For example, if you want to copy or move an item in a working copy, you should use `svn copy` or `svn move` instead of the `copy` and `move` commands provided by your operating system. We'll talk more about them later in this chapter.
+
+Unless you're ready to commit the addition of a new file or directory or changes to existing ones, there's no need to further notify the Subversion server that you've done anything.
+
+<pre>
+### What's with the .svn Directory?
+
+Every directory in a working copy contains an administrative area---a subdirectory named `.svn`. Usually, directory listing commands won't show this subdirectory, but it is nevertheless an important directory. Whatever you do, don't delete or change any-thing in the administrative area!Subversion depends on it to manage your working copy.
+
+If you accidentally remove the `.svn` subdirectory, the easiest way to fix the problem is to remove the entire containing directory (a normal system deletion, not `svn delete`), then run `svn update` from a parent directory. The Subversion client will download the directory you've deleted, with a new `.svn` area as well.
+</pre>
+
+While you can certainly check out a working copy with the URL of the repository as the only argument, **you can also specify a directory after your repository URL. This places your working copy in the new directory that you name.** For example:
+
+  ```ruby
+  $ svn checkout http://svn.collab.net/repos/svn/trunk subv
+  A    subv/Makefile.in
+  A    subv/ac-helpers
+  A    subv/ac-helpers/install.sh
+  A    subv/ac-helpers/install-sh
+  A    subv/build.conf
+  ...
+  Checked out revision 8810.
+  ```
+
+That will place your working copy in a directory named `subv` instead of a directory named `trunk` as we did previously. The directory `subv` will be created if it doesn't already exist.
+
+### Disabling Password Caching
+
+**When you perform a Subversion operation that requires you to authenticate, by default Subversion caches your authentication credentials on disk.** This is done for convenience so that you don't have to continually reenter your password for future operations. If you're concerned about caching your Subversion passwords, you can disable caching either permanently 永久 or on a case-by-case basis.
+
+To disable password caching for a particular one-time command, pass the `--no-auth-cache` option on the command line. To permanently disable caching, you can add the line `store-passwords = no` to your local machine's Subversion configuration file. See the section called “Client Credentials Caching” for details.
+
+### Authenticating As a Different User
+
+Since Subversion caches auth credentials by default (both username and password), it conveniently remembers who you were acting as the last time you modified your working copy. But sometimes that's not helpful---particularly if you're working in a shared working copy such as a system configuration directory or a web server document root. In this case, just pass the `--username` option on the command line, and Subversion will attempt to au-
+thenticate as that user, prompting you for a password if necessary.
+
+### Basic Work Cycle
+
+Subversion has numerous features, options, bells, and whistles, but on a day-to-day basis,odds 可能性 are that you will use only a few of them. In this section, we'll run through the most common things that you might find yourself doing with Subversion in the course of a day's work.
+
+The typical work cycle looks like this:
+
+1. Update your working copy.
+  * svn update
+1. Make changes.
+  * svn add
+  * svn delete
+  * svn copy
+  * svn move
+1. Examine your changes.
+  * svn status
+  * svn diff
+1. Possibly undo some changes.
+  * svn revert
+1. Resolve conflicts (merge others' changes).
+  * svn update
+  * svn resolve
+1. Commit your changes.
+  * svn commit
+
+### Update Your Working Copy
+
+When working on a project with a team, you'll want to update your working copy to receive any changes other developers on the project have made since your last update. Use `svn update` to bring your working copy into sync with the latest revision in the repository:
+
+  ```shell
+  $ svn update
+  U    foo.c
+  U    bar.c
+  Updated to revision 2.
+  ```
+
+In this case, it appears that someone checked in modifications to both `foo.c` and `bar.c` since the last time you updated, and Subversion has updated your working copy to include those changes.
+
+When the server sends changes to your working copy via `svn update`, a letter code is displayed next to each item to let you know what actions Subversion performed to bring your working copy up to date. To find out what these letters mean, run `svn help update`.
+
+
+
