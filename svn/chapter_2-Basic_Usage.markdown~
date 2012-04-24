@@ -101,5 +101,49 @@ While Subversion's flexibility 灵活性 allows you to lay out your repository i
   /tags
   ```
 
-You'll learn more about **tags and branches in Chapter 4**, Branching and Merging. For details and how to set up multiple projects, see the section called "Repository Layout" and the section called "Planning Your Repository Organization" to read more about project roots.
+You'll learn more about **tags and branches in Chapter 4, Branching and Merging**. For details and how to set up multiple projects, see the section called "Repository Layout" and the section called "Planning Your Repository Organization" to read more about project roots.
+
+## Initial Checkout
+
+Most of the time, you will start using a Subversion repository by doing a `checkout` of your project.Checking out a repository creates a “working copy” of it on your local machine.
+This copy contains the HEAD (latest revision) of the Subversion repository that you specify on the command line
+
+  ```shell
+  $ svn checkout http://svn.collab.net/repos/svn/trunk
+  A    trunk/Makefile.in
+  A    trunk/ac-helpers
+  A    trunk/ac-helpers/install.sh
+  A    trunk/ac-helpers/install-sh
+  A    trunk/build.conf
+  ...
+  Checked out revision 8810.
+  ```
+
+<pre>
+**What's in a Name?**
+
+Subversion tries hard not to limit the type of data you can place under version control.The contents of files and property values are stored and transmitted as __binary data__,and the section called “File Content Type” tells you how to give Subversion a hint 提示 that “textual” operations don't make sense for a particular file. There are a few places,however, where Subversion places restrictions 限制 on information it stores.
+
+Subversion internally handles certain bits of data---for example, property names,pathnames, and log messages—as UTF-8-encoded Unicode. **This is not to say that all your interactions with Subversion must involve UTF-8, though. As a general rule**,Subversion clients will gracefully and transparently handle conversions **between UTF-8 and the encoding system in use on your computer**, if such a conversion can meaningfully be done (which is the case for most common encodings in use today).
+
+In WebDAV exchanges and older versions of some of Subversion's administrative files, paths are used as XML attribute values, and property names in XML tag names.This means that pathnames can contain only legal XML (1.0) characters, and properties are further limited to ASCII characters. **Subversion also prohibits `TAB`, `CR`, and `LF` characters in path names to prevent paths from being broken up in diffs or in the output of commands such as `svn log` or `svn status`**.
+
+While it may seem like a lot to remember, in practice these limitations are rarely 很少 a problem. As long as your locale settings are compatible with UTF-8 and you don't use control characters in path names, you should have no trouble communicating with Subversion. The command-line client adds an extra bit of help—to create “legally correct” versions for internal use it will automatically escape illegal path characters as needed in URLs that you type.
+</pre>
+
+Although the preceding example checks out the trunk directory, **you can just as easily check out any deep subdirectory of a repository by specifying the subdirectory in the checkout URL**:
+
+  ```shell
+  $ svn checkout \
+    http://svn.collab.net/repos/svn/trunk/subversion/tests/cmdline/
+  A    cmdline/revert_tests.py
+  A    cmdline/diff_tests.py
+  A    cmdline/autoprop_tests.py
+  A    cmdline/xmltests
+  A    cmdline/xmltests/svn-test.sh
+  ...
+  Checked out revision 8810.
+  ```
+
+Since Subversion uses a **copy-modify-merge model** instead of **lock-modify-unlock** (see the section called “Versioning Models”), you can immediately make changes to the files and directories in your working copy. **Your working copy is just like any other collection of files and directories on your system. You can edit and change it, move it around, even delete the entire working copy and forget about it.**
 
