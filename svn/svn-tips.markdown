@@ -7,6 +7,17 @@ svn commit -m "update 'wp-code-highlight' to 1.2.4"
 svn checkout https://svn.sinaapp.com/jhjguxin/
 </shell></pre>
 
+## Recommended Repository Layout
+
+While Subversion's flexibility 灵活性 allows you to lay out your repository in any way that you choose, **we recommend that you create a `trunk` directory to hold the "main line" of development, a `branches` directory to contain branch copies, and a `tags` directory to contain tag copies**. For example:
+
+  ```shell
+  $ svn list file:///var/svn/repos
+  /trunk
+  /branches
+  /tags
+  ```
+
 ### What's with the .svn Directory?
 
 **Every directory in a working copy contains an administrative area**---a subdirectory named `.svn`. Usually, directory listing commands won't show this subdirectory, but it is nevertheless an important directory. **Whatever you do, don't delete or change any-thing in the administrative area!Subversion depends on it to manage your working copy.**
@@ -24,6 +35,19 @@ thenticate as that user, prompting you for a password if necessary.
 
 To disable password caching for a particular one-time command, pass the `--no-auth-cache` option on the command line. To permanently disable caching, you can add the line `store-passwords = no` to your local machine's Subversion configuration file. See the section called “Client Credentials Caching” for details.
 
+In this output format, `svn status` prints six columns of characters, followed by several whitespace characters, followed by a file or directory name. The first column tells the status of a file or directory and/or its contents. The codes we listed are:
+
+  * A item
+      The file, directory, or symbolic link item has been scheduled for addition into the repository.
+  * C item
+      The file item is in a state of conflict. That is, changes received from the server during an update overlap with local changes that you have in your working copy (and weren't resolved during the update). **You must resolve this conflict before committing your changes to the repository.**
+  * D item
+      The file, directory, or symbolic link item has been scheduled for deletion from the repository.
+  * M item
+      The contents of the file item have been modified.
+
+**`svn status` also has a` --verbose` (-v) option, which will show you the status of every item in your working copy**, even if it has not been changed:
+
 ### Basic Work Cycle
 
 The typical work cycle looks like this:
@@ -36,8 +60,8 @@ The typical work cycle looks like this:
   * svn copy
   * svn move
 1. Examine your changes.
-  * svn status
-  * svn diff
+  * svn status # 查看状态
+  * svn diff   # 查看不同
 1. Possibly undo some changes.
   * svn revert
 1. Resolve conflicts (merge others' changes).
@@ -45,6 +69,21 @@ The typical work cycle looks like this:
   * svn resolve
 1. Commit your changes.
   * svn commit
+
+### Make Changes to Your Working Copy
+
+Now you can get to work and make changes in your working copy. It's usually most convenient 方便 to decide on a discrete change (or set of changes) to make, such as writing a new feature, fixing a bug, and so on. The Subversion commands that you will use here are `svn add`, `svn delete`,`svn copy`, `svn move`, and `svn mkdir`. However, if you are merely editing files that are already in Subversion, you may not need to use any of these commands until you commit.
+
+**You can make two kinds of changes to your working copy: file changes and tree changes.**You don't need to tell Subversion that you intend to change a file; just make your changes using your text editor, word processor, graphics program, or whatever tool you would normally use. Subversion automatically detects which files have been changed, and in addition, it handles binary files just as easily as it handles text files---and just as efficiently, too.
+**For tree changes, you can ask Subversion to “mark” files and directories for scheduled removal, addition, copying, or moving. These changes may take place immediately in your working copy, but no additions or removals will happen in the repository until you commit them.**
+
+`git` 只有一个 `.git` 其它，在项目子目录最多有 `.gitkeep`，`.gitingore` 之类的配置文件。因此 针对整个站点 可以 一个命令实现 添加 变更到版本库 而 svn是 针对每个 子目录都有一个 .svn 因此 必须 针对每个 目录 单独 操作 版本控制
+
+### Changing the Repository Without a Working Copy
+
+There are some use cases that immediately commit tree changes to the repository.This happens only when a subcommand is operating directly on a URL, rather than on a working-copy path. In particular, **specific uses of `svn mkdir`, `svn copy`, `svn move`, and `svn delete` can work with URLs (and don't forget that `svn import` always makes changes to a URL).**
+
+URL operations behave in this manner 方式 because commands that operate on a working copy can use the working copy as a sort of “staging area” 临时区域 to set up your changes before committing them to the repository. Commands that operate on URLs don't have this luxury, so when you operate directly on a URL, any of the aforementioned 上述的 actions represents an immediate commit.
 
 TIPS:
   **While your working copy is “just like any other collection of files and directories on your system,” you can edit files at will, but you must tell Subversion about everything else that you do**. For example, if you want to copy or move an item in a working copy, you should use `svn copy` or `svn move` instead of the `copy` and `move` commands provided by your operating system. We'll talk more about them later in this chapter.

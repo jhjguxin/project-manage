@@ -224,5 +224,252 @@ In this case, it appears that someone checked in modifications to both `foo.c` a
 
 When the server sends changes to your working copy via `svn update`, a letter code is displayed next to each item to let you know what actions Subversion performed to bring your working copy up to date. To find out what these letters mean, run `svn help update`.
 
+### Make Changes to Your Working Copy
 
+Now you can get to work and make changes in your working copy. It's usually most convenient 方便 to decide on a discrete change (or set of changes) to make, such as writing a new feature, fixing a bug, and so on. The Subversion commands that you will use here are `svn add`, `svn delete`,`svn copy`, `svn move`, and `svn mkdir`. However, if you are merely editing files that are already in Subversion, you may not need to use any of these commands until you commit.
+
+**You can make two kinds of changes to your working copy: file changes and tree changes.**You don't need to tell Subversion that you intend to change a file; just make your changes using your text editor, word processor, graphics program, or whatever tool you would normally use. Subversion automatically detects which files have been changed, and in addition, it handles binary files just as easily as it handles text files---and just as efficiently, too.
+**For tree changes, you can ask Subversion to “mark” files and directories for scheduled removal, addition, copying, or moving. These changes may take place immediately in your working copy, but no additions or removals will happen in the repository until you commit them.**
+
+<pre>
+#### Versioning Symbolic Links
+
+**On non-Windows platforms, Subversion is able to version files of the special type symbolic link (or “symlink”)**. A symlink is a file that acts as a sort of transparent 透明 reference to some other object in the filesystem, allowing programs to read and write to those objects indirectly 间接 by way of performing operations on the symlink itself.__When a symlink is committed into a Subversion repository, Subversion remembers that the file was in fact a symlink, as well as the object to which the symlink “points.”__
+
+**When that symlink is checked out to another working copy on a non-Windows system, Subversion reconstructs a real filesystem-level symbolic link from the versioned symlink.** But that doesn't in any way limit the usability of working copies on systems such as Windows that do not support symlinks. On such systems, Subversion simply creates a regular text file whose contents are the path to which to the original symlink pointed. While that file can't be used as a symlink on a Windows system, it also won't prevent Windows users from performing their other Subversion-related activities.
+
+Example – Creating a symlink in your working copy:
+
+<code>
+$ mkdir A
+$ ln -s A link
+$ svn add --force .
+A         A
+A         link
+$ svn commit -m "link there"
+</code>
+
+the contents of the link file in svn:
+
+```shell
+link A
+```
+
+Example – change symlink target
+
+```shell
+$ svn del --force link
+$ svn commit -m "no link"
+$ mkdir B
+$ ln -s B link
+$ svn add --force .
+$ svn commit -m "link changed to B"
+the contents of the link file in svn:
+link B
+```
+</pre>
+
+Here is an overview of the five Subversion subcommands that you'll use most often to make tree changes:
+
+`svn add foo`
+  Schedule file, directory, or symbolic link `foo` to be added to the repository. When you next commit, `foo` will become a child of its parent directory. **Note** that if `foo` is a directory, everything underneath `foo` will be scheduled for addition. If you want only to add `foo` itself, pass the `--depth empty` option.
+
+`svn delete foo`
+  Schedule file, directory, or symbolic link `foo` to be deleted from the repository. If `foo` is a file or link, it is immediately deleted from your working copy. **If `foo` is a directory, it is not deleted, but Subversion schedules it for deletion. When you commit your changes, `foo` will be entirely removed from your working copy and the repository.**
+
+`svn copy foo bar`
+  Create a new item `bar` as a duplicate of `foo` and automatically schedule `bar` for addition. When `bar` is added to the repository on the next commit, its copy history is recorded (as having originally come from `foo`). `svn copy` does not create intermediate directories unless you pass the `--parents` option.
+
+`svn move foo bar`
+  This command is exactly the same as running `svn copy foo bar`; `svn delete foo`. That is, `bar` is scheduled for addition as a copy of `foo`, and `foo` is scheduled for removal. `svn move` does not create intermediate directories unless you pass the `--parents` option.
+
+`svn mkdir blort`
+  This command is exactly the same as running mkdir `blort`; `svn add blort`.That is, a new directory named `blort` is created and scheduled for addition.
+
+<pre>
+### Changing the Repository Without a Working Copy
+
+There are some use cases that immediately commit tree changes to the repository.This happens only when a subcommand is operating directly on a URL, rather than on a working-copy path. In particular, **specific uses of `svn mkdir`, `svn copy`, `svn move`, and `svn delete` can work with URLs (and don't forget that `svn import` always makes changes to a URL).**
+
+URL operations behave in this manner 方式 because commands that operate on a working copy can use the working copy as a sort of “staging area” 临时区域 to set up your changes before committing them to the repository. Commands that operate on URLs don't have this luxury, so when you operate directly on a URL, any of the aforementioned 上述的 actions represents an immediate commit.
+</pre>
+
+### Examine Your Changes 检查你的更改
+
+Once you've finished making changes, you need to commit them to the repository, but before you do so, it's usually a good idea to take a look at exactly what you've changed. By examining your changes before you commit, you can make a more accurate log message.You may also discover that you've inadvertently changed a file, and this gives you a chance to revert those changes before committing. Additionally, this is a good opportunity to review and scrutinize changes before publishing them. You can see an overview of the changes you've made by using `svn status`, and dig into the details of those changes by using `svn diff`.
+
+<pre>
+Look Ma! No Network!
+
+You can use the commands `svn status`, `svn diff`, and `svn revert` without any network access even if your repository is across the network. This makes it easy to manage your changes-in-progress when you are somewhere without a network connection, such as traveling on an airplane, riding a commuter train, or hacking on the beach.
+
+Subversion does this by keeping private caches of pristine versions of each versioned file inside the `.svn` administrative areas. This allows Subversion to report—and revert—local modifications to those files without network access. This cache (called the “text-base”) also allows Subversion to send the user's local modifications during a commit to the server as a compressed delta (or “difference”) against the pristine version. Having this cache is a tremendous benefit—even if you have a fast Internet connection, it's much faster to send only a file's changes rather than the whole file to the server.
+</pre>
+
+Subversion has been optimized to help you with this task, and it is able to do many things without communicating with the repository. In particular, your working copy contains a hidden cached “pristine” copy of each version-controlled file within the `.svn area`. Because of this, Subversion can quickly show you how your working files have changed or even allow you to undo your changes without contacting the repository.
+
+### See an overview of your changes
+
+To get an overview of your changes, you'll use the `svn status` command. You'll probably use `svn status` more than any other Subversion command.
+
+<pre>
+### CVS Users: Hold That Update!
+
+You're probably used to using `cvs update` to see what changes you've made to your working copy. `svn status` will give you all the information you need regarding what has changed in your working copy—without accessing the repository or potentially incorporating new changes published by other users.
+
+In Subversion, `svn update` does just that—it updates your working copy with any changes committed to the repository since the last time you updated your working copy. You may have to break the habit of using the `update` command to see what local modifications you've made.
+</pre>
+
+If you run `svn status` at the top of your working copy with no arguments, it will detect all file and tree changes you've made. Here are a few examples of the most common status codes that `svn status` can return. (Note that the text following # is not actually printed by `svn status`.)
+
+  ```shell
+  ?    scratch.c         # file is not under version control
+  A    stuff/loot/bloo.h # file is scheduled for addition
+  C    stuff/loot/lump.c # file has textual conflicts from an update
+  D    stuff/fish.c      # file is scheduled for deletion
+  M    bar.c             # the content in bar.c has local modifications
+  ```
+
+In this output format, `svn status` prints six columns of characters, followed by several whitespace characters, followed by a file or directory name. The first column tells the status of a file or directory and/or its contents. The codes we listed are:
+
+* A item
+    The file, directory, or symbolic link item has been scheduled for addition into the repository.
+* C item
+    The file item is in a state of conflict. That is, changes received from the server during an update overlap with local changes that you have in your working copy (and weren't resolved during the update). **You must resolve this conflict before committing your changes to the repository.**
+* D item
+    The file, directory, or symbolic link item has been scheduled for deletion from the repository.
+* M item
+    The contents of the file item have been modified.
+
+**`svn status` also has a` --verbose` (-v) option, which will show you the status of every item in your working copy**, even if it has not been changed:
+
+This is the “long form” output of `svn status`. The letters in the first column mean the same as before, but the second column shows the working revision of the item. The third and fourth columns show the revision in which the item last changed, and who changed it.
+
+None of the prior invocations to `svn status` contact the repository---instead, they compare the metadata in the `.svn` directory with the working copy. Finally, there is the `--show-updates` (-u) option, which contacts the repository and adds information about things that are out of date:
+
+  ```shell
+  $ svn status -u -v
+  M     *    44     23    sally   README
+  M          44     20    harry bar.c
+        *    44     35    harry stuff/trout.c
+  D          44     19    ira stuff/fish.c
+  A     0    ?      ?     stuff/things/bloo.h
+  Status against revision:    46
+  ```
+
+Notice the two asterisks 星号: if you were to run svn update at this point, you would receive changes to `README` and `trout.c`. This tells you some very useful information—**you'll need to update and get the server changes on README before you commit, or the repository will reject your commit for being out of date (more on this subject later).**
+
+`svn status` can display much more information about the files and directories in your working copy than we've shown here—for an exhaustive description of svn status and its output, see `svn status`.
+
+### Examine the details of your local modifications
+
+Another way to examine your changes is with the `svn diff` command. You can find out exactly how you've modified things by running svn diff with no arguments, which prints out file changes in unified diff format:
+
+<pre><code>
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ touch newfile
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn add newfile 
+A         newfile
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn diff newfile 
+Index: newfile
+===================================================================
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ echo "the new content ..." > newfile 
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn diff newfile Index: newfile
+===================================================================
+--- newfile	(revision 0)
++++ newfile	(revision 0)
+@@ -0,0 +1 @@
++the new content ...
+
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn di wp-rdf.php
+Index: wp-rdf.php
+===================================================================
+--- wp-rdf.php	(revision 361)
++++ wp-rdf.php	(working copy)
+@@ -1,12 +1,6 @@
+ <?php
+-/**
+- * Redirects to the RDF feed
+- * This file is deprecated and only exists for backwards compatibility
+- *
+- * @package WordPress
+- */
+ 
++aaaaaaaaaaaaaaaaaaa
+ require( './wp-load.php' );
+ wp_redirect( get_bloginfo( 'rdf_url' ), 301 );
+-exit;
+-?>
++asdsd
+</code></pre>
+
+The `svn diff` command produces this output by comparing your working files against the cached “pristine” copies within the .svn area. Files scheduled for addition are displayed as all added text, and files scheduled for deletion are displayed as all deleted text.
+
+Output is displayed in unified diff format. That is, removed lines are prefaced with `-`, and added lines are prefaced with `+`. `svn diff` also prints filename and offset information useful to the `patch` program, so you can generate “patches” by redirecting the diff output to a file:
+
+<pre><code>
+$ svn diff > patchfile
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn diff newfile 
+Index: newfile
+===================================================================
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn diff newfile > newfile
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ cat newfile
+Index: newfile
+===================================================================
+</code></pre>
+
+You could, for example, email the `patch` file to another developer for review or testing prior to a commit.
+
+Subversion uses its internal diff engine, which produces unified diff format, by default. If you want diff output in a different format, specify an external diff program using `--diff-cmd` and pass any flags you'd like to it using the `--extensions (-x)` option. For example, to see local differences in file `foo.c` in context output format while ignoring case differences 忽略大小写差异, you might run `svn diff --diff-cmd /usr/bin/diff --extensions '-i' foo.c`.
+
+### Undoing Working Changes
+
+Suppose while viewing the output of `svn diff` you determine 判定 that all the changes you made to a particular file are mistakes. Maybe you shouldn't have changed the file at all, or perhaps it would be easier to make different changes starting from scratch.
+
+This is a perfect opportunity to use `svn revert`:
+
+  ```shell
+  $ svn revert README
+  Reverted 'README'
+  ```
+
+Subversion reverts the file to its premodified state by overwriting it with the cached “pristine” copy from the `.svn` area. But also **note that `svn revert` can undo any scheduled operations**---for example, you might decide that you don't want to add a new file after all:
+
+<pre><code>
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ touch reverttest
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn st reverttest 
+?       reverttest
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn add reverttest 
+A         reverttest
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn revert reverttest 
+Reverted 'reverttest'
+jhjguxin@jhjguxin-virtual-machine:~/jhjguxin/1$ svn st reverttest 
+?       reverttest
+</code></pre>
+
+WARING: `svn revert item` has exactly the same effect as deleting `item` from your working copy and then running `svn update -r BASE item`. However, if
+you're reverting a file, `svn revert` has one very noticeable 明显的 difference---it doesn't have to communicate with the repository to restore your file.
+
+Or perhaps you mistakenly removed a file from version control:
+
+  ```shell
+  $ svn status README
+  $ svn delete README
+  D    README
+  $ svn revert README
+  Reverted 'README'
+  $ svn status README
+  ```
+
+### Resolve Conflicts (Merging Others' Changes)
+
+We've already seen how `svn status -u` can predict conflicts. Suppose you run `svn update` and some interesting things occur:
+
+  ```shell
+  $ svn update
+  U INSTALL
+  G README
+  Conflict discovered in 'bar.c'.
+  Select: (p) postpone, (df) diff-full, (e) edit,
+          (h) help for more options:
+  ```
 
