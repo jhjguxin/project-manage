@@ -197,12 +197,13 @@ TIPS:
   `svn cat` 目标[@版本]…如果指定了版本，将从指定的版本开始查找。
   `svn cat -r PREV filename > filename` (PREV 是上一版本,也可以写具体版本号,这样输出结果是可以提交的)
 
-19、 查找工作拷贝中的所有遗留的日志文件，删除进程中的锁 。
+1. 查找工作拷贝中的所有遗留的日志文件，删除进程中的锁 。
 
-当Subversion改变你的工作拷贝（或是.svn 中 的任何信息），它会尽可能的小心，在修改任何事情之前，它把意图写到日志文件中去，然后执行log文件中的命令，然后删掉日志文件，这与分类帐的文件系统 架构类似。如果Subversion的操作中断了（举个例子：进程被杀死了，机器死掉了），日志文件会保存在硬盘上，通过重新执行日志文 件，Subversion可以完成上一次开始的操作，你的工作拷贝可以回到一致的状态。
+当 Subversion 改变你的工作拷贝（或是 `.svn` 中 的任何信息），它会尽可能的小心，在修改任何事情之前，它把意图写到日志文件中去，然后执行 log 文件中的命令，然后删掉日志文件，这与分类帐的文件系统 架构类似。如果 Subversion 的操作中断了（举个例子：进程被杀死了，机器死掉了），日志文件会保存在硬盘上，通过重新执行日志文 件， Subversion可以完成上一次开始的操作，你的工作拷贝可以回到一致的状态。
 
-这就是svn cleanup 所作的：它查找工作拷贝中的所有遗留的日志文件，删除进程中的锁。如果Subversion告诉你工作拷贝中的一部分已经"锁定 "了，你就需要运行这个命令了。同样，svn status 将会使用L 显示锁定的项目：
+这就是 `svn cleanup` 所作的：它查找工作拷贝中的所有遗留的日志文件，删除进程中的锁。如果 Subversion 告诉你工作拷贝中的一部分已经"锁定 "了，你就需要运行这个命令了。同样，`svn status` 将会使用L 显示锁定的项目：
 
+<pre><code>
 $ svn status
  L somedir
  M somedir/foo.c 
@@ -210,27 +211,36 @@ $ svn status
  $ svn cleanup
  $ svn status
  M somedir/foo.c
+</code></pre>
 
- 20、  拷贝用户的一个未被版本化的目录树到版本库。 
+1. 拷贝用户的一个未被版本化的目录树到版本库。 
 
 svn import 命令是拷贝用户的一个未被版本化的目录树到版本库最快的方法，如果需要，它也要建立一些中介文件。
 
-$ svnadmin create /usr/local/svn/newrepos $ svn import mytree file:///usr/local/svn/newrepos/some/project Adding mytree/foo.c Adding mytree/bar.c Adding mytree/subdir Adding mytree/subdir/quux.h Committed revision 1.
-
+  ```shell
+  $ svnadmin create /usr/local/svn/newrepos $ svn import mytree file:///usr/local/svn/newrepos/some/project 
+  Adding mytree/foo.c 
+  Adding mytree/bar.c 
+  Adding mytree/subdir 
+  Adding mytree/subdir/quux.h 
+  Committed revision 1.
+  ```
 在上一个例子里，将会拷贝目录mytree 到版本库的some/project 下：
 
-$ svn list file:///usr/local/svn/newrepos/some/project bar.c foo.c subdir/
+<shell>$ svn list file:///usr/local/svn/newrepos/some/project bar.c foo.c subdir/</shell>
 
-注意，在导入之后，原来的目录树并没有 转化成工作拷贝，为了开始工作，你还是需要运行svn checkout 导出一个工作拷贝。
+注意，在导入之后，原来的目录树并没有 转化成工作拷贝，为了开始工作，你还是需要运行`svn checkout` 导出一个工作拷贝。
 
-另附：为SVN 加入Email通知 
-可以通过Subversion的Hook脚本的方式为SVN 加入邮件列表功能 
-编译安装了Subversion后 在源码的tools 下有一个comm-email.pl的Perl脚本，在你的档案目录下有一个hooks目录，进入到hooks目录把post-commit.tmpl 改名为post-commit并给它可执行的权限。 
-更改post-commit脚本 把comm-email.pl脚本的决对路径加上，否则 SVN 找不到comm-email.pl 
+另附：为 SVN 加入 Email 通知 
+可以通过 Subversion 的 Hook 脚本的方式为 SVN 加入邮件列表功能 
+编译安装了 Subversion 后 在源码的 tools 下有一个 comm-email.pl 的 Perl 脚本，在你的档案目录下有一个 hooks 目录，进入到 hooks 目录把 post-commit.tmpl 改名为 post-commit 并给它可执行的权限。 
+更改 post-commit 脚本把 `comm-email.pl` 脚本的决对路径加上，否则 SVN 找不到 comm-email.pl 
 
+<pre><shell>
 REPOS="$1" 
 REV="$2" 
 /usr/local/svn /resp/commit-email.pl "$REPOS" "$REV" email@address1.com email@address2.com 
 #log-commit.py --repository "$REPOS" --revision "$REV" 
+</shell></pre>
 
 最后一行是用来记日志的 我不用这个功能 所以注释掉了
