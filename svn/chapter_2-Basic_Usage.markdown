@@ -945,3 +945,194 @@ Note that the log messages are printed in reverse chronological order by default
     </tr>
   </tbody>
 </table>
+
+You can also examine the log history of a single file or directory. For example:
+
+<pre><code>
+$ svn log foo.c
+…
+$ svn log http://foo.com/svn/trunk/code/foo.c
+…
+</code></pre>
+
+These will display log messages only for those revisions in which the working file (or URL) changed.
+
+<pre>
+##### Why Does svn log Not Show Me What I Just Committed?
+
+If you make a commit and immediately type `svn log` with no arguments, you may notice that your most recent commit doesn't show up in the list of log messages. This is due to a combination of the behavior of `svn commit` and the default behavior of `svn log`. First, when you commit changes to the repository, svn bumps only the revision of files (and directories) that it commits, **so usually the parent directory remains at the older revision** (See the section called [“Updates and commits are separate”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.basic.in-action.mixedrevs.update-commit) for an explanation of why). `svn log` then defaults to fetching the history of the directory at its current revision, and thus you don't see the newly committed changes. The solution here is to either update your working copy or explicitly provide a revision number to `svn log` by using the `--revision` (-r) option.
+</pre>
+
+If you want even more information about a file or directory, `svn log` also takes a `--verbose` (-v) option. Because Subversion allows you to move and copy files and directories, it is important to be able to track path changes in the filesystem. So, in verbose mode, `svn log` will include a list of changed paths in a revision in its output:
+
+<pre><code>
+$ svn log -r 8 -v
+------------------------------------------------------------------------
+r8 | sally | 2008-05-21 13:19:25 -0500 (Wed, 21 May 2008) | 1 line
+Changed paths:
+   M /trunk/code/foo.c
+   M /trunk/code/bar.h
+   A /trunk/code/doc/README
+
+Frozzled the sub-space winch.
+
+------------------------------------------------------------------------
+</code></pre>
+
+`svn log` also takes a `--quiet` (-q) option, which suppresses 抑制 the body of the log message. When combined with `--verbose` (-v), it gives just the names of the changed files.
+
+<pre>
+### Why Does svn log Give Me an Empty Response?
+
+After working with Subversion for a bit, most users will come across something like this:
+
+<code>
+$ svn log -r 2
+------------------------------------------------------------------------
+$
+</code>
+
+At first glance, this seems like an error. But recall that while revisions are repository-wide, `svn log` operates on a path in the repository. If you supply no path, Subversion uses the current working directory as the default target. As a result, if you're operating in a subdirectory of your working copy and **attempt to see the log of a revision in which neither that directory nor any of its children was changed,** Subversion will show you an empty log. If you want to see what changed in that revision, try pointing `svn log` directly at the topmost URL of your repository, as in `svn log -r 2 ^/`.
+</pre>
+
+### Browsing the Repository
+
+Using `svn cat` and `svn list`, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
+
+#### svn cat
+
+If you want to examine an earlier version of a file and not necessarily the differences between two files, you can use `svn cat`:
+
+<pre><code>
+$ svn cat -r 2 rules.txt
+Be kind to others
+Freedom = Chocolate Ice Cream
+Everything in moderation
+Chew with your mouth open
+$
+</code></pre>
+
+You can also redirect the output directly into a file:
+
+<pre><code>
+$ svn cat -r 2 rules.txt > rules.txt.v2
+$
+</code></pre>
+
+#### svn list
+
+The svn list command shows you what files are in a repository directory without actually downloading the files to your local machine:
+
+<pre><code>
+$ svn list http://svn.example.com/repo/project
+README
+branches/
+tags/
+trunk/
+</pre></code>
+
+If you want a more detailed listing, pass the `--verbose` (`-v`) flag to get output like this:
+
+<pre><code>
+$ svn list -v http://svn.example.com/repo/project
+  23351 sally                 Feb 05 13:26 ./
+  20620 harry            1084 Jul 13  2006 README
+  23339 harry                 Feb 04 01:40 branches/
+  23198 harry                 Jan 23 17:17 tags/
+  23351 sally                 Feb 05 13:26 trunk/
+</code></pre>
+
+The columns tell you the revision at which the file or directory was last modified, the user who modified it, the size if it is a file, the date it was last modified, and the item's name.
+
+WARING: The `svn list` command with no arguments defaults to the **repository URL of the current working directory**, not the local working copy directory. After all, if you want a listing of your local directory, you could use just plain `ls` (or any reasonable non-Unixy equivalent或者 non-Unixy 中其他等价的命令).
+
+### Fetching 抓取 Older Repository Snapshots 快照
+
+In addition to all of the previous commands, you can use the `--revision` (`-r`) option with `svn update` to take an entire working copy “back in time”:
+
+<pre><code>
+# Make the current directory look like it did in r1729.
+$ svn update -r 1729
+…
+$
+</code></pre>
+
+NOTICE: Many Subversion newcomers attempt to use the preceding 之前的 `svn update` example to “undo” committed changes, but **this won't work as you can't commit changes that you obtain 获得 from backdating a working copy if the changed files have newer revisions**. See the section called [“Resurrecting Deleted Items”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge.basicmerging.resurrect) for a description of how to “undo” a commit.
+
+If you'd prefer to **reate a whole new working copy from an older snapshot**, you can do so by modifying the typical `svn checkout` command. As with `svn update`, you can provide the `--revision` (`-r`) option. But for reasons that we cover in the section called [“Peg and Operative Revisions”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.advanced.pegrevs), you might instead want to specify the target revision as part of Subversion's expanded URL syntax.
+
+<pre><code>
+# Checkout the trunk from r1729.
+$ svn checkout http://svn.example.com/svn/repo/trunk@1729 trunk-1729
+…
+# Checkout the current trunk as it looked in r1729.
+$ svn checkout http://svn.example.com/svn/repo/trunk -r 1729 trunk-1729
+…
+$
+</code></pre>
+
+Lastly, if you're building a release and **wish to bundle up your files from Subversion but don't want those pesky 讨厌的 `.svn` directories in the way**, you can use svn export to create a local copy of all or part of your repository sans 无 `.svn` directories. The basic syntax of this subcommand is identical 相同 to that of the `svn checkout`:
+
+<pre><code>
+# Export the trunk from the latest revision.
+$ svn export http://svn.example.com/svn/repo/trunk trunk-export
+…
+# Export the trunk from r1729.
+$ svn export http://svn.example.com/svn/repo/trunk@1729 trunk-1729
+…
+# Export the current trunk as it looked in r1729. 
+$ svn export http://svn.example.com/svn/repo/trunk -r 1729 trunk-1729
+…
+$
+</code></pre>
+
+### Sometimes You Just Need to Clean Up
+
+Now that we've covered the day-to-day tasks that you'll frequently use Subversion for, we'll review a few administrative tasks relating to your working copy.
+
+#### Disposing 处置 of a Working Copy
+
+Subversion doesn't track either the **state** or **the existence of working copies** on the server, so there's no server overhead 开销 to keeping working copies around. Likewise, **there's no need to let the server know that you're going to delete a working copy**.
+
+If you're likely to use a working copy again, there's nothing wrong with just leaving it on disk until you're ready to use it again, at which point all it takes is an `svn update` to bring it **up to date** and ready for use.
+
+However, **if you're definitely not going to use a working copy again, you can safely delete the entire thing using** whatever directory removal capabilities your operating system offers. We **recommend that before you do so you run `svn status` and review any files listed in its output that are prefixed with a `?` to make certain that they're not of importance.**
+
+#### Recovering from an Interruption
+
+**When Subversion modifies your working copy**---either your files or its own administrative state---it tries to do so as safely as possible. **Before changing the working copy**, Subversion logs its intentions in a private “to-do list”, of sorts. Next, it performs those actions to affect the desired change, h**olding a lock on the relevant part of the working copy while it works**. This prevents other Subversion clients from accessing the working copy mid-change. Finally, Subversion releases its lock and cleans up its private to-do list. Architecturally 从架构 , this is similar to a journaled filesystem. If a Subversion operation is interrupted (e.g, if the process is killed or if the machine crashes), the private to-do list remains on disk. This allows Subversion to return to that list later to complete any unfinished operations and return your working copy to a consistent state.
+
+This is exactly what `svn cleanup` does: it searches your working copy and runs any leftover to-do items, removing working copy locks as it completes those operations. **If Subversion ever tells you that some part of your working copy is “locked,” run `svn cleanup` to remedy the problem**. The `svn status` command will inform you about administrative locks in the working copy, too, by displaying an `L` next to those locked paths:
+
+<pre><code>
+$ svn status
+  L     somedir
+M       somedir/foo.c
+$ svn cleanup
+$ svn status
+M       somedir/foo.c
+</code></pre>
+
+**Don't confuse 混同 these working copy +administrative locks+ with the +user-managed locks+ that Subversion users create when using the lock-modify-unlock model of concurrent version control**; see the sidebar [The Three Meanings of “Lock”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.advanced.locking.meanings) for clarification.
+
+#### Dealing with Structural Conflicts
+
+**So far**, we have only talked about conflicts at the level of file content. When you and your collaborators make overlapping changes within the same file, Subversion forces you to merge those changes before you can commit.
+
+**But what happens if your collaborators move or delete a file that you are still working on?** Maybe there was a miscommunication, and one person thinks the file should be deleted, while another person still wants to commit changes to the file. Or maybe your collaborators did some refactoring, renaming files and moving around directories in the process. If you were still working on these files, those modifications 改动 may need to be applied to the files at their new location. **Such conflicts manifest 表现为 themselves at the directory tree structure level rather than at the file content level, and are known as tree conflicts**.
+
+<pre>
+##### Tree conflicts prior to Subversion 1.6
+
+Prior to Subversion 1.6, tree conflicts could yield rather unexpected results. For example, if a file was locally modified, but had been renamed in the repository, running `svn update` would make Subversion carry out the following steps:
+
+  * Check the file to be renamed for local modifications.
+
+  * Delete the file at its old location, and **if it had local modifications**, keep an on-disk copy of the file at the old location. This on-disk copy now appears as an **unversioned file** in the working copy.
+
+  * Add the file, as it exists in the repository, at its new location.
+
+When this situation arises, there is the possibility that the user makes a commit without realizing that local modifications have been left in a now-unversioned file in the working copy, and have not reached the repository. This gets more and more likely (and tedious) if the number of files affected by this problem is large.
+
+Since Subversion 1.6, this and other similar situations are flagged as conflicts in the working copy.
+</pre>

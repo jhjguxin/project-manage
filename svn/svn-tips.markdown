@@ -88,6 +88,12 @@ URL operations behave in this manner 方式 because commands that operate on a w
 TIPS:
   **While your working copy is “just like any other collection of files and directories on your system,” you can edit files at will, but you must tell Subversion about everything else that you do**. For example, if you want to copy or move an item in a working copy, you should use `svn copy` or `svn move` instead of the `copy` and `move` commands provided by your operating system. We'll talk more about them later in this chapter.
 
+### Browsing the Repository
+
+Using `svn cat` and `svn list`, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
+
+
+
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>
   例如：`svn checkout svn://192.168.1.1/pro/domain`
