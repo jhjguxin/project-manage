@@ -92,7 +92,51 @@ TIPS:
 
 Using `svn cat` and `svn list`, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
 
+#### Revision Keywords
 
+The Subversion client understands a number of **revision keywords**. These keywords can be used instead of integer arguments to the `--revision` (`-r`) option, and are resolved into specific revision numbers by Subversion:
+
+The Subversion client understands a number of revision keywords. These keywords can be used instead of integer arguments to the --revision (-r) option, and are resolved into specific revision numbers by Subversion:
+
+* `HEAD`
+    The latest (or “youngest”) revision in the repository.
+* `BASE`
+    The revision number of an item in a **working copy**. If the item has been locally modified, this refers to the way the item appears without those local modifications.
+* `COMMITTED`
+    The most recent revision prior to, or equal to, `BASE`, in which an item changed.
+* `PREV`
+    The revision immediately before the last revision in which an item changed. Technically, this boils down to COMMITTED-1.
+
+As can be derived 派生 from their descriptions, the `PREV`, `BASE`, and `COMMITTED` revision keywords are used only when referring to a **working copy path**---they **don't apply to** repository URLs. `HEAD`, on the other hand, can be used in conjunction with both of these path types.
+
+Here are some examples of revision keywords in action:
+
+<pre><shell>
+$ svn diff -r PREV:COMMITTED foo.c
+# shows the last change committed to foo.c
+
+$ svn log -r HEAD
+# shows log message for the latest repository commit
+
+$ svn diff -r HEAD
+# compares 比较 your working copy (with all of its local changes) to the
+# latest version of that tree in the repository
+
+$ svn diff -r BASE:HEAD foo.c
+# compares the unmodified version of foo.c with the latest version of
+# foo.c in the repository
+
+$ svn log -r BASE:HEAD
+# shows all commit logs for the current versioned directory since you
+# last updated
+
+$ svn update -r PREV foo.c
+# rewinds the last change on foo.c, decreasing foo.c's working revision
+
+$ svn diff -r BASE:14 foo.c
+# compares the unmodified version of foo.c with the way foo.c looked
+# in revision 14
+</shell></pre>
 
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>

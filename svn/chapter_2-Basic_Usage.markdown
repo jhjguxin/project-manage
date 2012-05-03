@@ -1136,3 +1136,213 @@ When this situation arises, there is the possibility that the user makes a commi
 
 Since Subversion 1.6, this and other similar situations are flagged as conflicts in the working copy.
 </pre>
+
+As with textual conflicts, **tree conflicts prevent a commit from being made from the conflicted state**, giving the user the opportunity to examine the state of the working copy for potential problems arising from the tree conflict, and resolving any such problems before committing.
+
+#### An Example Tree Conflict
+
+Suppose a software project you were working on currently looked like this:
+
+<pre><shell>
+$ svn list -Rv svn://svn.example.com/trunk/
+      4 harry                 Feb 06 14:34 ./
+      4 harry              23 Feb 06 14:34 COPYING
+      4 harry              41 Feb 06 14:34 Makefile
+      4 harry              33 Feb 06 14:34 README
+      4 harry                 Feb 06 14:34 code/
+      4 harry              51 Feb 06 14:34 code/bar.c
+      4 harry             124 Feb 06 14:34 code/foo.c
+</shell></pre>
+
++Your collaborator Harry has renamed the file bar.c to baz.c+. You are still working on bar.c in your working copy, but you don't know yet that the file has been renamed in the repository.
+
+The log message to Harry's commit looked like this:
+
+<pre><shell>
+$ svn log -r5 svn://svn.example.com/trunk
+------------------------------------------------------------------------
+r5 | harry | 2009-02-06 14:42:59 +0000 (Fri, 06 Feb 2009) | 2 lines
+Changed paths:
+   M /trunk/Makefile
+   D /trunk/code/bar.c
+   A /trunk/code/baz.c (from /trunk/code/bar.c:4)
+
+Rename bar.c to baz.c, and adjust Makefile accordingly 据此.
+</shell></pre>
+
+The local changes you have made look like this:
+
+<pre><shell>
+$ svn diff
+Index: code/foo.c
+===================================================================
+--- code/foo.c  (revision 4)
++++ code/foo.c  (working copy)
+@@ -3,5 +3,5 @@
+ int main(int argc, char *argv[])
+ {
+        printf("I don't like being moved around!\n%s", bar());
+-       return 0;
++       return 1;
+ }
+Index: code/bar.c
+===================================================================
+--- code/bar.c  (revision 4)
++++ code/bar.c  (working copy)
+@@ -1,4 +1,4 @@
+ const char *bar(void)
+ {
+-       return "Me neither!\n";
++       return "Well, I do like being moved around!\n";
+ }
+</shell></pre>
+
+Your changes are all based on `revision 4`. They cannot be committed because Harry has already checked in `revision 5`:
+
+<pre><shell>
+$ svn commit -m "Small fixes"
+Sending        code/bar.c
+Sending        code/foo.c
+Transmitting file data ..
+svn: Commit failed (details follow):
+svn: File not found: transaction '5-5', path '/trunk/code/bar.c'
+</shell></pre>
+
+At this point, you need to run `svn update`. Besides bringing our working copy up to date so that you can see Harry's changes, this also flags a tree conflict so you have the opportunity to evaluate and properly resolve it.
+
+<pre><shell>
+$ svn update
+   C code/bar.c
+A    code/baz.c
+U    Makefile
+Updated to revision 5.
+Summary of conflicts:
+  Tree conflicts: 1
+</shell></pre>
+
+In its output, `svn update` signifies tree conflicts using a capital `C` in the fourth output column. `svn status` reveals additional details of the conflict:
+
+<pre><shell>
+$ svn status
+M       code/foo.c
+A  +  C code/bar.c
+      >   local edit, incoming delete upon update
+M       code/baz.c
+</shell></pre>
+
+Note how `bar.c` is automatically scheduled for re-addition in your working copy, which simplifies things in case you want to keep the file.
+
+Because a move in Subversion is implemented 实施 as **a copy operation followed by a delete operation**, and these two operations cannot be easily related to one another during an update, all Subversion can warn you about is an incoming delete operation on a locally modified file. This delete operation may be part of a move, or it could be a genuine delete operation. Talking to your collaborators, or, as a last resort, `svn log`, is a good way to find out what has actually happened.
+
+Both `foo.c` and `baz.c` are reported as locally modified in the output of `svn status`. You made the changes to `foo.c` yourself, so this should not be surprising. But why is `baz.c` reported as locally modified?
+
+The answer is that despite 尽管 the limitations of the move implementation, Subversion was smart enough to transfer your local edits in `bar.c` into `baz.c`:
+
+<pre><shell>
+$ svn diff code/baz.c
+Index: code/baz.c
+===================================================================
+--- code/baz.c  (revision 5)
++++ code/baz.c  (working copy)
+@@ -1,4 +1,4 @@
+ const char *bar(void)
+ {
+-       return "Me neither!\n";
++       return "Well, I do like being moved around!\n";
+ }
+</shell></pre>
+
+WARING: Local edits to the file `bar.c`, which is renamed during an update to `baz.c`, will only be applied to `bar.c` **if your working copy of `bar.c` is based on the revision in which it was last modified before being moved in the repository**. Otherwise, Subversion will resort to retreiving 检索 `baz.c` from the repository, and will not try to transfer your local modifications to it. You will have to do so manually.
+
+`svn info` shows the URLs of the items involved in the conflict. The left URL shows the source of the local side of the conflict, while the right URL shows the source of the incoming side of the conflict. These URLs indicate 表明 where you should start searching the repository's history for the change which conflicts with your local change.
+
+<pre><shell>
+$ svn info code/bar.c | tail -n 4 
+Tree conflict: local edit, incoming delete upon update
+  Source  left: (file) ^/trunk/code/bar.c@4
+  Source right: (none) ^/trunk/code/bar.c@5
+</shell></pre>
+
+`bar.c` is now said to be the victim of a tree conflict. It cannot be committed until the conflict is resolved:
+
+<pre><shell>
+$ svn commit -m "Small fixes" 
+svn: Commit failed (details follow):
+svn: Aborting commit: 'code/bar.c' remains in conflict
+</shell></pre>
+
+So how can this conflict be resolved? You can either agree or disagree with the move Harry made. **In case you agree**, you can delete `bar.c` and mark the tree conflict as resolved:
+
+<pre><shell>
+$ svn delete --force code/bar.c
+D         code/bar.c
+$ svn resolve --accept=working code/bar.c ##has some wrong in here ?
+Resolved conflicted state of 'code/bar.c'
+$ svn status
+M       code/foo.c
+M       code/baz.c
+$ svn diff
+Index: code/foo.c
+===================================================================
+--- code/foo.c  (revision 5)
++++ code/foo.c  (working copy)
+@@ -3,5 +3,5 @@
+ int main(int argc, char *argv[])
+ {
+        printf("I don't like being moved around!\n%s", bar());
+-       return 0;
++       return 1;
+ }
+Index: code/baz.c
+===================================================================
+--- code/baz.c  (revision 5)
++++ code/baz.c  (working copy)
+@@ -1,4 +1,4 @@
+ const char *bar(void)
+ {
+-       return "Me neither!\n";
++       return "Well, I do like being moved around!\n";
+ }
+</shell></pre>
+
+**If you do not agree with the move**, you can delete `baz.c` instead, after making sure any changes made to it after it was renamed are either preserved or not worth keeping. Do not forget to revert the changes Harry made to the Makefile. Since bar.c is already scheduled for re-addition, there is nothing else left to do, and the conflict can be marked resolved:
+
+<pre><shell>
+$ svn delete --force code/bar.c
+D         code/bar.c
+$ svn resolve --accept=working code/bar.c
+Resolved conflicted state of 'code/bar.c'
+$ svn status
+M       code/foo.c
+M       code/baz.c
+$ svn diff
+Index: code/foo.c
+===================================================================
+--- code/foo.c  (revision 5)
++++ code/foo.c  (working copy)
+@@ -3,5 +3,5 @@
+ int main(int argc, char *argv[])
+ {
+        printf("I don't like being moved around!\n%s", bar());
+-       return 0;
++       return 1;
+ }
+Index: code/baz.c
+===================================================================
+--- code/baz.c  (revision 5)
++++ code/baz.c  (working copy)
+@@ -1,4 +1,4 @@
+ const char *bar(void)
+ {
+-       return "Me neither!\n";
++       return "Well, I do like being moved around!\n";
+ }
+</shell></pre>
+
+In either case, you have now resolved your first tree conflict! You can commit your changes and tell Harry during tea break about all the extra work he caused for you.
+
+### Summary
+
+Now we've covered most of the Subversion client commands. Notable exceptions are those dealing with branching and merging (see [Chapter 4, Branching and Merging](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge)) and properties (see the section called [“Properties”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.advanced.props)). However, you may want to take a moment to skim through [Chapter 9, Subversion Complete Reference](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.ref) to get an idea of all the different commands that Subversion has—and how you can use them to make your work easier.
+
+

@@ -90,7 +90,8 @@ TIPS:
 
 ### Browsing the Repository
 
-Using svn cat and svn list, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
+Using `svn cat` and `svn list`, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
+
 
 
 1. 将文件checkout到本地目录
