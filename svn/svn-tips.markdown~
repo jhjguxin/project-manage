@@ -92,7 +92,142 @@ TIPS:
 
 Using `svn cat` and `svn list`, you can view various revisions of files and directories without changing the working revision of your working copy. In fact, you don't even need a working copy to use either one.
 
+#### Revision Keywords
 
+The Subversion client understands a number of **revision keywords**. These keywords can be used instead of integer arguments to the `--revision` (`-r`) option, and are resolved into specific revision numbers by Subversion:
+
+The Subversion client understands a number of revision keywords. These keywords can be used instead of integer arguments to the --revision (-r) option, and are resolved into specific revision numbers by Subversion:
+
+* `HEAD`
+    The latest (or “youngest”) revision in the repository.
+* `BASE`
+    The revision number of an item in a **working copy**. If the item has been locally modified, this refers to the way the item appears without those local modifications.
+* `COMMITTED`
+    The most recent revision prior to, or equal to, `BASE`, in which an item changed.
+* `PREV`
+    The revision immediately before the last revision in which an item changed. Technically, this boils down to COMMITTED-1.
+
+As can be derived 派生 from their descriptions, the `PREV`, `BASE`, and `COMMITTED` revision keywords are used only when referring to a **working copy path**---they **don't apply to** repository URLs. `HEAD`, on the other hand, can be used in conjunction with both of these path types.
+
+Here are some examples of revision keywords in action:
+
+<pre><shell>
+$ svn diff -r PREV:COMMITTED foo.c
+# shows the last change committed to foo.c
+
+$ svn log -r HEAD
+# shows log message for the latest repository commit
+
+$ svn diff -r HEAD
+# compares 比较 your working copy (with all of its local changes) to the
+# latest version of that tree in the repository
+
+$ svn diff -r BASE:HEAD foo.c
+# compares the unmodified version of foo.c with the latest version of
+# foo.c in the repository
+
+$ svn log -r BASE:HEAD
+# shows all commit logs for the current versioned directory since you
+# last updated
+
+$ svn update -r PREV foo.c
+# rewinds the last change on foo.c, decreasing foo.c's working revision
+
+$ svn diff -r BASE:14 foo.c
+# compares the unmodified version of foo.c with the way foo.c looked
+# in revision 14
+</shell></pre>
+
+#### Creating a Branch
+
+**Creating a branch is very simple**---you make a copy of the project in the repository using the `svn copy` command. Subversion is able to copy not only single files, but whole directories as well. In this case, you want to make a copy of the `/calc/trunk` directory. Where should the new copy live? Wherever you wish---it's a matter of project policy. Let's say that your team has a policy of creating branches in the `/calc/branches` area of the repository, and you want to name your branch `my-calc-branch`. You'll want to create a new directory, `/calc/branches/my-calc-branch`, which begins its life as a copy of `/calc/trunk`.
+
+You may already have seen `svn copy` used to copy one file to another within a working copy. But it can also be used to do a “remote” copy entirely within the repository. Just copy one URL to another:
+
+<pre><shell>
+$ svn copy http://svn.example.com/repos/calc/trunk \
+           http://svn.example.com/repos/calc/branches/my-calc-branch \
+      -m "Creating a private branch of /calc/trunk."
+
+Committed revision 341.
+</shell></pre>
+
+**This command causes a near-instantaneous commit in the repository, creating a new directory in revision 341**. The new directory is a copy of `/calc/trunk`. This is shown in [Figure 4.3, “Repository with new copy”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge.using.create.dia-1). **While it's also possible to create a branch by using `svn copy` to duplicate a directory within the working copy, this technique isn't recommended**. It can be quite slow, in fact! Copying a directory on the client side is a linear-time operation 线性时间操作 , in that it actually has to duplicate every file and subdirectory within that working copy directory on the local disk. **Copying a directory on the server, however, is a constant-time operation, and it's the way most people create branches**.
+
+<pre>
+##### Cheap Copies 廉价拷贝
+
+Subversion's repository has a special design. When you copy a directory, you don't need to worry about the repository growing huge 巨大---**Subversion doesn't actually duplicate any data. Instead, it creates a new directory entry that points to an existing tree**. If you're an experienced Unix user, you'll recognize this as the same concept behind a hard link. As further changes are made to files and directories beneath the copied directory, Subversion continues to employ this hard link concept where it can. It duplicates data only when it is necessary to disambiguate 消除歧义 different versions of objects.
+
+This is why you'll often hear Subversion users talk about “cheap copies.” It doesn't matter how large the directory is—it takes a very tiny, constant amount of time and space to make a copy of it. In fact, this feature is the basis of how commits work in Subversion: **each revision is a “cheap copy” of the previous revision, with a few items lazily changed within.** (To read more about this, visit Subversion's web site and read about the “bubble up” method in Subversion's design documents.)
+
+Of course, these internal mechanics of copying and sharing data are hidden from the user, who simply sees copies of trees. The main point here is that copies are cheap, both in time and in space. **If you create a branch entirely within the repository (by running `svn copy URL1 URL2`), it's a quick, constant-time operation. Make branches as often as you want.**
+</pre>
+
+### Basic Merging
+
+Now you and Sally are working on parallel 并行 branches of the project: you're working on a private branch, and Sally is working on the trunk, or main line of development.
+
+For projects that have a large number of contributors, it's common for most people to have working copies of the trunk. **Whenever someone needs to make a long-running change that is likely to disrupt 中断 the trunk, a standard procedure is to create a private branch and commit changes there until all the work is complete.**
+
+So, the good news is that you and Sally aren't interfering 干扰 with each other. The bad news is that it's very easy to drift too far apart. Remember that one of the problems with the “crawl in a hole” strategy is that by the time you're finished with your branch, **it may be near-impossible to merge your changes back into the trunk without a huge number of conflicts**.
+
+Instead, you and Sally might continue to share changes as you work. **It's up to you to decide which changes are worth sharing; Subversion gives you the ability to selectively “copy” changes between branches.** And when you're completely finished with your branch, your entire set of branch changes can be copied back into the trunk. In Subversion terminology 术语, the general act of replicating changes from one branch to another is called merging, and it is performed using various invocations of the `svn merge` command.
+
+In the examples that follow, we're assuming that both your Subversion client and server are running Subversion 1.5 (or later). If either client or server is older than version 1.5, **things are more complicated**: the system won't track changes automatically, and you'll have to use painful manual methods to achieve similar results. **That is, you'll always need to use the detailed merge syntax to specify specific ranges of revisions to replicate** (see the section called [“Merge Syntax: Full Disclosure”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge.advanced.advancedsyntax) later in this chapter), and take special care to keep track of what's already been merged and what hasn't. For this reason, we strongly recommend that you make sure your client and server are at least at **version 1.5**.
+
+#### Changesets
+
+Before we proceed 继续 further, we should warn you that there's going to be a lot of discussion of “changes” in the pages ahead. A lot of people experienced 有经验 with version control systems use the terms “change” and “changeset” interchangeably 互换, and we should clarify 阐明 what Subversion understands as a changeset.
+
+Everyone seems to have a slightly 略略 different definition of changeset, or at least a different expectation of what it means for a version control system to have one. For our purposes, let's say that a changeset is just a collection of changes with a unique name. The changes might include textual edits to file contents, modifications to tree structure, or tweaks to metadata. **In more common speak, a changeset is just a patch with a name you can refer to.**
+
+In Subversion, a global revision number `N` names a tree in the repository: it's the way the repository looked after the `N`th commit. It's also the name of an implicit 隐式 changeset: if you compare tree `N` with tree `N`-1, you can derive 派生 the exact patch that was committed. For this reason, it's easy to think of revision `N` as not just a tree, but a changeset as well. If you use an **issue tracker** to manage bugs, you can use the revision numbers to refer to particular patches that fix bugs---for example, “this issue was fixed by r9238.” Somebody can then `run svn log -r 9238` to read about the exact changeset that fixed the bug, and `run svn diff -c 9238` to see the patch itself. And (as you'll see shortly) Subversion's `svn merge` command is able to use revision numbers. You can merge specific changesets from one branch to another by naming them in the merge arguments: passing `-c 9238` to `svn merge` would merge changeset `r9238` into your working copy.
+
+#### Keeping a Branch in Sync
+
+Continuing with our running example, let's suppose that a week has passed since you started working on your private branch. **Your new feature isn't finished yet**, but at the same time you know that other people on your team have continued to make important changes in the project's `/trunk`. It's in your best interest to replicate 重复 those changes to your own branch, just to make sure they mesh well with your changes.
+
+NOTICE: Frequently keeping your branch in sync with the main development line helps prevent “surprise” conflicts when the time comes for you to fold your changes back into the trunk.
+
+Subversion is aware of the history of your branch and knows when it divided away from the trunk. To replicate the latest, greatest trunk changes to your branch, first make sure your working copy of the branch is “clean”—that it has no local modifications reported by `svn status`. Then simply run:
+
+<pre><shell>
+$ pwd
+/home/user/my-calc-branch
+
+$ svn merge ^/calc/trunk
+--- Merging r345 through r356 into '.':
+U    button.c
+U    integer.c
+$
+</shell></pre>
+
+This basic syntax---`svn merge URL`---tells Subversion to merge all recent changes from the URL to the current working directory (which is typically the root of your working copy). **Also notice** that we're using the caret (^)  to avoid having to type out the **entire `/trunk` URL**.
+
+After running the prior example, your branch working copy now contains new local modifications, and these edits are duplications of all of the changes that have happened on the trunk since you first created your branch:
+
+<pre><shell>
+$ svn status
+ M      .
+M       button.c
+M       integer.c
+$
+</shell></pre>
+
+At this point, the wise thing to do is look at the changes carefully with svn diff, and then build and test your branch. Notice that the current working directory (“.”) has also been modified; the svn diff will show that its svn:mergeinfo property has been either created or modified. This is important merge-related metadata that you should not touch, since it will be needed by future svn merge commands. (We'll learn more about this metadata later in the chapter.)
+
+After performing the merge, you might also need to resolve some conflicts (just as you do with `svn update`) or possibly make some small edits to get things working properly. (**Remember, just because there are no syntactic conflicts doesn't mean there aren't any semantic conflicts!**) If you encounter serious problems, you can always abort the local changes by running `svn revert . -R` (which will undo all local modifications) and start a long “what's going on?” discussion with your collaborators. If things look good, however, you can submit these changes into the repository:
+
+<pre><shell>
+$ svn commit -m "Merged latest trunk changes to my-calc-branch."
+Sending        .
+Sending        button.c
+Sending        integer.c
+Transmitting file data ..
+Committed revision 357.
+$
+</shell></pre>
 
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>
