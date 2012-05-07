@@ -1,11 +1,12 @@
 ### linux下svn命令大全
 
-<pre><shell>
-svn delete ./1/wp-content/plugins/wp-code-highlight/
-svn add ./1/wp-content/plugins/wp-code-highlight/
-svn commit -m "update 'wp-code-highlight' to 1.2.4"
-svn checkout https://svn.sinaapp.com/jhjguxin/
-</shell></pre>
+
+  ```shell
+  svn delete ./1/wp-content/plugins/wp-code-highlight/
+  svn add ./1/wp-content/plugins/wp-code-highlight/
+  svn commit -m "update 'wp-code-highlight' to 1.2.4"
+  svn checkout https://svn.sinaapp.com/jhjguxin/
+  ```
 
 ## Recommended Repository Layout
 
