@@ -80,13 +80,15 @@ One strategy 策略 is to crawl into a hole(爬到一个洞里): **you and Sally
 
 You may already have seen `svn copy` used to copy one file to another within a working copy. But it can also be used to do a “remote” copy entirely within the repository. Just copy one URL to another:
 
-<pre><shell>
+<pre>
+<shell>
 $ svn copy http://svn.example.com/repos/calc/trunk \
            http://svn.example.com/repos/calc/branches/my-calc-branch \
       -m "Creating a private branch of /calc/trunk."
 
 Committed revision 341.
-</shell></pre>
+</shell>
+</pre>
 
 **This command causes a near-instantaneous commit in the repository, creating a new directory in revision 341**. The new directory is a copy of `/calc/trunk`. This is shown in [Figure 4.3, “Repository with new copy”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge.using.create.dia-1). **While it's also possible to create a branch by using `svn copy` to duplicate a directory within the working copy, this technique isn't recommended**. It can be quite slow, in fact! Copying a directory on the client side is a linear-time operation 线性时间操作 , in that it actually has to duplicate every file and subdirectory within that working copy directory on the local disk. **Copying a directory on the server, however, is a constant-time operation, and it's the way most people create branches**.
 
@@ -104,14 +106,16 @@ Of course, these internal mechanics of copying and sharing data are hidden from 
 
 Now that you've created a branch of the project, you can check out a new working copy to start using it:
 
-<pre><shell>
+<pre>
+<shell>
 $ svn checkout http://svn.example.com/repos/calc/branches/my-calc-branch
 A  my-calc-branch/Makefile
 A  my-calc-branch/integer.c
 A  my-calc-branch/button.c
 Checked out revision 341.
 $
-</shell></pre>
+</shell>
+</pre>
 
 There's nothing special about this working copy; it simply mirrors a different directory in the repository. When you commit changes, however, Sally won't see them when she updates, because her working copy is of `/calc/trunk`. (Be sure to read the section called [“Traversing 遍历 Branches”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.branchmerge.switchwc) later in this chapter: the svn switch command is an alternative 替代 way of creating a working copy of a branch.)
 
@@ -129,7 +133,8 @@ Now two independent lines of development (shown in [Figure 4.4, “The branching
 
 Things get interesting when you look at the history of changes made to your copy of `integer.c`:
 
-<pre><shell>
+<pre>
+<shell>
 $ pwd
 /home/user/my-calc-branch
 
@@ -163,11 +168,13 @@ Changed paths:
 * integer.c:  adding this file to the project.
 
 ------------------------------------------------------------------------
-</shell></pre>
+</shell>
+</pre>
 
 Notice that Subversion is tracing the history of your branch's `integer.c` all the way back through time, even traversing the point where it was copied. It shows the creation of the branch as an event in the history, because `integer.c` was implicitly 隐式地 copied when all of `/calc/trunk/` was copied. Now look at what happens when Sally runs the same command on her copy of the file:
 
-<pre><shell>
+<pre>
+<shell>
 $ pwd
 /home/sally/calc
 
@@ -194,11 +201,15 @@ Changed paths:
 * integer.c:  adding this file to the project.
 
 ------------------------------------------------------------------------
-</shell></pre>
+</shell>
+</pre>
+
 
 Sally sees her own revision 344 change, but not the change you made in revision 343. As far as Subversion is concerned, these two commits affected different files in different repository locations. However, Subversion does show that the two files share a common history. Before the branch copy was made in revision 341, the files used to be the same file. That's why you and Sally both see the changes made in revisions 303 and 98.
 
+
 #### The Key Concepts 概念 Behind Branching
+
 
 You should remember two important lessons from this section. **First**, Subversion has no internal concept of a branch---it knows only how to make copies. When you copy a directory, the resultant directory is only a “branch” because you attach that meaning to it. You may think of the directory differently, or treat it differently, but to Subversion it's just an ordinary directory that happens to carry some extra historical information.
 
