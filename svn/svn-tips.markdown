@@ -1,5 +1,6 @@
 ### linux下svn命令大全
 
+[Version Control with Subversion](http://svnbook.red-bean.com/) or [Old Versions of the Book](http://svnbook.red-bean.com/old-versions.html)
 
   ```shell
   svn delete ./1/wp-content/plugins/wp-code-highlight/
@@ -230,6 +231,71 @@ Committed revision 357.
 $
 </shell></pre>
 
+### Mergeinfo and Previews
+
+The basic mechanism 机制 Subversion uses to track changesets 变更---that is, which changes have been merged to which branches---is by recording data in versioned properties. Specifically, merge data is tracked in the `svn:mergeinfo` property attached to files and directories. (If you're not familiar with Subversion properties, see the section called [“Properties”](http://svnbook.red-bean.com/en/1.6/svn-book.html#svn.advanced.props).)
+
+You can examine the property, just like any other:
+
+<pre>
+<shell>
+$ cd my-calc-branch
+$ svn propget svn:mergeinfo .
+/trunk:341-390
+$
+</shell>
+</pre>
+
+WARING: While is possible to `modify svn:mergeinfo` just as you might any other versioned property, we strongly discourage doing so unless you really know what you're doing.
+
+The `svn:mergeinfo` property is automatically maintained by Subversion whenever you run `svn merge`. Its value indicates 指示 which changes made to a given path have been replicated into the directory in question. In our previous example, the path which is the source of the merged changes is `/trunk` and the directory which has received the changes is `/branches/my-calc-branch`.
+
+Subversion also provides a subcommand, `svn mergeinfo`, which can be helpful in seeing not only which changesets a directory has absorbed, but also which changesets it's still eligible 合格 to receive. This gives a sort of preview of which changes a subsequent `svn merge` operation would replicate to your branch.
+
+<pre>
+<shell>
+$ cd my-calc-branch
+
+# Which changes have already been merged from trunk to branch?
+$ svn mergeinfo ^/calc/trunk
+r341
+r342
+r343
+…
+r388
+r389
+r390
+
+# Which changes are still eligible to merge from trunk to branch?
+$ svn mergeinfo ^/calc/trunk --show-revs eligible
+r391
+r392
+r393
+r394
+r395
+$
+</shell>
+</pre>
+
+The `svn mergeinfo` command requires a “source” URL (where the changes would be coming from), and takes an optional “target” URL (where the changes would be merged to). **If no target URL is given, it assumes that the current working directory is the target.** In the prior example, because we're querying our branch working copy, the command assumes we're interested in receiving changes to `/branches/mybranch` from the specified `trunk` URL.
+
+Another way to get a more precise 精确 preview of a merge operation is to use the `--dry-run` option:
+
+<pre>
+<shell>
+$ svn merge ^/calc/trunk --dry-run
+U    integer.c
+
+$ svn status
+#  nothing printed, working copy is still unchanged.
+</shell>
+</pre>
+
+The `--dry-run` option doesn't actually apply any local changes to the working copy. It shows only status codes that would be printed in a real merge. It's useful for getting a “high-level” preview of the potential merge, for those times when running `svn diff` gives too much detail.
+
+NOTICE: After performing a merge operation, but before committing the results of the merge, you can use `svn diff --depth=empty /path/to/merge/target` to see only the changes to the immediate target of your merge. If your merge target was a directory, only property differences will be displayed. This is a handy way to see the changes to the `svn:mergeinfo` property recorded by the merge operation, which will remind you about what you've just merged.
+
+**Of course, the best way to preview a merge operation is to just do it!** Remember, running `svn merge` isn't an inherently 本质 risky thing (unless you've made local modifications to your working copy---but we've already stressed that you shouldn't be merging into such an environment). **If you don't like the results of the merge, simply run `svn revert . -R` to revert the changes from your working copy and retry the command with different options.** The merge isn't final until you actually `svn commit` the results.
 
 1. 将文件checkout到本地目录
   <shell>svn checkout path（path是服务器 上的目录）</shell>
