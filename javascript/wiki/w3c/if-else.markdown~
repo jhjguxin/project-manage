@@ -1,0 +1,48 @@
+## JavaScript If...Else 语句
+
+----------------
+**JavaScript 中的条件语句用于完成不同条件下的行为。**
+----------------
+
+### 实例
+
+[If 语句](http://www.w3school.com.cn/tiy/t.asp?f=jseg_ifthen)
+  如何编写一个 If 语句。
+[If...else 语句](http://www.w3school.com.cn/tiy/t.asp?f=jseg_ifthenelse)
+  如何编写 if...else 语句。
+[If..else if...else 语句](http://www.w3school.com.cn/tiy/t.asp?f=jseg_elseif)
+  如何编写 if..else if...else 语句
+[随机链接](http://www.w3school.com.cn/tiy/t.asp?f=jseg_randomlink)
+  本例演示一个随机的链接，当您单击这个链接时，会打开某个随机的网站。
+
+### 条件语句
+
+在您编写代码时，经常需要根据不同的条件完成不同的行为。可以在代码中使用条件语句来完成这个任务。
+
+在 JavaScript 中，我们可以使用下面几种条件语句：
+
+* if 语句
+    在一个指定的条件成立时执行代码。
+* if...else 语句
+    在指定的条件成立时执行代码，当条件不成立时执行另外的代码。
+* if...else if....else 语句
+    使用这个语句可以选择执行若干块代码中的一个。
+* switch 语句
+    使用这个语句可以选择执行若干块代码中的一个。
+
+### If 语句
+
+如果希望指定的条件成立时执行代码，就可以使用这个语句。
+
+语法：
+
+  ```javascript
+  if (条件)
+  {
+  条件成立时执行代码
+  }
+  ```
+
+注意：请使用小写字母。使用大写的 IF 会出错！
+
+

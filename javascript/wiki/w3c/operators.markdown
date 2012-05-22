@@ -1,8 +1,10 @@
 ## JavaScript 运算符
 
+------------
 **运算符 = 用于赋值。**
 
 **运算符 + 用于加值。**
+------------
 
 运算符 = 用于给 JavaScript 变量赋值。
 
@@ -25,17 +27,31 @@
 <table>
   <thead>
     <tr>
-    <td>运算符</td><td>描述</td><td>例子</td><td>结果</td>
+    <th>运算符</th><th>描述</th><th>例子</th><th>结果</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
     <td>+</td><td>加</td><td>x=y+2</td><td>x=7</td>
+    </tr>
+    <tr>
     <td>-</td><td>减</td><td>x</td><td>=y-2</td><td>x=3</td>
+    </tr>
+    <tr>
     <td>*</td><td>乘</td><td>x=y*2</td><td>x=10</td>
+    </tr>
+    <tr>
     <td>/</td><td>除</td><td>x=y/2</td><td>x=2.5</td>
+    </tr>
+    <tr>
     <td>%</td><td>求余数 (保留整数)</td><td>x=y%2</td><td>x=1</td>
+    </tr>
+    <tr>
     <td>++</td><td>累加</td><td>x=++y</td><td>x=6</td>
+    </tr>
+    <tr>
     <td>--</td><td>递减</td><td>x=--y</td><td>x=4</td> 
+    </tr>
   </tbody>
 </table>
 
@@ -47,16 +63,28 @@ JavaScript 赋值运算符
 <table>
   <thead>
     <tr>
-      <td>运算符 </td><td>例子 </td><td>等价于 </td><td>结果</td>
+      <th>运算符 </th><th>例子 </th><th>等价于 </th><th>结果</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
       <td>= </td><td>x=y </td><td>  </td><td>x=5</td>
+    </tr>
+    <tr>
       <td>+= </td><td>x+=y </td><td>x=x+y </td><td>x=15</td>
+    </tr>
+    <tr>
       <td>-= </td><td>x-=y </td><td>x=x-y </td><td>x=5</td>
+    </tr>
+    <tr>
       <td>*= </td><td>x*=y </td><td>x=x*y </td><td>x=50</td>
+    </tr>
+    <tr>
       <td>/= </td><td>x/=y </td><td>x=x/y </td><td>x=2</td>
+    </tr>
+    <tr>
       <td>%= </td><td>x%=y </td><td>x=x%y </td><td>x=0</td>
+    </tr>
   </tbody>
 </table>
 
