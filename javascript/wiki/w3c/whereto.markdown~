@@ -1,0 +1,24 @@
+## 把 JavaScript 放置到何处
+
+当页面载入时，会执行位于 body 部分的 JavaScript。
+
+当被调用时，位于 head 部分的 JavaScript 才会被执行。
+
+### 实例
+
+[head 部分](http://www.w3school.com.cn/tiy/t.asp?f=jseg_headsection)
+  包含函数的脚本位于文档的 head 部分。这样我们就可以确保在调用函数前，脚本已经载入了。
+
+[body 部分](http://www.w3school.com.cn/tiy/t.asp?f=jseg_bodysection)
+  执行位于 body 部分的脚本。
+[外部 JavaScript](http://www.w3school.com.cn/tiy/t.asp?f=jseg_externalexample)
+  如何访问外部脚本。
+
+### 在哪里放置 JavaScript
+
+页面中的脚本会在页面载入浏览器后立即执行。我们并不总希望这样。有时，我们希望当页面载入时执行脚本，而另外的时候，我们则希望当用户触发事件时才执行脚本。
+
+#### 位于 head 部分的脚本：
+
+当脚本被调用时，或者当事件被触发时，脚本就会被执行。当你把脚本放置到 head 部分后，就可以确保在需要使用脚本之前，它已经被载入了。
+
