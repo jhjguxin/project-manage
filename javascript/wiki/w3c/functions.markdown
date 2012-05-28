@@ -1,0 +1,120 @@
+## JavaScript 函数
+
+-------------
+**函数是由事件驱动的或者当它被调用时执行的可重复使用的代码块。**
+-------------
+
+### 实例
+
+[函数](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function)
+  如何调用函数。
+[带有参数的函数](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function_argument)
+  如何向函数传递变量，以及如何在函数中使用该变量。
+[带有参数的函数 2](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function_argument_2)
+  如何向函数传递多个变量，以及如何在函数中使用这些变量。
+[返回值的函数](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function_return)
+  如何从函数返回值。
+[带有参数并返回值的函数](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function_return_2)
+  如何向函数输入两个参数值，并返回值。
+
+### JavaScript 函数
+
+将脚本编写为函数，就可以避免页面载入时执行该脚本。
+
+函数包含着一些代码，这些代码只能被事件激活，或者在函数被调用时才会执行。
+
+你可以在页面中的任何位置调用脚本（如果函数嵌入一个外部的 `.js` 文件，那么甚至可以从其他的页面中调用）。
+
+函数在页面起始位置定义，即 `<head>` 部分。
+
+<pre>
+<javascript>
+<html>
+<head>
+<script type="text/javascript">
+function displaymessage()
+{
+alert("Hello World!")
+}
+</script>
+</head>
+
+<body>
+<form>
+<input type="button" value="Click me!" onclick="displaymessage()" >
+</form>
+</body>
+</html>
+</javascript>
+</pre>
+
+[亲自试一试](http://www.w3school.com.cn/tiy/t.asp?f=jseg_function_2)
+
+假如上面的例子中的 `alert("Hello world!!")` 没有被写入函数，那么当页面被载入时它就会执行。现在，当用户击中按钮时，脚本才会执行。我们给按钮添加了 `onClick` 事件，这样按钮被点击时函数才会执行。
+
+在 JS 事件这一章，你会学到更多关于 JavaScript 事件的知识。
+
+### 如何定义函数
+
+#### 创建函数的语法：
+
+<pre>
+<javascript>
+function 函数名(var1,var2,...,varX)
+  {
+  代码．．．
+  }
+</javascript>
+</pre>
+
+`var1`, `var2` 等指的是传入函数的变量或值。`{` 和 `}` 定义了函数的开始和结束。
+
+**注意：**无参数的函数必须在其函数名后加括号：
+
+<pre>
+<javascript>
+function 函数名()
+　　{
+　　代码．．．
+　　}
+</javascript>
+</pre>
+
+**注意：**别忘记 JavaScript 中大小写字母的重要性。"function" 这个词必须是小写的，否则 JavaScript 就会出错。另外需要注意的是，必须使用大小写完全相同的函数名来调用函数。
+
+### return 语句
+
+`return` 语句用来规定从函数返回的值。
+
+因此，需要返回某个值的函数必须使用这个 `return` 语句。
+
+例子
+
+下面的函数会返回两个数相乘的值（`a` 和 `b`）：
+
+<pre>
+<javascript>
+function prod(a,b)
+{
+x=a*b
+return x
+}
+</javascript>
+</pre>
+
+当您调用上面这个函数时，必须传入两个参数：
+
+<pre>
+<javascript>
+product=prod(2,3)
+</javascript>
+</pre>
+
+而从 `prod()` 函数的返回值是 `6`，这个值会存储在名为 `product` 的变量中。
+
+### JavaScript 变量的生存期
+
+**当您在函数内声明了一个变量后，就只能在该函数中访问该变量。**当退出该函数后，这个变量会被撤销。这种变量称为本地变量。您可以在不同的函数中使用名称相同的本地变量，这是因为只有声明过变量的函数能够识别其中的每个变量。
+
+如果您在函数之外声明了一个变量，则页面上的所有函数都可以访问该变量。这些变量的生存期从声明它们之后开始，在页面关闭时结束。
+
