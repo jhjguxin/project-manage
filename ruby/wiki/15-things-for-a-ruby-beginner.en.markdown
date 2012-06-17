@@ -24,11 +24,11 @@ There were many Ruby beginners in last week’s meetup, and the common question 
 
   I think all of these tools are mandatory for being a productive Ruby programmer. You’ll encounter them soon enough:
 
-  - RVM/rbenv: these are tools used to manage multiple Ruby versions on the same machine. I’ve been using RVM without complaint for quite a while, though there are people who will go up in arms against RVM for various reasons. As a beginner, you should be comfortable with either.
-  - RubyGems: a gem for anything, a gem for everything. If you are using RVM, it will install RubyGems by default for you. [http://docs.rubygems.org/read/chapter/4](http://docs.rubygems.org/read/chapter/4)
-  - Bundler: You’ll learn it easy enough if you are using Rails. But even for non-Rails projects, Bundler is now the de-facto tool to handle gems and dependencies. It is one of those tools that when you see for the first time you would wonder how you ever lived without it.
-  - Git: You are a git if you don’t use git yet. If you are not even using any version control at all, good for you – there aren’t bad practices that you need to unlearn. If you are on SVN, or God forbid CVS, jump now.[http://git-scm.com/book/en/Getting-Started-About-Version-Control](http://git-scm.com/book/en/Getting-Started-About-Version-Control)
-  - Github: You have a Github handle, right? ’nuff said.
+    - RVM/rbenv: these are tools used to manage multiple Ruby versions on the same machine. I’ve been using RVM without complaint for quite a while, though there are people who will go up in arms against RVM for various reasons. As a beginner, you should be comfortable with either.
+    - RubyGems: a gem for anything, a gem for everything. If you are using RVM, it will install RubyGems by default for you. [http://docs.rubygems.org/read/chapter/4](http://docs.rubygems.org/read/chapter/4)
+    - Bundler: You’ll learn it easy enough if you are using Rails. But even for non-Rails projects, Bundler is now the de-facto tool to handle gems and dependencies. It is one of those tools that when you see for the first time you would wonder how you ever lived without it.
+    - Git: You are a git if you don’t use git yet. If you are not even using any version control at all, good for you – there aren’t bad practices that you need to unlearn. If you are on SVN, or God forbid CVS, jump now.[http://git-scm.com/book/en/Getting-Started-About-Version-Control](http://git-scm.com/book/en/Getting-Started-About-Version-Control)
+    - Github: You have a Github handle, right? ’nuff said.
 
 3. Editor
 
@@ -36,13 +36,14 @@ There were many Ruby beginners in last week’s meetup, and the common question 
 
   Here is a list of editors/IDEs people generally use for Ruby development:
 
-  - Sublime Text
-  - Textmate
-  - RubyMine (My favourite, but needs a lot of memory and CPU)
-  - Vim
-  - emacs
-  - Aptana RadRails (recently saw a couple of people using it. don't know how good it is)
-  - Redcar (I've used it very occassionaly, am yet to see someone using it as a primary editor)
+    - Sublime Text
+    - Textmate
+    - RubyMine (My favourite, but needs a lot of memory and CPU)
+    - Vim
+    - emacs
+    - Aptana RadRails (recently saw a couple of people using it. don't know how good it is)
+    - Redcar (I've used it very occassionaly, am yet to see someone using it as a primary editor)
+
   If you are using Sublime Text, install and use its corresponding Ruby package. Ditto for Textmate.
 
   If you are on Vim, using the right set of plugins is a requisite to be productive. There is the popular [https://github.com/carlhuda/janus](https://github.com/carlhuda/janus) and Srushti's [https://github.com/srushti/vim-get](https://github.com/srushti/vim-get) which I use when I work with Vim. Even if you don't go for these plugin distributions, spend enough time to find the right plugins for Ruby development.
@@ -65,10 +66,10 @@ There were many Ruby beginners in last week’s meetup, and the common question 
 
   So Hash was a revelation and I started using it anywhere and everywhere. Do you want to build a CRUD app to manage customer info? Forget databases, I'll build a Hash and serialize to and deserialize from a YAML file. There were even more crimes committed using Hash that I dare not mention here. You would have gone through enough exercises that uses Hash when working through RubyMonk or Ruby Koans. But if you haven't, make sure you understand Hashes well enough. Specifically:
 
-  - iterating over a hash
-  - assigning default values for undefined keys in a hash
-  - Hash#keys and Hash#values for extracting just the keys and values
-  - In Ruby 1.8 Hashes are un-ordered: ie, you can't rely on the ordering of the hash to be same as the order in which you added elements. In Ruby 1.9, a Hash is sorted on the basis of order of insertion.
+    - iterating over a hash
+    - assigning default values for undefined keys in a hash
+    - Hash#keys and Hash#values for extracting just the keys and values
+    - In Ruby 1.8 Hashes are un-ordered: ie, you can't rely on the ordering of the hash to be same as the order in which you added elements. In Ruby 1.9, a Hash is sorted on the basis of order of insertion.
 
 6. JSON and YAML
 
@@ -136,19 +137,20 @@ There were many Ruby beginners in last week’s meetup, and the common question 
 
   So, what are the things that are specific to Ruby that you need to be aware of?
 
-  - Message Passing. `"abcd".length` is in fact `"abcd".send(:length)`.
-  - Module vs Classes (hint: they're very similar, but you can't instantiate a Module)
-  - Mixins (Ruby's answer to multiple inheritance and the greatest thing _before_ sliced bread)
-  - attr_reader, attr_writer, attr_accessor.
-  - instance methods and class methods
-  - instance variables and class variables.
+    - Message Passing. `"abcd".length` is in fact `"abcd".send(:length)`.
+    - Module vs Classes (hint: they're very similar, but you can't instantiate a Module)
+    - Mixins (Ruby's answer to multiple inheritance and the greatest thing _before_ sliced bread)
+    - attr_reader, attr_writer, attr_accessor.
+    - instance methods and class methods
+    - instance variables and class variables.
+
   **And we all know that you don't use class variables unless you have a very good reason**. Class methods aren't that bad, but are usually a smell. Whenever you find yourselves writing a class method, take a step back and make sure it can't be rephrased 改写 as an instance method, perhaps in a child object?
 
   There is a lot more to OO, some less specific to Ruby. As you go deep into the rabbit hole, ponder over these blanket statements:
 
-  - Primitives 原语 (Hash, Array etc.) are evil 邪恶! Build objects.
-  - Inheritance is evil! Use Composition.
-  - Conditions (if..else, switch..case) are evil! Use Polymorphism 多态性.
+    - Primitives 原语 (Hash, Array etc.) are evil 邪恶! Build objects.
+    - Inheritance is evil! Use Composition.
+    - Conditions (if..else, switch..case) are evil! Use Polymorphism 多态性.
 
 10. Ruby is interpreted 解释. It is malleable 可塑性. Use that to your advantage.
 
@@ -198,10 +200,10 @@ There were many Ruby beginners in last week’s meetup, and the common question 
 
   These are the methods you would want to look up to get a decent overview of metaprogramming in Ruby:
 
-  - define_method
-  - method_missing
-  - instance_eval
-  - class_eval
+    - define_method
+    - method_missing
+    - instance_eval
+    - class_eval
 
   I would also recommend Yehuda Katz's excellent explanation of Metaprogramming by relating it to the context of 'self': [http://yehudakatz.com/2009/11/15/metaprogramming-in-ruby-its-all-about-the-self/](http://yehudakatz.com/2009/11/15/metaprogramming-in-ruby-its-all-about-the-self/)
 
