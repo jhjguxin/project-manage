@@ -1,0 +1,147 @@
+## JavaScript Try...Catch 语句
+
+----------------------------
+`try...catch` 的作用是测试代码中的错误。
+----------------------------
+
+### 实例
+
+[try...catch 语句](http://www.w3school.com.cn/tiy/t.asp?f=jseg_try_catch)
+  如何编写 try...catch 语句。
+[带有确认框的 try...catch 语句](http://www.w3school.com.cn/tiy/t.asp?f=jseg_try_catch2)
+  另一个编写 try...catch 语句的例子。
+
+### JavaScript - 捕获错误
+
+当我们在网上冲浪时，总会看到带有 `runtime` 错误的 Javascript 警告框，同时会询问我们“是否进行 `debug`？”。像这样的错误信息或许对开发人员有用，对用户则未必。当错误发生时，他们往往会选择离开这个站点。
+本节向你讲解如何捕获和处理 Javascript 的错误消息，这样就可以为受众提供更多的便利。
+有两种在网页中捕获错误的方法：
+* 使用 `try...catch` 语句。(在 IE5+、Mozilla 1.0、和 Netscape 6 中可用)
+* 使用 `onerror` 事件。这是用于捕获错误的老式方法。(Netscape 3 以后的版本可用)
+  __注意：chrome、opera 和 safari 浏览器不支持 onerror 事件。__
+
+### `Try...Catch` 语句
+
+`try...catch` 可以测试代码中的错误。`try` 部分包含需要运行的代码，而 `catch` 部分包含错误发生时运行的代码。
+
+#### 语法：
+
+<pre>
+<javascript>
+try
+{
+   //在此运行代码
+}
+catch(err)
+{
+   //在此处理错误
+}
+</javascript>
+</pre>
+
+**注意：**try...catch 使用小写字母。大写字母会出错。
+
+#### 实例 1
+
+下面的例子原本用在用户点击按钮时显示 "Welcome guest!" 这个消息。不过 `message()` 函数中的 `alert()` 被误写为 `adddlert()`。这时错误发生了：
+
+
+<pre>
+<html>
+<html>
+<head>
+<script type="text/javascript">
+function message()
+{
+adddlert("Welcome guest!")
+}
+</script>
+</head>
+
+<body>
+<input type="button" value="View message" onclick="message()" />
+</body>
+
+</html>
+</html>
+</pre>
+
+我们可以添加 `try...catch` 语句，这样当错误发生时可以采取更适当的措施。
+下面的例子用 `try...catch` 语句重新修改了脚本。由于误写了 `alert()`，所以错误发生了。不过这一次，`catch` 部分捕获到了错误，并用一段准备好的代码来处理这个错误。这段代码会显示一个自定义的出错信息来告知用户所发生的事情。
+
+<pre>
+<html>
+<html>
+<head>
+<script type="text/javascript">
+var txt=""
+function message()
+{
+try
+  {
+  adddlert("Welcome guest!")
+  }
+catch(err)
+  {
+  txt="此页面存在一个错误。\n\n"
+  txt+="错误描述: " + err.description + "\n\n"
+  txt+="点击OK继续。\n\n"
+  alert(txt)
+  }
+}
+</script>
+</head>
+
+<body>
+<input type="button" value="View message" onclick="message()" />
+</body>
+
+</html>
+</html>
+</pre>
+
+[TIY](http://www.w3school.com.cn/tiy/t.asp?f=jseg_try_catch)
+
+#### 实例 2
+
+下一个例子会显示一个确认框，让用户来选择在发生错误时点击确定按钮来继续浏览网页，还是点击取消按钮来回到首页。如果 `confirm` 方法的返回值为 `false`，代码会把用户重定向到其他的页面。如果 `confirm` 方法的返回值为 `true`，那么代码什么也不会做。
+
+<pre>
+<html>
+<html>
+<head>
+<script type="text/javascript">
+var txt=""
+function message()
+{
+try
+  {
+  adddlert("Welcome guest!")
+  }
+catch(err)
+  {
+  txt="There was an error on this page.\n\n"
+  txt+="Click OK to continue viewing this page,\n"
+  txt+="or Cancel to return to the home page.\n\n"
+  if(!confirm(txt))
+    {
+    document.location.href="http://www.w3school.com.cn/"
+    }
+  }
+}
+</script>
+</head>
+
+<body>
+<input type="button" value="View message" onclick="message()" />
+</body>
+
+</html>
+</html>
+</pre>
+
+[TIY](http://www.w3school.com.cn/tiy/t.asp?f=jseg_try_catch2)
+
+#### onerror 事件
+
+我们马上会讲解 `onerror` 事件。但首先您需要学习如何使用 `throw` 语句来创建异常。`throw` 语句可以与 `try...catch` 语句一起使用。
