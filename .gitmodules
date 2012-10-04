@@ -1,3 +1,6 @@
 [submodule "code-style-gudie"]
 	path = code-style-gudie
 	url = https://github.com/jhjguxin/code-style-gudie.git
+[submodule "code-style-guide"]
+	path = code-style-guide
+	url = https://github.com/jhjguxin/code-style-guide.git
