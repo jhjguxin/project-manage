@@ -1,0 +1,75 @@
+## JavaScript 特殊字符
+
+-----------------------
+你可以在 JavaScript 中使用反斜杠来向文本字符串添加特殊字符。
+-----------------------
+
+### 插入特殊字符
+
+反斜杠用来在文本字符串中插入省略号、换行符、引号和其他特殊字符。
+请看下面的 JavaScript 代码：
+
+<pre>
+<javascript>
+var txt="We are the so-called "Vikings" from the north."
+document.write(txt)
+</javascript>
+</pre>
+
+在 JavaScript 中，字符串使用单引号或者双引号来起始或者结束。这意味着上面的字符串将被截为：We are the so-called。
+要解决这个问题，就必须把在 "Viking" 中的引号前面加上反斜杠 (\)。这样就可以把每个双引号转换为字面上的字符串。
+
+<pre>
+<javascript>
+var txt="We are the so-called \"Vikings\" from the north."
+document.write(txt)
+</javascript>
+</pre>
+
+现在 JavaScript 就可以输出正确的文本字符串了：We are the so-called "Vikings" from the north。
+这是另一个例子：
+
+```javascript
+document.write ("You \& me are singing!")
+```
+
+上面的例子会产生以下输出：
+
+```javascript
+You & me are singing!
+```
+
+下面的表格列出了其余的特殊字符，这些特殊字符都可以使用反斜杠来添加到文本字符串中：
+
+<table>
+  <tr>
+    <th>代码</th><th>输出</th>
+  </tr>
+  <tr>
+    <td>\'</td><td>单引号</td>
+  </tr>
+  <tr>
+    <td>\"</td><td>双引号</td>
+  </tr>
+  <tr>
+    <td>\&</td><td>和号</td>
+  </tr>
+  <tr>
+    <td>\\</td><td>反斜杠</td>
+  </tr>
+  <tr>
+    <td>\n</td><td>换行符</td>
+  </tr>
+  <tr>
+    <td>\r</td><td>回车符</td>
+  </tr>
+  <tr>
+    <td>\t</td><td>制表符</td>
+  </tr>
+  <tr>
+    <td>\b</td><td>退格符</td>
+  </tr>
+  <tr>
+    <td>\f</td><td>换页符</td>
+  </tr>
+</table>

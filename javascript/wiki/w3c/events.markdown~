@@ -1,0 +1,37 @@
+## JavaScript 事件
+
+-----------------------------
+事件是可以被 JavaScript 侦测到的行为。
+-----------------------------
+
+### 事件
+
+JavaScript 使我们有能力创建动态页面。事件是可以被 JavaScript 侦测到的行为。
+网页中的每个元素都可以产生某些可以触发 JavaScript 函数的事件。比方说，我们可以在用户点击某按钮时产生一个 `onClick` 事件来触发某个函数。事件在 HTML 页面中定义。
+
+#### 事件举例：
+
+  * 鼠标点击
+  * 页面或图像载入
+  * 鼠标悬浮于页面的某个热点之上
+  * 在表单中选取输入框
+  * 确认表单
+  * 键盘按键
+
+**注意：**事件通常与函数配合使用，当事件发生时函数才会执行。
+如果需要更多有关 Javascript 可识别事件的知识，请阅读我们的 JavaScript 事件参考手册。
+
+### onload 和 onUnload
+
+当用户进入或离开页面时就会触发 `onload` 和 `onUnload` 事件。
+`onload` 事件常用来检测访问者的浏览器类型和版本，然后根据这些信息载入特定版本的网页。
+`onload` 和 `onUnload` 事件也常被用来处理用户进入或离开页面时所建立的 `cookies`。例如，当某用户第一次进入页面时，你可以使用消息框来询问用户的姓名。姓名会保存在 cookie 中。当用户再次进入这个页面时，你可以使用另一个消息框来和这个用户打招呼："Welcome John Doe!"。
+
+### onFocus, onBlur 和 onChange
+
+`onFocus`、`onBlur` 和 `onChange` 事件通常相互配合用来验证表单。
+下面是一个使用 `onChange` 事件的例子。用户一旦改变了域的内容，checkEmail() 函数就会被调用。
+
+```html
+<input type="text" size="30" id="email" onchange="checkEmail()">
+```

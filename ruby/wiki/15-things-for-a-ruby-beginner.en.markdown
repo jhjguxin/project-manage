@@ -25,13 +25,9 @@ There were many Ruby beginners in last week’s meetup, and the common question 
   I think all of these tools are mandatory for being a productive Ruby programmer. You’ll encounter them soon enough:
 
   - RVM/rbenv: these are tools used to manage multiple Ruby versions on the same machine. I’ve been using RVM without complaint for quite a while, though there are people who will go up in arms against RVM for various reasons. As a beginner, you should be comfortable with either.
-
   - RubyGems: a gem for anything, a gem for everything. If you are using RVM, it will install RubyGems by default for you. [http://docs.rubygems.org/read/chapter/4](http://docs.rubygems.org/read/chapter/4)
-
   - Bundler: You’ll learn it easy enough if you are using Rails. But even for non-Rails projects, Bundler is now the de-facto tool to handle gems and dependencies. It is one of those tools that when you see for the first time you would wonder how you ever lived without it.
-
   - Git: You are a git if you don’t use git yet. If you are not even using any version control at all, good for you – there aren’t bad practices that you need to unlearn. If you are on SVN, or God forbid CVS, jump now.[http://git-scm.com/book/en/Getting-Started-About-Version-Control](http://git-scm.com/book/en/Getting-Started-About-Version-Control)
-
   - Github: You have a Github handle, right? ’nuff said.
 
 3. Editor
@@ -47,6 +43,7 @@ There were many Ruby beginners in last week’s meetup, and the common question 
   - emacs
   - Aptana RadRails (recently saw a couple of people using it. don't know how good it is)
   - Redcar (I've used it very occassionaly, am yet to see someone using it as a primary editor)
+
   If you are using Sublime Text, install and use its corresponding Ruby package. Ditto for Textmate.
 
   If you are on Vim, using the right set of plugins is a requisite to be productive. There is the popular [https://github.com/carlhuda/janus](https://github.com/carlhuda/janus) and Srushti's [https://github.com/srushti/vim-get](https://github.com/srushti/vim-get) which I use when I work with Vim. Even if you don't go for these plugin distributions, spend enough time to find the right plugins for Ruby development.
@@ -146,6 +143,7 @@ There were many Ruby beginners in last week’s meetup, and the common question 
   - attr_reader, attr_writer, attr_accessor.
   - instance methods and class methods
   - instance variables and class variables.
+
   **And we all know that you don't use class variables unless you have a very good reason**. Class methods aren't that bad, but are usually a smell. Whenever you find yourselves writing a class method, take a step back and make sure it can't be rephrased 改写 as an instance method, perhaps in a child object?
 
   There is a lot more to OO, some less specific to Ruby. As you go deep into the rabbit hole, ponder over these blanket statements:
@@ -245,7 +243,7 @@ Blocks are my favourite. They move mountains. Rather, they let you write beautif
 
   None of this is rocket science, but it takes time and practice for concepts to sink in, and that is just fine.
 
-  ------------------------------------------
+------------------------------------------
 
   Have further questions? There are tons of resource on the internet to answer your questions!
 

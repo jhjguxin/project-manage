@@ -1,0 +1,93 @@
+## JavaScript Array（数组）对象
+
+--------------------------------
+数组对象的作用是：使用单独的变量名来存储一系列的值。
+--------------------------------
+
+### 实例
+
+[创建数组](http://www.w3school.com.cn/tiy/t.asp?f=jsrf_array)
+  创建数组，为其赋值，然后输出这些值。
+[For...In 声明](http://www.w3school.com.cn/tiy/t.asp?f=jsrf_array_for_in)
+  使用 for...in 声明来循环输出数组中的元素。
+[合并两个数组 - concat()](http://www.w3school.com.cn/tiy/t.asp?f=jseg_concat_2)
+  如何使用 concat() 方法来合并两个数组。
+[用数组的元素组成字符串 - join()](http://www.w3school.com.cn/tiy/t.asp?f=jseg_join)
+  如何使用 join() 方法将数组的所有元素组成一个字符串。
+[文字数组 - sort()](http://www.w3school.com.cn/tiy/t.asp?f=jseg_sort_1)
+  如何使用 sort() 方法从字面上对数组进行排序。
+[数字数组 - sort()](http://www.w3school.com.cn/tiy/t.asp?f=jseg_sort_2)
+  如何使用 sort() 方法从数值上对数组进行排序。
+
+### 完整的 Array 对象参考手册
+
+我们提供 JavaScript Array 对象参考手册，其中包括所有可用于数组对象的属性和方法。
+该手册包含了对每个属性和方法的详细描述以及相关实例。
+
+### 定义数组
+
+数组对象用来在单独的变量名中存储一系列的值。
+我们使用关键词 new 来创建数组对象。下面的代码定义了一个名为 myArray 的数组对象：
+
+```javascript
+var myArray=new Array()
+```
+
+有两种向数组赋值的方法（你可以添加任意多的值，就像你可以定义你需要的任意多的变量一样）。
+
+**1:**
+
+```javascript
+var mycars=new Array()
+mycars[0]="Saab"
+mycars[1]="Volvo"
+mycars[2]="BMW"
+```
+
+也可以使用一个整数自变量来控制数组的容量：
+
+```javascript
+var mycars=new Array(3)
+mycars[0]="Saab"
+mycars[1]="Volvo"
+mycars[2]="BMW"
+```
+
+2:
+
+```javascript
+var mycars=new Array("Saab","Volvo","BMW")
+```
+
+**注意：**如果你需要在数组内指定数值或者逻辑值，那么变量类型应该是数值变量或者布尔变量，而不是字符变量。
+
+### 访问数组
+
+通过指定数组名以及索引号码，你可以访问某个特定的元素。
+下面是代码行：
+
+```javascript
+document.write(mycars[0])
+```
+
+下面是输出：
+
+```javascript
+Saab
+```
+
+修改已有数组中的值
+如需修改已有数组中的值，只要向指定下标号添加一个新值即可：
+
+```javascript
+mycars[0]="Opel";
+````
+
+现在，以上代码：
+
+```
+document.write(mycars[0]);
+```
+
+将输出：
+Opel
