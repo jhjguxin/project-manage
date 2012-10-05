@@ -44,19 +44,19 @@
   * [状态](#状态)
   * [读者对象](#读者对象)
   * [本书结构](#本书结构)
-* [JavaScript 与 Node.js](#JavaScript 与 Node.js)
-  * [JavaScript 与你](#JavaScript 与你)
+* [JavaScript 与 Node.js](#JavaScript-与-Node.js)
+  * [JavaScript 与你](#JavaScript-与你)
   * [简短申明](#简短申明)
-  * [服务器端 JavaScript](#服务器端 JavaScript)
-  * [“Hello World”](#“Hello World”)
-* [一个完整的基于 Node.js 的 web 应用](#一个完整的基于 Node.js 的 web 应用)
+  * [服务器端 JavaScript](#服务器端-JavaScript)
+  * [“Hello World”](#“Hello-World”)
+* [一个完整的基于 Node.js 的 web 应用](#一个完整的基于-Node.js-的-web-应用)
   * [用例](#用例)
   * [应用不同模块分析](#应用不同模块分析)
 * [构建应用的模块](#构建应用的模块)
-  * [一个基础的 HTTP 服务器](#一个基础的 HTTP 服务器)
-  * [分析 HTTP 服务器](#分析 HTTP 服务器)
+  * [一个基础的 HTTP 服务器](#一个基础的-HTTP-服务器)
+  * [分析 HTTP 服务器](#分析-HTTP-服务器)
   * [进行函数传递](#进行函数传递)
-  * [函数传递是如何让 HTTP 服务器工作的](#函数传递是如何让 HTTP 服务器工作的)
+  * [函数传递是如何让 HTTP 服务器工作的](#函数传递是如何让-HTTP-服务器工作的)
   * [基于事件驱动的回调](#基于事件驱动的回调)
   * [服务器是如何处理请求的](#服务器是如何处理请求的)
   * [服务端的模块放在哪里](#服务端的模块放在哪里)
@@ -68,7 +68,7 @@
     * [阻塞与非阻塞](#阻塞与非阻塞)
     * [以非阻塞操作进行请求响应](#以非阻塞操作进行请求响应)
   * [更有用的场景](#更有用的场景)
-    * [处理 POST 请求](#处理 POST 请求)
+    * [处理 POST 请求](#处理-POST-请求)
     * [处理文件上传](#处理文件上传)
   * [总结与展望](#总结与展望)
 
@@ -336,3 +336,647 @@ http.createServer(onRequest).listen(8888);
 至少对我来说，需要一些功夫才能弄懂它。你如果还是不太确定的话就再去读读 Felix 的博客文章。
 
 让我们再来琢磨琢磨这个新概念。我们怎么证明，在创建完服务器之后，即使没有 HTTP 请求进来、我们的回调函数也没有被调用的情况下，我们的代码还继续有效呢？我们试试这个：
+
+```javascript
+var http = require("http");
+
+function onRequest(request, response) {
+  console.log("Request received.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("Hello World");
+  response.end();
+}
+
+http.createServer(onRequest).listen(8888);
+
+console.log("Server has started.");
+```
+
+**注意：**在 onRequest （我们的回调函数）触发的地方，我用 console.log 输出了一段文本。在HTTP服务器开始工作之后，也输出一段文本。
+
+当我们与往常一样，运行它 node server.js时，它会马上在命令行上输出“Server has started.”。当我们向服务器发出请求（在浏览器访问[http://localhost:8888/](http://localhost:8888/) ），“Request received.”这条消息就会在命令行中出现。
+
+这就是事件驱动的异步服务器端 JavaScript 和它的回调啦！
+
+（请注意，当我们在服务器访问网页时，我们的服务器可能会输出两次“Request received.”。那是因为大部分服务器都会在你访问 [http://localhost:8888/](http://localhost:8888/) 时尝试读取 `http://localhost:8888/favicon.ico` )
+
+### 服务器是如何处理请求的
+
+好的，接下来我们简单分析一下我们服务器代码中剩下的部分，也就是我们的回调函数 `onRequest()` 的主体部分。
+
+当回调启动，我们的 `onRequest()` 函数被触发的时候，有两个参数被传入： `request` 和 `response` 。
+
+它们是对象，你可以使用它们的方法来处理HTTP请求的细节，并且响应请求（比如向发出请求的浏览器发回一些东西）。
+
+所以我们的代码就是：当收到请求时，使用 `response.writeHead()` 函数发送一个 HTTP 状态 200 和 HTTP 头的内容类型（content-type），使用 `response.write()` 函数在 HTTP 相应主体中发送文本“Hello World"。
+
+最后，我们调用 `response.end()` 完成响应。
+
+目前来说，我们对请求的细节并不在意，所以我们没有使用 `request` 对象。
+
+### 服务端的模块放在哪里
+
+OK，就像我保证过的那样，我们现在可以回到我们如何组织应用这个问题上了。我们现在在 `server.js` 文件中有一个非常基础的 HTTP 服务器代码，而且我提到通常我们会有一个叫 `index.js` 的文件去调用应用的其他模块（比如 `server.js` 中的 HTTP 服务器模块）来引导和启动应用。
+
+我们现在就来谈谈怎么把 `server.js` 变成一个真正的 Node.js 模块，使它可以被我们（还没动工）的 `index.js` 主文件使用。
+
+也许你已经注意到，我们已经在代码中使用了模块了。像这样：
+
+```javascript
+var http = require("http");
+
+...
+
+http.createServer(...);
+```
+
+Node.js 中自带了一个叫做“http”的模块，我们在我们的代码中请求它并把返回值赋给一个本地变量。
+
+这把我们的本地变量变成了一个拥有所有 `http` 模块所提供的公共方法的对象。
+
+给这种本地变量起一个和模块名称一样的名字是一种惯例，但是你也可以按照自己的偏好来：
+
+```javascript
+var foo = require("http");
+
+...
+
+foo.createServer(...);
+```
+
+很好，怎么使用 Node.js 内部模块已经很清楚了。我们怎么创建自己的模块，又怎么使用它呢？
+
+等我们把 `server.js` 变成一个真正的模块，你就能搞明白了。
+
+事实上，我们不用做太多的修改。把某段代码变成模块意味着我们需要把我们希望提供其功能的部分**导出**到请求这个模块的脚本。
+
+目前，我们的 HTTP 服务器需要导出的功能非常简单，因为请求服务器模块的脚本仅仅是需要启动服务器而已。
+
+我们把我们的服务器脚本放到一个叫做 `start` 的函数里，然后我们会导出这个函数。
+
+```javascript
+var http = require("http");
+
+function start() {
+  function onRequest(request, response) {
+    console.log("Request received.");
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+这样，我们现在就可以创建我们的主文件 `index.js` 并在其中启动我们的 HTTP 了，虽然服务器的代码还在 `server.js` 中。
+
+创建 `index.js` 文件并写入以下内容：
+
+```javascript
+var server = require("./server");
+
+server.start();
+```
+
+正如你所看到的，我们可以像使用任何其他的内置模块一样使用 `server` 模块：请求这个文件并把它指向一个变量，其中已导出的函数就可以被我们使用了。
+
+好了。我们现在就可以从我们的主要脚本启动我们的的应用了，而它还是老样子：
+
+```shell
+node index.js
+```
+
+非常好，我们现在可以把我们的应用的不同部分放入不同的文件里，并且通过生成模块的方式把它们连接到一起了。
+
+我们仍然只拥有整个应用的最初部分：我们可以接收 HTTP 请求。但是我们得做点什么——对于不同的 URL 请求，服务器应该有不同的反应。
+
+对于一个非常简单的应用来说，你可以直接在回调函数 `onRequest()` 中做这件事情。不过就像我说过的，我们应该加入一些抽象的元素，让我们的例子变得更有趣一点儿。
+
+处理不同的 HTTP 请求在我们的代码中是一个不同的部分，叫做“路由选择”——那么，我们接下来就创造一个叫做**路由**的模块吧。
+
+### 如何来进行请求的“路由”
+
+我们要为路由提供请求的 URL 和其他需要的 GET 及 POST 参数，随后路由需要根据这些数据来执行相应的代码（这里“代码”对应整个应用的第三部分：一系列在接收到请求时真正工作的处理程序）。
+
+因此，我们需要查看 HTTP 请求，从中提取出请求的 URL 以及 GET/POST 参数。这一功能应当属于路由还是服务器（甚至作为一个模块自身的功能）确实值得探讨，但这里暂定其为我们的 HTTP 服务器的功能。
+
+我们需要的所有数据都会包含在 `request` 对象中，该对象作为 `onRequest()` 回调函数的第一个参数传递。但是为了解析这些数据，我们需要额外的 Node.JS 模块，它们分别是 `url` 和 `querystring` 模块。
+
+<pre>
+                               url.parse(string).query
+                                           |
+           url.parse(string).pathname      |
+                       |                   |
+                       |                   |
+                     ------ -------------------
+http://localhost:8888/start?foo=bar&hello=world
+                                ---       -----
+                                 |          |
+                                 |          |
+              querystring(string)["foo"]    |
+                                            |
+                         querystring(string)["hello"]
+</pre>
+
+当然我们也可以用 `querystring` 模块来解析 POST 请求体中的参数，稍后会有演示。
+
+现在我们来给 `onRequest()` 函数加上一些逻辑，用来找出浏览器请求的 URL 路径：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start() {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+好了，我们的应用现在可以通过请求的 URL 路径来区别不同请求了---这使我们得以使用路由（还未完成）来将请求以 URL 路径为基准映射到处理程序上。
+
+在我们所要构建的应用中，这意味着来自 `/start` 和 `/upload` 的请求可以使用不同的代码来处理。稍后我们将看到这些内容是如何整合到一起的。
+
+现在我们可以来编写路由了，建立一个名为 `router.js` 的文件，添加以下内容：
+
+```javascript
+function route(pathname) {
+  console.log("About to route a request for " + pathname);
+}
+
+exports.route = route;
+```
+
+如你所见，这段代码什么也没干，不过对于现在来说这是应该的。在添加更多的逻辑以前，我们先来看看如何把路由和服务器整合起来。
+
+我们的服务器应当知道路由的存在并加以有效利用。我们当然可以通过硬编码的方式将这一依赖项绑定到服务器上，但是其它语言的编程经验告诉我们这会是一件非常痛苦的事，因此我们将使用依赖注入的方式较松散地添加路由模块（你可以读读 [Martin Fowlers 优秀的文章关于 Dependency Injection](http://martinfowler.com/articles/injection.html) 了解更多的背景知识）。
+
+首先，我们来扩展一下服务器的 `start()` 函数，以便将路由函数作为参数传递过去：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+
+    route(pathname);
+
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+同时，我们会扩展相应 `index.js`，使得路由函数可以被注入到服务器中：
+
+```javascript
+var server = require("./server");
+var router = require("./router");
+
+server.start(router.route);
+```
+
+在这里，我们传递的函数依旧什么也没做。
+
+如果现在启动应用（`node index.js`，始终记得这个命令行），随后请求一个 URL，你将会看到应用输出相应的信息，这表明我们的 HTTP 服务器已经在使用路由模块了，并会将请求的路径传递给路由：
+
+```shell
+bash$ node index.js
+Request for /foo received.
+About to route a request for /foo
+```
+
+（以上输出已经去掉了比较烦人的/favicon.ico请求相关的部分）。
+
+### 行为驱动执行
+
+Execution in the kingdom of verbs(行为驱动执行)
+
+请允许我再次脱离主题，在这里谈一谈函数式编程。
+
+将函数作为参数传递并不仅仅出于技术上的考量。对软件设计来说，这其实是个哲学问题。想想这样的场景：在 index 文件中，我们可以将 `router` 对象传递进去，服务器随后可以调用这个对象的 route 函数。
+
+就像这样，我们传递一个东西，然后服务器利用这个东西来完成一些事。嗨,那个叫路由的东西，能帮我把这个 route 一下吗？
+
+But the server doesn't need the thing. It only needs to get something done, and to get something done, you don't need things at all, you need actions. You don't need nouns, you need verbs.
+但是服务器其实不需要这样的东西。它只需要把事情做完就行，其实为了把事情做完，你根本不需要东西，你需要的是动作。也就是说，你不需要名词，你需要动词。
+
+Understanding the fundamental mind-shift that's at the core of this idea is what made me really understand functional programming.
+理解了这个概念里最核心、最基本的思想转换后，我自然而然地理解了函数编程。
+
+我理解函数编程是在读了Steve Yegge的大作[Execution in the Kingdom of Nouns](http://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html)之后。你也去读一读这本书吧，真的。这是最好的关于软件的书籍之一能够遇到这样的大作我十分荣幸。
+
+### 路由给真正的请求处理程序
+
+回到正题，现在我们的 HTTP 服务器和请求路由模块已经如我们的期望的，可以相互交流了，就像一对亲密无间的兄弟。
+
+当然这还远远不够，路由，顾名思义，是指我们要针对不同的 URL 有不同的处理方式。例如处理 `/start` 的“业务逻辑”就应该和处理 `/upload` 的不同。
+
+在现在的实现下，路由过程会在路由模块中“结束”，并且路由模块并不是真正针对请求“采取行动”的模块，否则当我们的应用程序变得更为复杂时，将无法很好地扩展。
+
+我们暂时把作为路由目标的函数称为请求处理程序。现在我们不要急着来开发路由模块，因为如果请求处理程序没有就绪的话，再怎么完善路由模块也没有多大意义。
+
+应用程序需要新的部件，因此加入新的模块---已经无需为此感到新奇了。我们来创建一个叫做 `requestHandlers` 的模块，并对于每一个请求处理程序，添加一个占位用函数，随后将这些函数作为模块的方法导出：
+
+```javascript
+function start() {
+  console.log("Request handler 'start' was called.");
+}
+
+function upload() {
+  console.log("Request handler 'upload' was called.");
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+这样我们就可以把请求处理程序和路由模块连接起来，让路由“有路可寻”。
+
+At this point we need to make a decision: do we hard-code usage of the requestHandlers module into the router, or do we want a bit more dependency injection? Although dependency injection, like every other pattern, shouldn't be used only for the sake of using it, in this case it makes sense to loosely couple the router and its request handlers, and thus making the router really reusable.
+在这里我们得做个决定：是将 `requestHandlers` 模块硬编码到路由里来使用，还是再添加一点依赖注入？虽然依赖注入和其他模式一样，依不应该仅仅为使用而使用，但在现在这个情况下，使用依赖注入可以让路由和请求处理程序之间的耦合更加松散，也因此能让路由的重用性更高。
+
+这意味着我们得将请求处理程序从服务器传递到路由中，但感觉上这么做更离谱了，我们得一路把这堆请求处理程序从我们的主文件传递到服务器中，再将之从服务器传递到路由。
+
+那么我们要怎么传递这些请求处理程序呢？别看现在我们只有2个处理程序，在一个真实的应用中，请求处理程序的数量会不断增加，我们当然不想每次有一个新的 URL 或请求处理程序时，都要为了在路由里完成请求到处理程序的映射而反复折腾。除此之外，在路由里有一大堆 `if request == x then call handler y` 也使得系统丑陋不堪。
+
+仔细想想，有一大堆东西，每个都要映射到一个字符串（就是请求的 URL）上？似乎关联数组（associative array）能完美胜任。
+
+不过结果有点令人失望，JavaScript 没提供关联数组 -- 也可以说它提供了？事实上，在JavaScript 中，真正能提供此类功能的是它的对象。
+
+在这方面，[http://msdn.microsoft.com/en-us/magazine/cc163419.aspx](http://msdn.microsoft.com/en-us/magazine/cc163419.aspx) 有一个不错的介绍，我在此摘录一段：
+
+<pre>
+在 C++ 或 C# 中，当我们谈到对象，指的是类或者结构体的实例。对象根据他们实例化的模板（就是所谓的类），会拥有不同的属性和方法。但在 JavaScript 里对象不是这个概念。在 JavaScript 中，对象就是一个 `键/值` 对的集合---你可以把 JavaScript 的对象想象成一个键为字符串类型的字典。
+</pre>
+
+但如果 JavaScript 的对象仅仅是 `键/值` 对的集合，它又怎么会拥有方法呢？好吧，这里的值可以是字符串、数字或者……函数！
+
+好了，最后再回到代码上来。现在我们已经确定将一系列请求处理程序通过一个对象来传递，并且需要使用松耦合的方式将这个对象注入到 `route()` 函数中。
+
+我们先将这个对象引入到主文件 `index.js` 中
+
+虽然 `handle` 并不仅仅是一个“东西”（一些请求处理程序的集合），我还是建议以一个动词作为其命名，这样做可以让我们在路由中使用更流畅的表达式，稍后会有说明。
+
+正如所见，将不同的 URL 映射到相同的请求处理程序上是很容易的：只要在对象中添加一个键为"/"的属性，对应requestHandlers.start即可，这样我们就可以干净简洁地配置 `/start` 和`/` 的请求都交由start这一处理程序处理。
+
+在完成了对象的定义后，我们把它作为额外的参数传递给服务器，为此将 `server.js` 修改如下：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+
+    route(handle, pathname);
+
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+这样我们就在 `start()` 函数里添加了 `handle` 参数，并且把 `handle` 对象作为第一个参数传递给了 `route()` 回调函数。
+
+然后我们相应地在 `route.js` 文件中修改 `route()` 函数：
+
+通过以上代码，我们首先检查给定的路径对应的请求处理程序是否存在，如果存在的话直接调用相应的函数。我们可以用从关联数组中获取元素一样的方式从传递的对象中获取请求处理函数，因此就有了简洁流畅的形如 `handle[pathname]()` ;的表达式，这个感觉就像在前方中提到的那样：“嗨，请帮我处理了这个路径”。
+
+有了这些，我们就把服务器、路由和请求处理程序在一起了。现在我们启动应用程序并在浏览器中访问 [http://localhost:8888/start](http://localhost:8888/start) ，以下日志可以说明系统调用了正确的请求处理程序：
+
+```shell
+Server has started.
+Request for /start received.
+About to route a request for /start
+Request handler 'start' was called.
+```
+
+并且在浏览器中打开 [http://localhost:8888/](http://localhost:8888/) 可以看到这个请求同样被 `start` 请求处理程序处理了：
+
+```shell
+Request for / received.
+About to route a request for /
+Request handler 'start' was called.
+```
+
+### 让请求处理程序作出响应
+
+很好。不过现在要是请求处理程序能够向浏览器返回一些有意义的信息而并非全是“Hello World”，那就更好了。
+
+这里要记住的是，浏览器发出请求后获得并显示的“Hello World”信息仍是来自于我们 `server.js` 文件中的 `onRequest` 函数。
+
+其实“处理请求”说白了就是“对请求作出响应”，因此，我们需要让请求处理程序能够像 `onRequest` 函数那样可以和浏览器进行“对话”。
+
+#### 不好的实现方式
+
+对于我们这样拥有 PHP 或者 Ruby 技术背景的开发者来说，最直截了当的实现方式事实上并不是非常靠谱： 看似有效，实则未必如此。
+
+这里我指的“直截了当的实现方式”意思是：让请求处理程序通过 `onRequest` 函数直接返回（`return()`）他们要展示给用户的信息。
+
+我们先就这样去实现，然后再来看为什么这不是一种很好的实现方式。
+
+让我们从让请求处理程序返回需要在浏览器中显示的信息开始。我们需要将 `requestHandler.js` 修改为如下形式：
+
+```javascript
+function start() {
+  console.log("Request handler 'start' was called.");
+  return "Hello Start";
+}
+
+function upload() {
+  console.log("Request handler 'upload' was called.");
+  return "Hello Upload";
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+好的。同样的，请求路由需要将请求处理程序返回给它的信息返回给服务器。因此，我们需要将 `router.js` 修改为如下形式：
+
+```javascript
+function route(handle, pathname) {
+  console.log("About to route a request for " + pathname);
+  if (typeof handle[pathname] === 'function') {
+    return handle[pathname]();
+  } else {
+    console.log("No request handler found for " + pathname);
+    return "404 Not found";
+  }
+}
+
+exports.route = route;
+```
+
+正如上述代码所示，当请求无法路由的时候，我们也返回了一些相关的错误信息。
+
+最后，我们需要对我们的 `server.js` 进行重构以使得它能够将请求处理程序通过请求路由返回的内容响应给浏览器，如下所示：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    var content = route(handle, pathname)
+    response.write(content);
+    response.end();
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+如果我们运行重构后的应用，一切都会工作的很好：请求 [http://localhost:8888/start](http://localhost:8888/start) ,浏览器会输出“Hello Start”，请求 [http://localhost:8888/upload](http://localhost:8888/upload) 会输出“Hello Upload”,而请求 [http://localhost:8888/foo](http://localhost:8888/foo) 会输出“404 Not found”。
+
+好，那么问题在哪里呢？简单的说就是： 当未来有请求处理程序需要进行非阻塞的操作的时候，我们的应用就“挂”了。
+
+没理解？没关系，下面就来详细解释下。
+
+#### 阻塞与非阻塞
+
+正如此前所提到的，当在请求处理程序中包括非阻塞操作时就会出问题。但是，在说这之前，我们先来看看什么是阻塞操作。
+
+我不想去解释“阻塞”和“非阻塞”的具体含义，我们直接来看，当在请求处理程序中加入阻塞操作时会发生什么。
+
+这里，我们来修改下 `start` 请求处理程序，我们让它等待10秒以后再返回“Hello Start”。因为，JavaScript 中没有类似 `sleep()` 这样的操作，所以这里只能够来点小 **Hack** 来模拟实现。
+
+让我们将 `requestHandlers.js` 修改成如下形式：
+
+```javascript
+function start() {
+  console.log("Request handler 'start' was called.");
+
+  function sleep(milliSeconds) {
+    var startTime = new Date().getTime();
+    while ( new Date().getTime() < startTime + milliSeconds );
+  }
+
+  sleep(10000);
+  return "Hello Start";
+}
+
+function upload() {
+  console.log("Request handler 'upload' was called.");
+  return "Hello Upload";
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+上述代码中，当函数 `start()` 被调用的时候，Node.js 会先等待 10 秒，之后才会返回“Hello Start”。当调用 `upload()` 的时候，会和此前一样立即返回。
+
+（当然了，这里只是模拟休眠 10 秒，实际场景中，这样的阻塞操作有很多，比方说一些长时间的计算操作等。）
+
+接下来就让我们来看看，我们的改动带来了哪些变化。
+
+如往常一样，我们先要重启下服务器。为了看到效果，我们要进行一些相对复杂的操作（跟着我一起做）： 首先，打开两个浏览器窗口或者标签页。在第一个浏览器窗口的地址栏中输入 [http://localhost:8888/start](http://localhost:8888/start)， 但是先不要打开它！
+
+在第二个浏览器窗口的地址栏中输入 [http://localhost:8888/upload](http://localhost:8888/upload)， 同样的，先不要打开它！
+
+接下来，做如下操作：在第一个窗口中（“/start”）按下回车，然后快速切换到第二个窗口中（“/upload”）按下回车。
+
+注意，发生了什么： `/start` URL加载花了10秒，这和我们预期的一样。但是，`/upload` URL居然也花了10秒，而它在对应的请求处理程序中并没有类似于 `sleep()` 这样的操作！
+
+这到底是为什么呢？原因就是 `start()` 包含了阻塞操作。形象的说就是“它阻塞了所有其他的处理工作”。
+
+这显然是个问题，因为 Node 一向是这样来标榜自己的：“在node中除了代码，所有一切都是并行执行的”。
+
+这句话的意思是说，Node.js 可以在不新增额外线程的情况下，依然可以对任务进行并行处理 —— Node.js是单线程的。它通过事件轮询（event loop）来实现并行操作，对此，我们应该要充分利用这一点 —— 尽可能的避免阻塞操作，取而代之，多使用非阻塞操作。
+
+然而，要用非阻塞操作，我们需要使用回调，通过将函数作为参数传递给其他需要花时间做处理的函数（比方说，休眠 10 秒，或者查询数据库，又或者是进行大量的计算）。
+
+对于 Node.js 来说，它是这样处理的：“嘿，`probablyExpensiveFunction()`（译者注：_这里指的就是需要花时间处理的函数_），你继续处理你的事情，我（_Node.js线程_）先不等你了，我继续去处理你后面的代码，请你提供一个 `callbackFunction()`，等你处理完之后我会去调用该回调函数的，谢谢！”
+
+（如果想要了解更多关于事件轮询细节，可以阅读Mixu的博文——[理解node.js的事件轮询](http://blog.mixu.net/2011/02/01/understanding-the-node-js-event-loop/)。）
+
+接下来，我们会介绍一种错误的使用非阻塞操作的方式。
+
+和上次一样，我们通过修改我们的应用来暴露问题。
+
+这次我们还是拿 `start` 请求处理程序来“开刀”。将其修改成如下形式：
+
+```javascript
+var exec = require("child_process").exec;
+
+function start() {
+  console.log("Request handler 'start' was called.");
+  var content = "empty";
+
+  exec("ls -lah", function (error, stdout, stderr) {
+    content = stdout;
+  });
+
+  return content;
+}
+
+function upload() {
+  console.log("Request handler 'upload' was called.");
+  return "Hello Upload";
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+上述代码中，我们引入了一个新的 Node.js 模块，`child_process`。之所以用它，是为了实现一个既简单又实用的非阻塞操作：`exec()`
+
+`exec()` 做了什么呢？它从 Node.js 来执行一个 shell 命令。在上述例子中，我们用它来获取当前目录下所有的文件（“ls -lah”）,然后，当 `/start` URL 请求的时候将文件信息输出到浏览器中。
+
+上述代码是非常直观的： 创建了一个新的变量 `content`（初始值为“empty”），执行“ls -lah”命令，将结果赋值给 `content`，最后将 `content`返回。
+
+和往常一样，我们启动服务器，然后访问“[http://localhost:8888/start](http://localhost:8888/start)” 。
+
+之后会载入一个漂亮的 web 页面，其内容为“empty”。怎么回事？
+
+这个时候，你可能大致已经猜到了，`exec()`在非阻塞这块发挥了神奇的功效。它其实是个很好的东西，有了它，我们可以执行非常耗时的 shell 操作而无需迫使我们的应用停下来等待该操作。
+
+（如果想要证明这一点，可以将“ls -lah”换成比如“find /”这样更耗时的操作来效果）。
+
+然而，针对浏览器显示的结果来看，我们并不满意我们的非阻塞操作，对吧？
+
+好，接下来，我们来修正这个问题。在这过程中，让我们先来看看为什么当前的这种方式不起作用。
+
+问题就在于，为了进行非阻塞工作，`exec()` 使用了回调函数。
+
+在我们的例子中，该回调函数就是作为第二个参数传递给 `exec()` 的匿名函数：
+
+```javascript
+function (error, stdout, stderr) {
+  content = stdout;
+}
+```
+
+我们这里“ls -lah”的操作其实是非常快的（除非当前目录下有上百万个文件）。这也是为什么回调函数也会很快的执行到 —— 不过，不管怎么说它还是异步的。
+
+为了让效果更加明显，我们想象一个更耗时的命令： “find /”，它在我机器上需要执行1分钟左右的时间，然而，尽管在请求处理程序中，我把“ls -lah”换成“find /”，当打开 `/start` URL 的时候，依然能够立即获得 HTTP 响应 —— 很明显，当 `exec()` 在后台执行的时候，Node.js自身会继续执行后面的代码。并且我们这里假设传递给 `exec()` 的回调函数，只会在“find /”命令执行完成之后才会被调用。
+
+那究竟我们要如何才能实现将当前目录下的文件列表显示给用户呢？
+
+好，了解了这种不好的实现方式之后，我们接下来来介绍如何以正确的方式让请求处理程序对浏览器请求作出响应。
+
+#### 以非阻塞操作进行请求响应
+
+我刚刚提到了这样一个短语 —— “正确的方式”。而事实上通常“正确的方式”一般都不简单。
+
+不过，用 Node.js 就有这样一种实现方案： 函数传递。下面就让我们来具体看看如何实现。
+
+到目前为止，我们的应用已经可以通过应用各层之间传递值的方式（请求处理程序 -> 请求路由 -> 服务器）将请求处理程序返回的内容（请求处理程序最终要显示给用户的内容）传递给HTTP服务器。
+
+现在我们采用如下这种新的实现方式：相对采用将内容传递给服务器的方式，我们这次采用将服务器“传递”给内容的方式。 从实践角度来说，就是将response对象（从服务器的回调函数onRequest()获取）通过请求路由传递给请求处理程序。 随后，处理程序就可以采用该对象上的函数来对请求作出响应。
+
+原理就是如此，接下来让我们来一步步实现这种方案。
+
+先从 `server.js` 开始：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+
+    route(handle, pathname, response);
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+相对此前从 `route()` 函数获取返回值的做法，这次我们将 `response` 对象作为第三个参数传递给 `route()` 函数，并且，我们将 `onRequest()` 处理程序中所有有关 `response` 的函数调都移除，因为我们希望这部分工作让 `route()` 函数来完成。
+
+下面就来看看我们的 `router.js`:
+
+```javascript
+function route(handle, pathname, response) {
+  console.log("About to route a request for " + pathname);
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname](response);
+  } else {
+    console.log("No request handler found for " + pathname);
+    response.writeHead(404, {"Content-Type": "text/plain"});
+    response.write("404 Not found");
+    response.end();
+  }
+}
+
+exports.route = route;
+```
+
+同样的模式：相对此前从请求处理程序中获取返回值，这次取而代之的是直接传递 `response` 对象。
+
+如果没有对应的请求处理器处理，我们就直接返回“404”错误。
+
+最后，我们将 `requestHandler.js` 修改为如下形式：
+
+```javascript
+var exec = require("child_process").exec;
+
+function start(response) {
+  console.log("Request handler 'start' was called.");
+
+  exec("find /",
+    { timeout: 10000, maxBuffer: 20000*1024 },
+    function (error, stdout, stderr) {
+      response.writeHead(200, {"Content-Type": "text/plain"});
+      response.write(stdout);
+      response.end();
+    });
+}
+
+function upload(response) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("Hello Upload");
+  response.end();
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+这样一来，当请求 [http://localhost:8888/start](http://localhost:8888/start)的时候，会花10秒钟的时间才载入，而当请求 [http://localhost:8888/upload](http://localhost:8888/upload)的时候，会立即响应，纵然这个时候 `/start` 响应还在处理中。
