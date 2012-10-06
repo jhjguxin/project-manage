@@ -813,7 +813,7 @@ exports.upload = upload;
 
 在第二个浏览器窗口的地址栏中输入 [http://localhost:8888/upload](http://localhost:8888/upload)， 同样的，先不要打开它！
 
-接下来，做如下操作：在第一个窗口中（“/start”）按下回车，然后快速切换到第二个窗口中（“/upload”）按下回车。
+接下来，做如下操作：在第一个窗口中（`/start`）按下回车，然后快速切换到第二个窗口中（`/upload`）按下回车。
 
 注意，发生了什么： `/start` URL加载花了10秒，这和我们预期的一样。但是，`/upload` URL居然也花了10秒，而它在对应的请求处理程序中并没有类似于 `sleep()` 这样的操作！
 
@@ -860,9 +860,9 @@ exports.upload = upload;
 
 上述代码中，我们引入了一个新的 Node.js 模块，`child_process`。之所以用它，是为了实现一个既简单又实用的非阻塞操作：`exec()`
 
-`exec()` 做了什么呢？它从 Node.js 来执行一个 shell 命令。在上述例子中，我们用它来获取当前目录下所有的文件（“ls -lah”）,然后，当 `/start` URL 请求的时候将文件信息输出到浏览器中。
+`exec()` 做了什么呢？它从 Node.js 来执行一个 shell 命令。在上述例子中，我们用它来获取当前目录下所有的文件（`ls -lah`）,然后，当 `/start` URL 请求的时候将文件信息输出到浏览器中。
 
-上述代码是非常直观的： 创建了一个新的变量 `content`（初始值为“empty”），执行“ls -lah”命令，将结果赋值给 `content`，最后将 `content`返回。
+上述代码是非常直观的： 创建了一个新的变量 `content`（初始值为 `empty`），执行 `ls -lah` 命令，将结果赋值给 `content`，最后将 `content`返回。
 
 和往常一样，我们启动服务器，然后访问“[http://localhost:8888/start](http://localhost:8888/start)” 。
 
@@ -870,7 +870,7 @@ exports.upload = upload;
 
 这个时候，你可能大致已经猜到了，`exec()`在非阻塞这块发挥了神奇的功效。它其实是个很好的东西，有了它，我们可以执行非常耗时的 shell 操作而无需迫使我们的应用停下来等待该操作。
 
-（如果想要证明这一点，可以将“ls -lah”换成比如“find /”这样更耗时的操作来效果）。
+（如果想要证明这一点，可以将 `ls -lah` 换成比如 `find /` 这样更耗时的操作来效果）。
 
 然而，针对浏览器显示的结果来看，我们并不满意我们的非阻塞操作，对吧？
 
@@ -888,7 +888,7 @@ function (error, stdout, stderr) {
 
 我们这里“ls -lah”的操作其实是非常快的（除非当前目录下有上百万个文件）。这也是为什么回调函数也会很快的执行到 —— 不过，不管怎么说它还是异步的。
 
-为了让效果更加明显，我们想象一个更耗时的命令： “find /”，它在我机器上需要执行1分钟左右的时间，然而，尽管在请求处理程序中，我把“ls -lah”换成“find /”，当打开 `/start` URL 的时候，依然能够立即获得 HTTP 响应 —— 很明显，当 `exec()` 在后台执行的时候，Node.js自身会继续执行后面的代码。并且我们这里假设传递给 `exec()` 的回调函数，只会在“find /”命令执行完成之后才会被调用。
+为了让效果更加明显，我们想象一个更耗时的命令： `find /`，它在我机器上需要执行1分钟左右的时间，然而，尽管在请求处理程序中，我把 `ls -lah` 换成 `find /`，当打开 `/start` URL 的时候，依然能够立即获得 HTTP 响应 —— 很明显，当 `exec()` 在后台执行的时候，Node.js自身会继续执行后面的代码。并且我们这里假设传递给 `exec()` 的回调函数，只会在 `find /` 命令执行完成之后才会被调用。
 
 那究竟我们要如何才能实现将当前目录下的文件列表显示给用户呢？
 
@@ -980,3 +980,574 @@ exports.upload = upload;
 ```
 
 这样一来，当请求 [http://localhost:8888/start](http://localhost:8888/start)的时候，会花10秒钟的时间才载入，而当请求 [http://localhost:8888/upload](http://localhost:8888/upload)的时候，会立即响应，纵然这个时候 `/start` 响应还在处理中。
+
+### 更有用的场景
+
+到目前为止，我们做的已经很好了，但是，我们的应用没有实际用途。
+
+我们的 `server`，`router` 以及请求 `handlers` 模块都已经完成了，下面让我们按照此前的用例给网站添加交互：用户选择一个文件，上传该文件，然后在浏览器中看到上传的文件。为了保持简单，**我们假设用户只会上传图片，然后我们应用将该图片显示到浏览器中**。
+
+好，下面就一步步来实现，鉴于此前已经对 JavaScript 原理性技术性的内容做过大量介绍了，这次我们加快点速度。
+
+要实现该功能，分为如下两步： 首先，让我们来看看如何处理 `POST` 请求（非文件上传），之后，接着在第二步，我们将会让它作为一个用于处理文件上传的 Node.js 外部模块。之所以采用这种实现方式有两个理由。
+
+第一，尽管在 Node.js 中处理基础的 POST 请求相对比较简单，但在这过程中还是能学到很多。
+第二，用 Node.js 来处理文件上传（multipart POST 请求）是比较复杂的，它不在本书的范畴，但，如何使用外部模块却是在本书涉猎内容之内。
+
+#### 处理 POST 请求
+
+考虑这样一个简单的例子：我们显示一个文本区（textarea）供用户输入内容，然后通过 POST 请求提交给服务器。最后，服务器接受到请求，通过处理程序将输入的内容展示到浏览器中。
+
+`/start` 请求处理程序用于生成带文本区的表单，因此，我们将 `requestHandlers.js` 修改为如下形式：
+
+```javascript
+function start(response) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" content="text/html; '+
+    'charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" method="post">'+
+    '<textarea name="text" rows="20" cols="60"></textarea>'+
+    '<input type="submit" value="Submit text" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("Hello Upload");
+  response.end();
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+好了，现在我们的应用已经很完善了，都可以获得威比奖（Webby Awards）了，哈哈。（译者注：威比奖是由国际数字艺术与科学学院主办的评选全球最佳网站的奖项，具体参见详细说明）通过在浏览器中访问 [http://localhost:8888/start](http://localhost:8888/start) 就可以看到简单的表单了，要记得重启服务器哦！
+
+你可能会说：这种直接将视觉元素(view content)放在请求处理程序中的方式太丑陋了。说的没错，但是，我并不想在本书中介绍诸如 MVC 之类的模式，因为这对于你了解 JavaScript 或者 Node.js 环境来说没多大关系。
+
+余下的篇幅，我们来探讨一个更有趣的问题： 当用户提交表单时，触发 `/upload` 请求处理程序处理 POST 请求的问题。
+
+现在，我们已经是新手中的专家了，很自然会想到采用异步回调来实现非阻塞地处理 POST 请求的数据。
+
+这里采用非阻塞方式处理是明智的，因为 POST 请求一般都比较“重” —— 用户可能会输入大量的内容。用阻塞的方式处理大数据量的请求必然会导致用户操作的阻塞。
+
+为了使整个过程非阻塞，Node.js 会将 POST 数据拆分成很多小的数据块，然后通过触发特定的事件，将这些小数据块传递给回调函数。这里的特定的事件有 `data` 事件（表示新的小数据块到达了）以及 `end` 事件（表示所有的数据都已经接收完毕）。
+
+我们需要告诉 `Node.js` 当这些事件触发的时候，回调哪些函数。怎么告诉呢？ 我们通过为对象 `request` 添加监听器（listener）来实现。这里的 `request` 对象是每次接收到 HTTP 请求时候，都会把该对象传递给 `onRequest` 回调函数。
+
+如下所示：
+
+```javascript
+request.addListener("data", function(chunk) {
+  // called when a new chunk of data was received
+});
+
+request.addListener("end", function() {
+  // called when all chunks of data have been received
+});
+```
+
+问题来了，这部分逻辑写在哪里呢？ 我们现在只是在服务器中获取到了 `request` 对象 —— 我们并没有像（刚刚处理） `response` 对象那样，把 `request` 对象传递给请求路由和请求处理程序。
+
+在我看来，获取所有来自请求的数据，然后将这些数据给应用层处理，应该是 HTTP 服务器要做的事情。因此，我建议，我们直接在服务器中处理 POST 数据，然后将最终的数据传递给请求路由和请求处理器，让他们来进行进一步的处理。
+
+因此，实现思路就是： 将 `data` 和 `end` 事件的回调函数直接放在服务器中，在 `data` 事件回调中收集所有的 `POST` 数据，当接收到所有数据，触发 `end` 事件后，其回调函数调用请求路由，并将数据传递给它，然后，请求路由再将该数据传递给请求处理程序。
+
+还等什么，马上来实现。先从 `server.js` 开始：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var postData = "";
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+
+    request.setEncoding("utf8");
+
+    request.addListener("data", function(postDataChunk) {
+      postData += postDataChunk;
+      console.log("Received POST data chunk '"+
+      postDataChunk + "'.");
+    });
+
+    request.addListener("end", function() {
+      route(handle, pathname, response, postData);
+    });
+
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+上述代码做了三件事情： 首先，我们设置了接收数据的编码格式为 UTF-8，然后注册了 `data` 事件的监听器，用于收集每次接收到的新数据块，并将其赋值给 `postData` 变量，最后，我们将请求路由的调用移到 `end` 事件处理程序中，以确保它只会当所有数据接收完毕后才触发，并且只触发一次。我们同时还把 POST 数据传递给请求路由，因为这些数据，请求处理程序会用到。
+
+上述代码在每个数据块到达的时候输出了日志，这对于最终生产环境来说，是很不好的（数据量可能会很大，还记得吧？），但是，在开发阶段是很有用的，有助于让我们看到发生了什么。
+
+我建议可以尝试下，尝试着去输入一小段文本，以及大段内容，当大段内容的时候，就会发现 `data` 事件会触发多次。
+
+再来点酷的。我们接下来在 `/upload` 页面，展示用户输入的内容。要实现该功能，我们需要将 `postData` 传递给请求处理程序，修改 `router.js` 为如下形式：
+
+```javascript
+function route(handle, pathname, response, postData) {
+  console.log("About to route a request for " + pathname);
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname](response, postData);
+  } else {
+    console.log("No request handler found for " + pathname);
+    response.writeHead(404, {"Content-Type": "text/plain"});
+    response.write("404 Not found");
+    response.end();
+  }
+}
+
+exports.route = route;
+```
+
+然后，在 `requestHandlers.js` 中，我们将数据包含在对 `upload` 请求的响应中：
+
+```javascript
+function start(response, postData) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" content="text/html; '+
+    'charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" method="post">'+
+    '<textarea name="text" rows="20" cols="60"></textarea>'+
+    '<input type="submit" value="Submit text" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response, postData) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You've sent: " + postData);
+  response.end();
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+好了，我们现在可以接收 POST 数据并在请求处理程序中处理该数据了。
+
+我们最后要做的是： 当前我们是把请求的整个消息体传递给了请求路由和请求处理程序。我们应该只把 POST 数据中，我们感兴趣的部分传递给请求路由和请求处理程序。在我们这个例子中，我们感兴趣的其实只是 text 字段。
+
+我们可以使用此前介绍过的 `querystring` 模块来实现：
+
+```javascript
+var querystring = require("querystring");
+
+function start(response, postData) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" content="text/html; '+
+    'charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" method="post">'+
+    '<textarea name="text" rows="20" cols="60"></textarea>'+
+    '<input type="submit" value="Submit text" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response, postData) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You've sent the text: "+
+  querystring.parse(postData).text);
+  response.end();
+}
+
+exports.start = start;
+exports.upload = upload;
+```
+
+好了，以上就是关于处理POST数据的全部内容。
+
+#### 处理文件上传
+
+最后，我们来实现我们最终的用例：允许用户上传图片，并将该图片在浏览器中显示出来。
+
+回到90年代，这个用例完全可以满足用于 IPO 的商业模型了，如今，我们通过它能学到这样两件事情： 如何安装外部 Node.js 模块，以及如何将它们应用到我们的应用中。
+
+这里我们要用到的外部模块是 Felix Geisendörfer 开发的 node-formidable 模块。它对解析上传的文件数据做了很好的抽象。 其实说白了，处理文件上传“就是”处理POST数据 —— 但是，麻烦的是在具体的处理细节，所以，这里采用现成的方案更合适点。
+
+使用该模块，首先需要安装该模块。Node.js 有它自己的包管理器，叫 NPM。它可以让安装 Node.js 的外部模块变得非常方便。通过如下一条命令就可以完成该模块的安装：
+
+```shell
+npm install formidable
+#if you want install on system try bellow command
+sudo npm install -g formidable
+```
+
+如果终端输出如下内容：
+
+```shell
+npm info build Success: formidable@1.0.9
+npm ok
+```
+
+就说明模块已经安装成功了。
+
+现在我们就可以用formidable模块了——使用外部模块与内部模块类似，用require语句将其引入即可：
+
+```javascript
+var formidable = require("formidable");
+```
+
+这里该模块做的就是将通过 HTTP POST请求提交的表单，在 Node.js 中可以被解析。我们要做的就是创建一个新的 IncomingForm，它是对提交表单的抽象表示，之后，就可以用它解析 request 对象，获取表单中需要的数据字段。
+
+[node-formidable](https://github.com/felixge/node-formidable) 官方的例子展示了这两部分是如何融合在一起工作的：
+
+```javascript
+var formidable = require('formidable'),
+    http = require('http'),
+    sys = require('sys');
+
+http.createServer(function(req, res) {
+  if (req.url == '/upload' && req.method.toLowerCase() == 'post') {
+    // parse a file upload
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+      res.writeHead(200, {'content-type': 'text/plain'});
+      res.write('received upload:\n\n');
+      res.end(sys.inspect({fields: fields, files: files}));
+    });
+    return;
+  }
+
+  // show a file upload form
+  res.writeHead(200, {'content-type': 'text/html'});
+  res.end(
+    '<form action="/upload" enctype="multipart/form-data" '+
+    'method="post">'+
+    '<input type="text" name="title"><br>'+
+    '<input type="file" name="upload" multiple="multiple"><br>'+
+    '<input type="submit" value="Upload">'+
+    '</form>'
+  );
+}).listen(8888);
+```
+
+如果我们将上述代码，保存到一个文件中，并通过 node 来执行，就可以进行简单的表单提交了，包括文件上传。然后，可以看到通过调用 form.parse 传递给回调函数的 files 对象的内容，如下所示：
+
+```shell
+received upload:
+
+{ fields: { title: 'Hello World' },
+  files:
+   { upload:
+      { size: 1558,
+        path: '/tmp/1c747974a27a6292743669e91f29350b',
+        name: 'us-flag.png',
+        type: 'image/png',
+        lastModifiedDate: Tue, 21 Jun 2011 07:02:41 GMT,
+        _writeStream: [Object],
+        length: [Getter],
+        filename: [Getter],
+        mime: [Getter] } } }
+```
+
+为了实现我们的功能，我们需要将上述代码应用到我们的应用中，另外，我们还要考虑如何将上传文件的内容（保存在 `/tmp` 目录中）显示到浏览器中。
+
+我们先来解决后面那个问题： 对于保存在本地硬盘中的文件，如何才能在浏览器中看到呢？
+
+显然，我们需要将该文件读取到我们的服务器中，使用一个叫 `fs` 的模块。
+
+我们来添加 `/show` URL 的请求处理程序，该处理程序直接硬编码将文件 `/tmp/test.png` 内容展示到浏览器中。当然了，首先需要将该图片保存到这个位置才行。
+
+将 `requestHandlers.js` 修改为如下形式：
+
+```javascript
+var querystring = require("querystring"),
+    fs = require("fs");
+
+function start(response, postData) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" '+
+    'content="text/html; charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" method="post">'+
+    '<textarea name="text" rows="20" cols="60"></textarea>'+
+    '<input type="submit" value="Submit text" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response, postData) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You've sent the text: "+
+  querystring.parse(postData).text);
+  response.end();
+}
+
+function show(response, postData) {
+  console.log("Request handler 'show' was called.");
+  fs.readFile("/tmp/test.png", "binary", function(error, file) {
+    if(error) {
+      response.writeHead(500, {"Content-Type": "text/plain"});
+      response.write(error + "\n");
+      response.end();
+    } else {
+      response.writeHead(200, {"Content-Type": "image/png"});
+      response.write(file, "binary");
+      response.end();
+    }
+  });
+}
+
+exports.start = start;
+exports.upload = upload;
+exports.show = show;
+```
+
+我们还需要将这新的请求处理程序，添加到 `index.js` 中的路由映射表中：
+
+```javascript
+var server = require("./server");
+var router = require("./router");
+var requestHandlers = require("./requestHandlers");
+
+var handle = {}
+handle["/"] = requestHandlers.start;
+handle["/start"] = requestHandlers.start;
+handle["/upload"] = requestHandlers.upload;
+handle["/show"] = requestHandlers.show;
+
+server.start(router.route, handle);
+```
+
+重启服务器之后，通过访问 [http://localhost:8888/show](http://localhost:8888/show) ，就可以看到保存在 `/tmp/test.png` 的图片了。
+
+好，最后我们要的就是：
+
+* 在 `/start` 表单中添加一个文件上传元素
+* 将 `node-formidable` 整合到我们的 `upload` 请求处理程序中，用于将上传的图片保存到 `/tmp/test.png`
+* 将上传的图片内嵌到 `/upload` URL 输出的 HTML 中
+
+第一项很简单。只需要在HTML表单中，添加一个multipart/form-data的编码类型，移除此前的文本区，添加一个文件上传组件，并将提交按钮的文案改为“Upload file”即可。 如下requestHandler.js所示：
+
+```javascript
+var querystring = require("querystring"),
+    fs = require("fs");
+
+function start(response, postData) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" '+
+    'content="text/html; charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" enctype="multipart/form-data" '+
+    'method="post">'+
+    '<input type="file" name="upload">'+
+    '<input type="submit" value="Upload file" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response, postData) {
+  console.log("Request handler 'upload' was called.");
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You've sent the text: "+
+  querystring.parse(postData).text);
+  response.end();
+}
+
+function show(response, postData) {
+  console.log("Request handler 'show' was called.");
+  fs.readFile("/tmp/test.png", "binary", function(error, file) {
+    if(error) {
+      response.writeHead(500, {"Content-Type": "text/plain"});
+      response.write(error + "\n");
+      response.end();
+    } else {
+      response.writeHead(200, {"Content-Type": "image/png"});
+      response.write(file, "binary");
+      response.end();
+    }
+  });
+}
+
+exports.start = start;
+exports.upload = upload;
+exports.show = show;
+```
+
+很好。下一步相对比较复杂。这里有这样一个问题： 我们需要在upload处理程序中对上传的文件进行处理，这样的话，我们就需要将 `request` 对象传递给 node-formidable 的 `form.parse` 函数。
+
+但是，我们有的只是 `response` 对象和 `postData` 数组。看样子，我们只能不得不将 `request` 对象从服务器开始一路通过请求路由，再传递给请求处理程序。 或许还有更好的方案，但是，不管怎么说，目前这样做可以满足我们的需求。
+
+到这里，我们可以将 `postData` 从服务器以及请求处理程序中移除了 —— 一方面，对于我们处理文件上传来说已经不需要了，另外一方面，它甚至可能会引发这样一个问题： 我们已经“消耗”了 `request` 对象中的数据，这意味着，对于 `form.parse` 来说，当它想要获取数据的时候就什么也获取不到了。（因为 Node.js 不会对数据做缓存）
+
+我们从 `server.js` 开始 —— 移除对 `postData` 的处理以及 `request.setEncoding` （这部分node-formidable自身会处理），转而采用将 `request` 对象传递给请求路由的方式：
+
+```javascript
+var http = require("http");
+var url = require("url");
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Request for " + pathname + " received.");
+    route(handle, pathname, response, request);
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+```
+
+接下来是 `router.js` —— 我们不再需要传递 `postData` 了，这次要传递 `request` 对象：
+
+```javascript
+function route(handle, pathname, response, request) {
+  console.log("About to route a request for " + pathname);
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname](response, request);
+  } else {
+    console.log("No request handler found for " + pathname);
+    response.writeHead(404, {"Content-Type": "text/html"});
+    response.write("404 Not found");
+    response.end();
+  }
+}
+
+exports.route = route;
+```
+
+现在，`request` 对象就可以在我们的 `upload` 请求处理程序中使用了。node-formidable会处理将上传的文件保存到本地 `/tmp` 目录中，而我们需要做的是确保该文件保存成 `/tmp/test.png`。 没错，我们保持简单，并假设只允许上传 `PNG` 图片。
+
+这里采用 `fs.renameSync(path1,path2)` 来实现。要注意的是，正如其名，该方法是同步执行的， 也就是说，如果该重命名的操作很耗时的话会阻塞。 这块我们先不考虑。
+
+接下来，我们把处理文件上传以及重命名的操作放到一起，如下requestHandlers.js所示：
+
+```javascript
+var querystring = require("querystring"),
+    fs = require("fs"),
+    formidable = require("formidable");
+
+function start(response) {
+  console.log("Request handler 'start' was called.");
+
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" content="text/html; '+
+    'charset=UTF-8" />'+
+    '</head>'+
+    '<body>'+
+    '<form action="/upload" enctype="multipart/form-data" '+
+    'method="post">'+
+    '<input type="file" name="upload" multiple="multiple">'+
+    '<input type="submit" value="Upload file" />'+
+    '</form>'+
+    '</body>'+
+    '</html>';
+
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write(body);
+    response.end();
+}
+
+function upload(response, request) {
+  console.log("Request handler 'upload' was called.");
+
+  var form = new formidable.IncomingForm();
+  console.log("about to parse");
+  form.parse(request, function(error, fields, files) {
+    console.log("parsing done");
+    fs.renameSync(files.upload.path, "/tmp/test.png");
+    response.writeHead(200, {"Content-Type": "text/html"});
+    response.write("received image:<br/>");
+    response.write("<img src='/show' />");
+    response.end();
+  });
+}
+
+function show(response) {
+  console.log("Request handler 'show' was called.");
+  fs.readFile("/tmp/test.png", "binary", function(error, file) {
+    if(error) {
+      response.writeHead(500, {"Content-Type": "text/plain"});
+      response.write(error + "\n");
+      response.end();
+    } else {
+      response.writeHead(200, {"Content-Type": "image/png"});
+      response.write(file, "binary");
+      response.end();
+    }
+  });
+}
+
+exports.start = start;
+exports.upload = upload;
+exports.show = show;
+```
+
+好了，重启服务器，我们应用所有的功能就可以用了。选择一张本地图片，将其上传到服务器，然后浏览器就会显示该图片。
+
+#### 总结与展望
+
+恭喜，我们的任务已经完成了！我们开发完了一个 Node.js 的 web 应用，应用虽小，但却“五脏俱全”。 期间，我们介绍了很多技术点：服务端 JavaScript、函数式编程、阻塞与非阻塞、回调、事件、内部和外部模块等等。
+
+当然了，还有许多本书没有介绍到的： 如何操作数据库、如何进行单元测试、如何开发 Node.js 的外部模块以及一些简单的诸如如何获取GET请求之类的方法。
+
+但本书毕竟只是一本给初学者的教程 —— 不可能覆盖到所有的内容。
+
+幸运的是，Node.js 社区非常活跃（作个不恰当的比喻就是犹如一群有多动症小孩子在一起，能不活跃吗？）， 这意味着，有许多关于 Node.js 的资源，有什么问题都可以向社区寻求解答。 其中 Node.js 社区的 wiki 以及 NodeCloud 就是最好的资源。
