@@ -1,7 +1,7 @@
 ## Node 入门
 
-> Node website: [node.js](http://nodejs.org/)
-> 作者： [Manuel Kiessling](http://twitter.com/manuelkiessling)
+> Node website: [node.js](http://nodejs.org/) <br />
+> 作者： [Manuel Kiessling](http://twitter.com/manuelkiessling) <br />
 > 翻译： [goddyzhao](http://weibo.com/goddyzhao) & [GrayZhang](http://www.otakustay.com/) & [MondayChen](http://weibo.com/cmonday)
 
 ### 关于

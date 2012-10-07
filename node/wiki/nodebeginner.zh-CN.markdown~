@@ -1209,12 +1209,10 @@ exports.upload = upload;
 
 这里我们要用到的外部模块是 Felix Geisendörfer 开发的 node-formidable 模块。它对解析上传的文件数据做了很好的抽象。 其实说白了，处理文件上传“就是”处理POST数据 —— 但是，麻烦的是在具体的处理细节，所以，这里采用现成的方案更合适点。
 
-使用该模块，首先需要安装该模块。Node.js 有它自己的包管理器，叫 NPM。它可以让安装 Node.js 的外部模块变得非常方便。通过如下一条命令就可以完成该模块的安装：
+使用该模块，首先需要安装该模块。Node.js 有它自己的包管理器，叫 NPM。它可以让安装 Node.js 的外部模块变得非常方便。通过如下一条命令就可以完成该模块的安装：([more info](https://npmjs.org/doc/install.html))
 
 ```shell
 npm install formidable
-#if you want install on system try bellow command
-sudo npm install -g formidable
 ```
 
 如果终端输出如下内容：
