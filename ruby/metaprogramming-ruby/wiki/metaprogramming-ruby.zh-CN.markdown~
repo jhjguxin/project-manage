@@ -1,0 +1,208 @@
+## 第 1 部分 Ruby 元编程(Metaprogramming Ruby)
+
+### Ruby 对象模型关系
+
+```code
+              (Object.class #=>Class)     superclass
+                Object    <-----  Module
+      class        ^                |
+obj1 -------|      |supclass        |superclass
+            --> MyClass ---------> Class(Class.class #=>Cclass)
+obj2 -------|            class
+      class
+```
+
+#### Kernel 模块
+
+如果给 Kernel 模块增加一个方法，这个*内核方法(Kernel Method)*就对所有的对象可用。
+
+私有方法不能明确指定一个接收者来调用一个私有方法。
+
+在 class 中，如果调用方法不是你自己则必须明确指定一个接收者；私有方法只能被隐含接收者调用。
+
+```ruby
+class C
+  def public_method
+   self.private_method
+  end
+
+  private
+  def private_method;end
+end
+ => nil
+C.new.public_method
+NoMethodError: private method `private_method' called for #<C:0xc5b7f28>
+#
+```
+
+* 当调用一个方法时，接收者会扮演 self 的角色。
+* 当定义一个模块(或者类)时，该模块扮演 self 的角色。
+* 实例变量永远都被认为 self 的实例变量。
+
+### 方法(Methods)
+
+通过 `send()` 方法，你想调用的方法名成为一个参数，这样就可以在代码运行期期间，直到最后一刻才决定调用哪个方法。
+
+一些 Ruby 主义者认为 `send()` 方法太容易破坏对象封装性了，在 Ruby 1.9 中，曾经尝试修改 `send()` 方法的行为，但是最终还是恢复回来了。在 Ruby 1.9.1 中， `send()` 仍然可以调用私有方法——许多库就是特意使用这个特性来实现某些功能的。不过新增了一个 `publi_send()` 方法，这个方法会尊重接收者的隐私权。
+
+#### 动态定义方法
+
+```ruby
+class MyClass
+  define_method :my_method do |my_arg|
+    my_arg * 3
+  end
+
+  class_eval do
+    def my_method(my_arg)
+      my_arg * 3
+    end
+  end
+
+  class_eval <<-Code# delimiters can be indented
+    def my_method(my_arg)
+      my_arg * 3
+    end
+  Code
+
+  def attr_accessor_with_history(attr_name)
+     attr_name = attr_name.to_s # make sure it's a string
+     attr_reader attr_name
+     attr_reader attr_name+"_history"
+     class_eval %Q"
+         def #{attr_name}=(value)
+             if !defined? @#{attr_name}_history
+                 @#{attr_name}_history = [@#{attr_name}]
+             end
+             @#{attr_name} = value
+             @#{attr_name}_history << value
+         end
+     "
+  end
+end
+```
+
+例如：
+
+```ruby
+class Computer
+  def initialize(computer_id,data_source)
+    @id = computer_id
+    @data_source = data_source
+  end
+
+  def self.define_component(name)
+    define_method(name){
+      info = @data_source.send "get_#{name}_info", @id
+      price = @data_source.send "get_#{name}_price", @id
+      result = "#{name.to_s.capitalize}: #{info} ($#{price})"
+      (price >=100) ? " * " << result : result
+    }
+  end
+
+  [:mouse, :cpu, :keyboard].collect{|name| define_component name}
+
+end
+```
+
+### 幽灵方法(Ghost Methods)
+
+被 `method_missing()` 方法处理的消息，从调用的角度看，跟普通方法没有区别，但实际上接收者并没有相应的方法。这被成为*幽灵方法(Ghost Methods)*。，覆写 `method_missing()` 方法使得你可以调用实际上并不存在的方法。
+
+### 代码块(Blocks)
+
+```ruby
+def a_method(a,b)
+  a + yield(a,b)
+end
+
+a_method(1,2) #LocalJumpError: no block given (yield)
+a_method(1,2) {|x,y| (x+y) * 3} # => 10
+a_method(1,2){|x,y| x}          # => 2
+def a_method(a,b)
+  if block_given?
+    a + yield(a,b)
+  else
+    %q(no block give !)
+  end
+end
+a_method(1,2)     # => "no block give !"
+```
+
+### 闭包(Closures)
+
+```ruby
+def my_method
+  x = "Goodbye"
+  yield("cruel")
+end
+
+x = "Hello"
+my_method {|y| "#{x}, #{y} world"} # => "Hello, cruel world"
+```
+
+当创建块时会获取到局部绑定(比如上面的 `x`),然后把块连同它自己的绑定传定给一个方法。上面例子中方法中的 `x` 对这个块来说是不可见的。
+
+```ruby
+def define_methods
+  shared = 0
+
+  Kernel.send :define_method, :counter do
+    shared
+  end
+
+  Kernel.send :define_method, :inc do |x|
+    shared += x
+  end
+end
+
+define_methods
+
+counter
+inc(4)
+counter
+```
+
+上面例子中定义了两个内核方法(`send()` 动态派发地技术来访问 Kernel 的 `define_method`)。`Kernel#counter`和`Kernel#inc`都可以看到 `shared` 变量，而其他方法则看不到。这种共享变量的技巧被称为 *共享作用域(Shared Scope)*。
+
+
+```ruby
+Class C
+  def initialize
+    @x, @y = 1, 2
+  end
+end
+
+C.new.instance_exec(3) {|arg| (@x + @y) * 3}  # => 9
+```
+
+#### Proc
+
+Ruby 在标准库中提供了名为 Proc 的类。一个 Proc 就是一个转换成对象的块，可以通过把块传递给 `Proc.new` 方法来创建一个 Proc。以后就可以用 `Proc#call()` 来执行这个由块转换而来的对象。
+
+```ruby
+inc = Proc.new {|x| x + 1}
+inc.call(2) # => 3
+```
+
+这种方法成为 *延迟执行(Deferred Evaluation)*。
+
+Ruby 还提供了两个*内核方法(Kernel Method)* 把块转换为 `Proc:lambda()` 和 `proc()`。`lambda()`, `proc()`, `Proc.new` 这三种方式之间有一些细微的差别，但在绝大多数情况下，你可以随便挑一个最喜欢的方式。
+
+#### &操作符
+
+```ruby
+def my_method(&the_proc)
+  the_proc
+end
+
+p = my_method {|name| "Hello, #{name}!"}
+puts p.class # => Proc
+puts p.call("Bill")  # => Hello, Bill!
+
+def my_method(greeting)
+  puts "#{greeting}, #{yeild}!"
+end
+my_proc = proc { "Bill" }
+my_method("Hello")
+```
