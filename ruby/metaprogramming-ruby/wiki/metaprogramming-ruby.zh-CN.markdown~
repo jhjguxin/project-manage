@@ -143,6 +143,53 @@ my_method {|y| "#{x}, #{y} world"} # => "Hello, cruel world"
 
 当创建块时会获取到局部绑定(比如上面的 `x`),然后把块连同它自己的绑定传定给一个方法。上面例子中方法中的 `x` 对这个块来说是不可见的。
 
+#### 作用域
+
+上面例子中定义了两个内核方法(`send()` 动态派发地技术来访问 Kernel 的 `define_method`)。`Kernel#counter`和`Kernel#inc`都可以看到 `shared` 变量，而其他方法则看不到。这种共享变量的技巧被称为 *共享作用域(Shared Scope)*。
+
+
+```ruby
+Class C
+  def initialize
+    @x, @y = 1, 2
+  end
+end
+
+C.new.instance_exec(3) {|arg| (@x + @y) * 3}  # => 9
+```
+
+
+
+块局部变量：块内部可以定义局部变量，在块执行结束后会消失。 
+
+切换作用域
+Ruby 中一旦进入一个新的作用域，原先的绑定就会被替换为一组新的绑定，原先的作用域就超出范围，完全不可见了。
+一个对象调用同一对象中的其他方法，实例变量在调用过程中始终存在于作用域中。由此我们知道实例变量为什么要加个 `@` 了，它同普通变量不同。
+作用域门
+程序会在三个地方关闭前一个作用域，同时打开一个新的作用域。
+类定义： **class**
+模块定义：**module**
+方法： **def**
+只要程序见到以上三个关键字：`class`、`module`、`def`，就意味着进入了一个新的作用域，之前的作用域将不可见。
+
+**如上可见，普通变量是无法穿越作用域门的。**要想在不同作用域间共享变量，有两个办法：全局变量(`$`打头的变量) 跟 顶级实例变量（`@`打头的变量）。
+但顶级实例变量在 `self` 发生改变时，会退出作用域。 
+**`class/module` 与 `def` 之间的区别：**`class/module` 中代码会立即执行,`def` 中的代码只有被调用时才会执行。因此 反复调用同一方法时，我们得到的是不同的作用域，当然该作用域在方法调用结束时消失。 
+
+##### 扁平化作用域
+
+`class`、`module`、`def` 是普通变量无法逾越的藩篱，如何让普通变量穿越作用域呢？哈，我们取消这三个关键字，用方法调用取代就可以了。
+`class MyClass` 可以改写成 `MyClass = Class.new do ... end`
+`module MyModule` 可以改写成 `MyModule = Module.new do ... end`
+`def my_method` 可以改写成 `define_method :my_method do ... end`
+ 
+方法调用不会开启新的作用域，我们依然处于当前作用域中，所有变量自然可以为我所用。这就叫**扁平化作用域**。
+
+#### 共享作用域
+
+如果想在一组方法间共享一个变量，而且不希望其它方法能够访问。那么我们可以将这一组方法放入一个扁平化作用域中，然后用 class、module或 def加以保护。
+
+
 ```ruby
 def define_methods
   shared = 0
@@ -163,18 +210,23 @@ inc(4)
 counter
 ```
 
-上面例子中定义了两个内核方法(`send()` 动态派发地技术来访问 Kernel 的 `define_method`)。`Kernel#counter`和`Kernel#inc`都可以看到 `shared` 变量，而其他方法则看不到。这种共享变量的技巧被称为 *共享作用域(Shared Scope)*。
-
+###### 3.4 instance_eval()  p83
 
 ```ruby
-Class C
-  def initialize
-    @x, @y = 1, 2
-  end
-end
-
-C.new.instance_exec(3) {|arg| (@x + @y) * 3}  # => 9
+v = 2
+obj.instance_eval {@v = v}
+obj.instance_eval {@v} # =>2
 ```
+
+通过 `instance_eval` 可以将一个对象的的作用域暴露在当前作用域中，同时改变 `self` ；因此上面代码中我们既可以访问 `v`，也可以访问 `@v`。
+Ruby 1.9 中引入了 `instance_exec` ：同 `instance_eval` 功能相似，但它允许对块传入参数。 
+
+#### 3.5 可调用对象 p86
+
+有三种方法可以打包代码
+使用 `proc`
+使用 `lambda`
+使用方法
 
 #### Proc
 
@@ -189,7 +241,31 @@ inc.call(2) # => 3
 
 Ruby 还提供了两个*内核方法(Kernel Method)* 把块转换为 `Proc:lambda()` 和 `proc()`。`lambda()`, `proc()`, `Proc.new` 这三种方式之间有一些细微的差别，但在绝大多数情况下，你可以随便挑一个最喜欢的方式。
 
+```ruby
+dec = lambda {|x| x-1}
+dec.class #=>proc
+dec.call(2) #=>1 
+```
+
 #### &操作符
+
+```ruby
+def math(a,b)
+    yield(a,b)
+end 
+
+def teach_math(a,b,&operation)
+    puts "let's do the math :"
+    puts math(a,b,&operation)
+end
+
+teach_match(2,3) {|x,y| x*y}
+
+=> let's do the math:
+6
+```
+
+&operation 表示这是一个代码块，operation 表示这是一个 Proc 对象。
 
 ```ruby
 def my_method(&the_proc)
@@ -201,8 +277,263 @@ puts p.class # => Proc
 puts p.call("Bill")  # => Hello, Bill!
 
 def my_method(greeting)
-  puts "#{greeting}, #{yeild}!"
+  puts "#{greeting}, #{yield}!"
 end
 my_proc = proc { "Bill" }
-my_method("Hello")
+my_method("Hello", &my_proc) #Hello, Bill! => nil
+```
+
+#### proc 与 lambda 和 return (proc 与 lambda的 return 关键字)
+
+**return** 行为不同：块和 `proc` 从其被定义的作用域返回，往往是顶级作用域；`lambda` 和方法从其本身返回。因此 `proc` 最好不要用显式的 `return` 语句。
+接受参数能力不同：`proc` 允许传入参数不规范，可多可少；`lambda` 必须同定义参数完全一致，否则会报错。
+整体而言，**lambda** 更直观，更像是一个方法，因此很多 Ruby 使用者首选 lambda。
+
+自己写了段小程序，做下测试：
+
+```ruby
+def test (&input) 
+    puts input.call 
+    puts yield #这里是执行的 block，并非 lambda ，所以 return 语句会报错，试图从顶级作用域 返回 
+end 
+l = lambda { return 'hello'} 
+test(&l)
+```
+
+`Kernel#proc()` 在 Ruby1.9 中，是 `Proc.new()` 的别名。我们还是只使用 `Proc.new()` 或者 `lambda()` 吧，省的搞混。
+
+##### 简洁 lambda
+
+```ruby
+p = –>(x) { x + 1 } 等价于
+p = lambda {|x| x+1}
+```
+
+##### 重访方法
+
+```ruby
+class MyClass
+  def initialize(value)
+    @x = value
+  end
+  
+  def my_method
+    @x
+  end
+end
+
+object = MyClass.new(1)
+m = object.method :my_method
+m.call
+
+unbound = m.unbind
+another_object = MyClass.new(2)
+m = unbound.bind(another_object)
+m.call
+```
+
+#### 可调用对象小结
+
+可调用对象是可以执行的代码片段，而且它们有自己的作用域。可调用对象有以下几种形式。
+
+1. **块** (虽然它们不是真正的“对象”，但是它们是“可调用的”)：在定义它们的作用域中执行。
+1. **proc**: `Proc` 类的对象，跟块一样，它们在定义自身的作用域中执行。
+1. **lambda**: 也是 `Proc` 类的对象，但它们跟普通的 proc有细微的差别。它们跟块一样都是闭包，因此也在定义自身的作用域中执行。
+1. **方法**: 绑定于对象，在所绑定对象的作用域中执行。它们也可以于这个作用域解除绑定，在重新绑定到另一个对象的作用域上。
+
+### 星期四：类定义 Class Definitions
+
+#### 前言
+
+1、定义类实际上是在运行一段普通的代码
+2、本章关注：类宏(Class Macro)、环绕别名(Around Alias)、单件类(singleton class or eigenclass)
+
+#### 4.1 类定义揭秘
+
+1. 可以在类定义中加入任何代码，因为我们实际上是在运行类定义。跟方法和块一样，类定义也会返回最后一条语句的值。
+1. 在类定义中，类本身充当了当前对象 self 的角色。
+
+##### 当前类
+
+1. 无论身处程序何处，我们知道总有一个当前对象：`self`。同样也总有一个当前类存在。当定义一个方法时，该方法将成为当前类的一个实例方法。
+1. 一般我们是通过 `class` 、`module` 关键字来判断当前类的，这需要知道类名或模块名。如果不知道类名，我们可以使用 `class_eval()`。
+
+###### class_eval()
+
+1. **Module#class_eval()** 方法（或其别名 `module_eval()` ） 会在一个已存在类的上下文中执行一个块：
+1. **Module#class_eval()** 和 **Object#instance_eval()** 方法截然不同。 `instance_eval()` 方法仅仅会修改 `self`，而 `class_eval()` 方法会同时修改 self 和当前类。
+1. 修改当前类，`class_eval()` 实际上是重新打开了该类，就像 `class` 关键字所做的一样。
+1. `class` 关键字会开启一个新的作用域，而 `class_eval()` 方法则使用扁平作用域。
+
+###### 当前类及其特殊情况
+
+```ruby
+class MyClass
+    def method_one
+        def method_two; 'hello'; end
+    end
+end
+
+obj = MyClass.new
+
+obj.method_one
+obj.method_two # => 'hello'
+```
+
+1. 因为定义 `method_two` 时，当前类的角色由 self 的类来充当，就是 MyClass ；所以我们得到如上结果
+1. 同理：当我们位于顶级作用域时。当前类是 Object --- 就是 main 对象的类，所以在顶级作用域中定义方法的时候，这个方法会成为 Object 类的实例方法。
+
+##### 当前类小结
+
+1. 类定义中，当前对象 `self` 就是正在定义的类（即当前对象就是当前类）。
+1. Ruby 总是追踪当前类的引用。所有使用 `def` 定义的方法都会成为当前类的实例方法。
+1. 如果有一个类的引用，则可以使用 `class_eval()` 方法打开这个类。
+
+##### 类实例变量
+
+看下面这个例子就一目了然了 
+
+```ruby
+class MyClass
+    @my_var = 1 # 这是一个类实例变量，因为此时 self 是 MyClass
+    
+    def self.read; @my_var; end # 这是一个类方法，所以可以访问类实例变量
+    def write;@my_var = 2; end # 这是实例方法，实例对象会作为 self传入该方法，因此只能访问该 obj 的实例变量。
+    def read; @my_var; end
+end 
+
+obj = MyClass.new
+obj.write
+obj.read # => 2
+MyClass.read # =>1 ；类实例变量，只能通过类方法访问，因为此时的 self 是 MyClass。
+```
+
+##### 类变量
+
+一句话，尽量避免使用类变量，多用类实例变量。
+
+```ruby
+class C
+  @@v = 1
+end
+  
+class D < C
+  def my_method; @@v; end
+end
+
+D.new.my_method # => 1
+```
+
+类变量有一个很不好的习惯
+
+```ruby
+@@v = 1 
+
+Class MyClass
+  @@v = 2
+end
+
+@@v # => 2
+```
+
+#### 4.3 单件方法
+
+```ruby
+str = "just a regular string"
+def str.title?
+	self.upcase == self
+end
+
+str.title? # => false
+str.methods.grep(/title?/) # => ["title?"]
+str.singleton_methods # => ["title?"]
+```
+
+关于类方法的真相
+
+类方法的实质就是：它们是一个类的单件方法。实际上，如果比较单件方法的定义和类方法的定义，则会发现它们是一样的。
+
+```ruby
+an_object.a_method
+AClass.a_class_method
+```
+
+#### 类宏
+
+像 `attr_accessor()` 这样的方法称为类宏。虽然看起来像关键字，但它们只是普通的方法。
+`attr_accessor` 是用 C语言写的，松本行弘给出了一个 Ruby 版的示例：
+
+```ruby
+class Module
+    def attr_accessor(*syms)
+        syms.each do |sym|
+            class_eval %{
+                def #{sym}
+                    @#{sym}
+                end                
+                def #{sym}={val}
+                    @#{sym}=val
+                end
+            }
+        end
+    end
+end
+```
+
+下面还有一个类似的例子：
+
+```ruby
+# File lib/spec/rake/spectask.rb, line 58
+def self.attr_accessor(*names)
+  super(*names)
+  names.each do |name|
+    module_eval "def #{name}() evaluate(@#{name}) end" # Allows use of procs
+  end
+end
+```
+
+##### 应用类宏
+
+将旧的方法通过类宏代理至新的方法
+
+```ruby
+class Book
+    def title # ...
+    def subtitle # ...
+    def lend_to(user)
+    puts "Lending to #{user}"
+    # ...
+    
+    def self.deprecate(old_method, new_method)
+        define_method(old_method) do |*args, &block|
+            warn "Warning: #{old_method}() is deprecated. Use #{new_method}()."
+            send(new_method, *args, &block)
+        end
+    end
+    
+    deprecate :GetTitle, :title
+    deprecate :LEND_TO_USER, :lend_to
+    deprecate :title2, :subtitle
+end
+```
+
+##### 4.4 Eigenclass
+
+单件方法到底存放在哪里??
+对象本身是不可能的，对象的类也是不可能的。
+揭秘 eigenclass
+中文版这里翻译的很不好，看了英文的才明白，我修改如下：
+
+```code
+当你向一个对象索要它的类时，Ruby 并没有告诉你全部真相。除了你所看到的类以外，对象还有一个此对象独有的，特殊的隐藏类。这个类称为该对象的 eigenclass。
+```
+
+对于这个特殊的 eigenclass 类，我们可以这样获取：
+
+```ruby
+obj = Object.new
+eigenclass = class << obj
+    self
+end
+eigenclass.class # => Class
 ```
