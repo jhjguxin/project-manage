@@ -438,6 +438,8 @@ end
 
 #### 4.3 单件方法
 
+只针对单个对象生效的方法称为:**单件方法**.
+
 ```ruby
 str = "just a regular string"
 def str.title?
@@ -532,7 +534,57 @@ end
 ```ruby
 obj = Object.new
 eigenclass = class << obj
-    self
+  self
 end
+
 eigenclass.class # => Class
 ```
+
+eigenclass 是一个对象的单件方法的存活之所:
+
+```ruby
+def obj.my_singleton_method; end
+eigenclass.instance_methods.grep(/my_/) # => ["my_singleton_method"]
+```
+
+#### 类方法的语法
+
+```ruby
+class MyClass
+  def self.my_method; end
+end
+
+def MyClass.my_other_method; end
+
+class MyClass
+  class << self
+    def my_method; end
+  end
+end
+```
+
+#### eigenclass 和继承
+
+##### 二次元
+
+eigenclass 是类,类是对象,对象有 eigenclass，像其它对象一样，eigenclass 也有自己的 eigenclass:
+
+```ruby
+class << "abc"
+  class << self
+    self # => #<Class:#<Class:#<String:0x00000001994b38>>> 
+  end
+end
+```
+
+#### 大统一理论
+
+把 eigenclass, 普通类和模块放到一起, Ruby对象模型可以总结为 7条规则:
+
+1. 只有一种对象---要么是普通的对象, 要么是模块.
+2. 只有一种模块---可以是普通模块, 类, eigenclass 或者代理类.
+3. 只有一个方法, 他存在于一种模块中---通常是类中。
+4. 每个对象(包括类)都有自己的"真正的类"---要么是普通类，要么是 eigenclass.
+5. 除了 BasicObject 类(在 Ruby 1.8 中是 Ojbect 类)无超类外，每个类有且只有一个超类。这意味着从任何类只有一条向上直到 BasicObject 的祖先链.
+6. 一个**对象**的 eigenclass 的超类是这个对象的类;一个类的 eigenclass 的超类是这个类的超类的 eigenclass.
+7. 当调用一个方法, Ruby 先向右进入接收者真正的类, 然后向上进入祖先链.
