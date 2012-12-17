@@ -586,4 +586,93 @@ end
 3. 只有一个方法, 他存在于一种模块中---通常是类中。
 4. 每个对象(包括类)都有自己的"真正的类"---要么是普通类，要么是 eigenclass.
 5. 除了 BasicObject 类(在 Ruby 1.8 中是 Ojbect 类)无超类外，每个类有且只有一个超类。这意味着从任何类只有一条向上直到 BasicObject 的祖先链.
-6. 一个**对象**的 eigenclass 的超类是这个对象的类;一个类的 eigenclass 的超类是这个类的超类的 eigenclass.
+6. 一个**对象**的 eigenclass 的超类是这个对象的类;一个类的 eigenclass 的超类是这个类的超类的 eigenclass.(eigenclass 就是这个类的专属领域)
+7. 当调用一个方法, Ruby 先向右进入接收者真正的类, 然后向上进入祖先链.
+
+#### 类属性
+
+给对象创建属性:
+
+```ruby
+class MyClass
+  attr_accessor :a
+end
+
+obj = MyClass.new
+obj.a = 2
+obj.a # => 2
+```
+
+给类创建属性(但是会给所有的类都添加这个属性):
+
+```ruby
+class MyClass; end
+
+class Class
+ attr_accessor :b
+end
+
+MyClass.b = 42
+MyClass.b # => 42
+```
+
+如果你希望添加专属于 MyClass 的属性,就涉及到 eigenclass():
+
+```ruby
+class MyClass
+  class << self
+    attr_accessor :c
+  end
+end
+
+MyClass.c = "It's works!"
+MyClass.c # => "It's works!"
+```
+
+#### 模块的麻烦
+
+通过包含模块来定义类方法.
+
+```module
+module MyModule
+  def self.my_method; 'hello'; end
+end
+
+class MyClass
+  include MyModule
+end
+
+MyClass.my_method # NoMethodError!
+```
+
+因为当类包含模块时, 它获得的是该模块的实例方法---而不是类方法。
+
+#### Solution
+
+首先定义 my_method() 方法，把它作为 MyModule 的一个普通实例方法。接着在 MyClass 的 eigenclass 中包含模块。
+
+```ruby
+module MyModule
+  def my_method;  'hello'; end
+end
+
+class MyClass
+  class << self
+    include MyModule
+  end
+  def abc
+    puts 'abc'
+  end
+end
+
+MyClass.my_method  # => "hello"
+MyClass.new.singleton_class.instance_methods.grep /abc/ # => [:abc]
+MyClass.singleton_class.instance_methods.grep /my_method/ # => [:my_method]
+MyClass.new.singleton_class.singleton_methods # => [:my_method]
+```
+
+my_method() 方法是 MyClass 的 eigenclass 的一个实例方法,这样, my_method() 也是 MyClass 的一个类方法.这种技术称为**类扩展(Class Extension)**.
+
+#### 类方法和 include()
+
+

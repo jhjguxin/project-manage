@@ -586,5 +586,191 @@ end
 3. 只有一个方法, 他存在于一种模块中---通常是类中。
 4. 每个对象(包括类)都有自己的"真正的类"---要么是普通类，要么是 eigenclass.
 5. 除了 BasicObject 类(在 Ruby 1.8 中是 Ojbect 类)无超类外，每个类有且只有一个超类。这意味着从任何类只有一条向上直到 BasicObject 的祖先链.
-6. 一个**对象**的 eigenclass 的超类是这个对象的类;一个类的 eigenclass 的超类是这个类的超类的 eigenclass.
+6. 一个**对象**的 eigenclass 的超类是这个对象的类;一个类的 eigenclass 的超类是这个类的超类的 eigenclass.(eigenclass 就是这个类的专属领域)
 7. 当调用一个方法, Ruby 先向右进入接收者真正的类, 然后向上进入祖先链.
+
+#### 类属性
+
+给对象创建属性:
+
+```ruby
+class MyClass
+  attr_accessor :a
+end
+
+obj = MyClass.new
+obj.a = 2
+obj.a # => 2
+```
+
+给类创建属性(但是会给所有的类都添加这个属性):
+
+```ruby
+class MyClass; end
+
+class Class
+ attr_accessor :b
+end
+
+MyClass.b = 42
+MyClass.b # => 42
+```
+
+如果你希望添加专属于 MyClass 的属性,就涉及到 eigenclass():
+
+```ruby
+class MyClass
+  class << self
+    attr_accessor :c
+  end
+end
+
+MyClass.c = "It's works!"
+MyClass.c # => "It's works!"
+```
+
+#### 模块的麻烦
+
+通过包含模块来定义类方法.
+
+```module
+module MyModule
+  def self.my_method; 'hello'; end
+end
+
+class MyClass
+  include MyModule
+end
+
+MyClass.my_method # NoMethodError!
+```
+
+因为当类包含模块时, 它获得的是该模块的实例方法---而不是类方法。
+
+#### Solution
+
+首先定义 my_method() 方法，把它作为 MyModule 的一个普通实例方法。接着在 MyClass 的 eigenclass 中包含模块。
+
+```ruby
+module MyModule
+  def my_method;  'hello'; end
+end
+
+class MyClass
+  class << self
+    include MyModule
+  end
+  def abc
+    puts 'abc'
+  end
+end
+
+MyClass.my_method  # => "hello"
+MyClass.new.singleton_class.instance_methods.grep /abc/ # => [:abc]
+MyClass.singleton_class.instance_methods.grep /my_method/ # => [:my_method]
+MyClass.new.singleton_class.singleton_methods # => [:my_method]
+```
+
+my_method() 方法是 MyClass 的 eigenclass 的一个实例方法,这样, my_method() 也是 MyClass 的一个类方法.这种技术称为**类扩展(Class Extension)**.
+
+#### 类方法和 include() 以及 Object#extend
+
+重温类扩展,可以通过把模块混合到类的 eigenclass 中来定义类方法。类方法其实是单件方法的特例，因此你可以把这种技巧推广到任意对象. 一般情况下这种技术称为**对象扩展(Object Extension)**.
+
+```ruby
+module MyModule
+  def my_method: 'hello'; end
+end
+
+obj = Object.new
+class << obj
+  include MyModule
+end
+
+obj.my_method         # => "hello"
+obj.singleton_methods # => [:my_method]
+```
+
+```ruby
+module MyModule
+  def my_method: 'hello'; end
+end
+
+obj = Object.new
+obj.extend MyModule
+obj.my_method         # => "hello"
+
+class MyClass
+  extend MyModule
+end
+
+MyClass.my_method     # => "hello"
+```
+
+
+#### 方法别名
+
+`alias` 是关键字关键字,因此两个方法名之间没有逗号。
+
+```ruby
+class MyClass
+  def my_method; "my_method()"; end
+  alias :m :my_method
+end
+
+obj = MyClass.new
+obj.my_method  # => "my_method()"
+obj.m          # => "my_method()"
+```
+
+#### 环绕别名
+
+[around+alias](http://gemclips.wikispaces.com/around+alias)
+通过对方法进行别名处理,用原来的方法名做另外的事情.
+1.对原方法定义一个别名
+2.重新定义(旧的方法名的,返回值为重定义方法的值)方法
+3.在重新定义的方法里面使用老的(新的方法名的,返回值为原始值)方法
+
+```ruby
+class String
+  #alias :real_length :length
+  
+  def length
+    real_length > 5 ? 'long' : 'short'
+  end
+end
+
+'War and Peace'.length    # => "long"
+'War and Peace'.real_length    # => 13
+```
+
+**两条警告**
+
+  *. 环绕别名是一个**猴子补丁**,你可能会破坏原来的方法。
+  *. 不能把一个环绕别名加载两次.会出现程序崩溃。(SystemStackError: stack level too deep)
+
+
+#### 编写代码的代码
+
+
+##### target
+
+基于 attr_accessor(), 创造一个自己的宏类(attr_checked())其功能与 attr_accessor() 相似,但是仅仅会创建有效的的属性(接收一个属性名和一个块，并且用这个块来进行校验如果校验不通过则会抛出异常)。
+
+##### 开发计划
+
+1. 使用 eval() 编写一个名为 add_checked_attribute() 的内核方法，为类添加一个最简单的经过校验的属性.
+2. 重构 add_checked_attribute() 方法，去掉 eval().
+3. 通过块来校验属性.
+4. 将 add_checked_attribute() 改名为 attr_checked() 方法.
+5. 写一个模块，通过钩子方法为指定的类添加 attr_checked() 方法.
+
+##### 5.2 Kernel#eval
+
+除了 instance_eval() 和 class_eval() 这里是 *eval 家族的第三个成员--- eval() 方法(它是一个**内核方法**). eval()直接使用包含 Ruby 代码的字符串---简称为**代码字符串(String of Code)**.Kernel#eval() 会执行字符串中的代码，并返回执行结果.
+
+```ruby
+array = [10, 20]
+element = 30
+eval("array << element")
+```
