@@ -774,3 +774,9 @@ array = [10, 20]
 element = 30
 eval("array << element")
 ```
+
+###### 绑定对象
+
+如果想完全掌握 eval() 方法, 就应该学习 Binding 类. Binding 就是一个用对象表示的完整作用域.你可以通过创建 Binding 对象来捕获并带走当前作用域.接着你还可以通过 eval(), instance_eval() 或 class_eval(), 在Bingding 对象所携带的作用域中执行代码.
+
+
