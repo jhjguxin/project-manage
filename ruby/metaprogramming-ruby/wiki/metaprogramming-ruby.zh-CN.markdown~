@@ -779,4 +779,288 @@ eval("array << element")
 
 如果想完全掌握 eval() 方法, 就应该学习 Binding 类. Binding 就是一个用对象表示的完整作用域.你可以通过创建 Binding 对象来捕获并带走当前作用域.接着你还可以通过 eval(), instance_eval() 或 class_eval(), 在Bingding 对象所携带的作用域中执行代码.
 
+可以使用 Kernel#binding() 方法来创建对象:
 
+```ruby
+class MyClass
+  def my_method
+    @x =1
+    binding
+  end
+end
+
+b = MyClass.new.my_method
+```
+
+对 *eval() 方法家族，可以给它传递一个 Binding 对象作为额外的参数,代码就可以在这个 Binding 对象所携带的作用域中执行:
+
+```ruby
+eval "@x", b # => 1
+```
+
+Ruby 还提供了一个名为 TOPLEVEL_BINDING 的预定义常量, 它表示顶级作用域的 Binding 对象. 你可以在程序的任何地方访问这个作用域:
+
+```ruby
+class AnotherClass
+  def my_method
+    eval "self", TOPLEVEL_BINDING
+  end
+end
+
+AnotherClass.new.my_method
+```
+
+从某种意义上说，你可以把 Binding 对象看作是一个比块更"纯净"的闭包, 因为它们只包含作用域而不包含代码.
+
+```ruby
+eval(string [, binding [, filename [,lineno]]])
+
+#Evaluates the Ruby expression(s) in string. If binding is given, which must be a Binding object, the evaluation is performed in its context. If the optional filename and lineno parameters are present, they will be used when reporting syntax errors.
+
+def get_binding(str)
+  return binding
+end
+str = "hello"
+eval "str + ' Fred'"                      #=> "hello Fred"
+eval "str + ' Fred'", get_binding("bye")  #=> "bye Fred"
+```
+
+```ruby
+array = [1,2,3]
+x = 'a'
+array.instance_eval "puts self"
+array.instance_eval "self[1] = x"
+array # => [1, "a", 3]
+```
+
+代码注入攻击带来安全性问题
+
+1. 防止代码注入--污染对象和安全级别
+2. 通过 tainted?() 判断对象是不是被污染了。
+3. 通过 $$SAFE 全局变量设定安全级别(0-4 级别，4最严格)
+
+执行代码字符串前通过 Object#untaint() 去除污染标示，然后依赖安全级别禁止危险动作。
+
+5.3 小测验：校验过的属性（第一步）
+
+```ruby
+require 'test/unit'
+
+class Person; end
+
+class TestCheckedAttribute < Test::Unit::TestCase
+  def setup
+    add_checked_attribute(Person, :age)
+    @bob = Person.new
+  end
+
+  def test_accepts_valid_values
+    @bob.age = 20
+    assert_equal 20, @bob.age
+  end
+
+  def test_refuses_nil_values
+    assert_raises RuntimeError, 'Invalid attribute' do
+      @bob.age = nil
+    end
+  end
+
+  def test_refuses_false_values
+    assert_raises RuntimeError, 'Invalid attribute' do
+      @bob.age = false
+    end
+  end
+end
+
+# Here is the method that you should implement.
+# (We called the class argument "clazz", because
+# "class" is a reserved keyword.)
+def add_checked_attribute(clazz, attribute)
+  # ...
+end
+```
+
+##### Before You Solve This Quiz . . .
+
+You need to generate an attribute like attr_accessor() does, so you’ll probably appreciate a short review of attr_accessor().11 When you tell attr_accessor() that you want an attribute named, say, :my_attr, it generates two Mimic 类似 Methods like these:
+
+```ruby
+def my_attr
+  @my_attr
+end
+def my_attr=(value)
+  @my_attr = value
+end
+```
+
+###### Quiz Solution
+
+```ruby
+def add_checked_attribute(clazz, attribute)
+  eval "
+    class #{clazz}
+      def #{attribute}=(value)
+        raise 'Invalid attribute' unless value
+        @#{attribute} = value
+      end
+      
+      def #{attribute}()
+        @#{attribute}
+      end
+    end
+      "
+end
+```
+
+##### 5.4 小测验：校验过的属性（第二步）
+
+重构 add_checked_attribute(), 用普通的 Ruby 方法替换  eval(), 这样做的理由:
+1. eval() 总有安全性的问题
+2. 抛开代码字符串, 程序会更清楚, 更优雅
+
+```ruby
+def add_checked_attribute(clazz, attribute)
+  clazz.class_eval do
+    define_method "#{attribute}=" do |value|
+      raise 'Invalid attribute' unless value
+      instance_variable_set("@#{attribute}" , value)
+    end
+    
+    define_method attribute do
+      instance_variable_get "@#{attribute}"
+    end
+  end
+end
+```
+
+**重点:**
+1. 使用 class_eval 来进入类的作用域上下文
+2. 使用 define_method 动态定义方法
+3. 使用 instance_variable_get, set 设置实例变量
+
+##### 5.5 小测验:校验过的属性（第三步）
+
+目前只赋值 nil 或 false 的情况抛出了异常,但是需要通过块来提供更灵活的校验
+
+```ruby
+def add_checked_attribute(clazz, attribute, &validation)
+  clazz.class_eval do
+    define_method "#{attribute}=" do |value|
+      raise 'Invalid attribute' unless validation.call(value)
+      instance_variable_set("@#{attribute}" , value)
+    end
+    
+    define_method attribute do
+      instance_variable_get "@#{attribute}"
+    end
+  end
+end
+```
+
+#### 5.6 小测验:校验过的属性（第四步）
+
+把内核方法改造成类宏,使之对所有的类都可用.可以简单的把它定义成 Class 或 Module 的实例方法.
+
+```ruby
+class Class
+  def attr_checked(attribute, &validation)
+    define_method "#{attribute}=" do |value|
+      raise 'Invalid attribute' unless validation.call(value)
+      instance_variable_set("@#{attribute}" , value)
+    end
+    
+    define_method attribute do
+      instance_variable_get "@#{attribute}"
+    end
+  end
+end
+```
+
+##### 5.7 钩子方法
+
+```ruby
+class String
+  def self.inherited(subclass)
+    puts "#{self} was inherited by #{subclass}"
+  end
+end
+class MyString < String; end
+
+=> String was inherited by MyString
+```
+
+inherited() 方法时 Class 的一个实例方法，当类被继承时,Ruby 会调用这个方法。你可以覆写它的行为.
+像 Class#inherited() 这样的方法称为钩子方法(Hook Method),因为可以用它们像钩子一样钩住一个特定的事件.
+
+###### 更多钩子方法
+
+*. Class#inherited()
+*. Module#included()
+*. Module#extend_object()
+*. Module#method_added()
+*. Module#method_removed()
+*. Module#method_undefined()
+
+##### 在标准方法中插入代码
+
+```ruby
+module M; end
+class C
+  def self.include(*modules)
+    puts "Called: C.include(#{modules})"
+    super # 为保留原有方法的功能，所以要调用 super
+  end
+  include M
+end
+=> Called: C.include(M)
+```
+另外也可以使用环绕别名 p133,将一个普通的方法变成一个钩子方法.
+
+##### 类扩展混入
+
+这种技术是 类扩展 和 钩子方法 的结合,我们称之为类扩展混入.具体步骤如下：
+1、定义一个模块，姑且叫做 MyMixin。
+2、在 MyMixin 中定义一个内部模块(通常叫做 ClassMethods),并给它定义一些方法。这些方法最终会成为类方法。
+3、覆写 MyMixin#included() 方法来用 ClassMethods 扩展包含者(使用 extend() 方法)
+演示如下:
+
+```ruby
+module MyMixin
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+  # ClassMethods 中的方法将成为类方法
+  module ClassMethods
+    def x
+      "x()"
+    end
+  end
+  # 这里将成为实例方法
+  def new_func
+    "new func"
+  end
+end
+```
+
+##### 5.8 小测验:校验过的属性(第五步)
+
+利用上面学到的类扩展混入技术,最终代码如下:
+
+```ruby
+module CheckedAttributes
+  def self.included(base)
+    base.extend ClassMethods
+  end
+  module ClassMethods
+    def attr_checked(attribute, &validation)
+      define_method "#{attribute}=" do |value|
+        raise 'Invalid attribute' unless validation.call(value)
+        instance_variable_set("@#{attribute}" , value)
+      end
+      define_method attribute do
+        instance_variable_get "@#{attribute}"
+      end
+    end
+  end
+end
+```
