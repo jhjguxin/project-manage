@@ -82,4 +82,38 @@ alias_method :foo?, :foo_with_feature?
 
 so you can safely chain `foo`, `foo?`, and `foo!` with the same feature.
 
+##### Validation stand alone
+
+ActiveRecord::Base 类, 是由松耦合, 相对简单, 易于测试和复用的模块组成.
+
+```ruby
+#rails/modules.rb
+require 'activerecord'
+
+ActiveRecord::Base
+
+class MyClass
+  def save; end
+  def save!; end
+  def new_record?; true; end
+  
+  include ActiveRecord::Validations
+  
+  attr_accessor :attr
+  validates_length_of :attr, :minimum => 4
+end
+
+obj = MyClass.new
+obj.attr = "test"
+obj.valid?         # => true
+obj.attr = "tst"
+obj.valid?         # => false
+```
+
+#### 深入 ActiveRecord
+
+动态属性(dynamic attribute) 动态查找器(dynamic finder)
+
+##### 动态属性
+
 
