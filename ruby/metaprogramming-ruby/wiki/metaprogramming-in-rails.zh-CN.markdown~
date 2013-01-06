@@ -449,6 +449,11 @@ Clean.new.instance_eval{a_useful_method(3)}  # => 6
 
 处理从外部获得的字符串代码
 
-File.readlines("a_file_cont").each do |line|
+```ruby
+File.readlines("a_file_containing_lines_of_ruby.txt").each do |line|
   puts "#{line.chomp} ==> #{eval(line)}"
 end
+
+#>>1+1==>2
+```
+
