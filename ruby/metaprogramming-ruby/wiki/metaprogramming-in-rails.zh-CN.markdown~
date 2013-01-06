@@ -130,8 +130,8 @@ Mass assignment security provides an interface for protecting attributes from en
 
 #### 安全元编程 Metaprogramming Safely
 
-*. 可信的单元测试是抵抗元编程 bug 的第一道防线.
-*. 让猴子补丁明显一些, 防止(无意识的)猴子补丁.
+* . 可信的单元测试是抵抗元编程 bug 的第一道防线.
+* . 让猴子补丁明显一些, 防止(无意识的)猴子补丁.
   
 #### Rake 怎样防止猴子补丁
 
@@ -306,7 +306,7 @@ end
 
 #### 法术手册 Spell Book
 
-*. Argument Array
+* . Argument Array
 
 ```ruby
 def my_method(*args)
@@ -317,7 +317,7 @@ end
 my_method('abc','xzy','123')
 ```
 
-*. Around Alias
+* . Around Alias
 
 ```ruby
 class String
@@ -332,7 +332,7 @@ end
 "asdf".old_reverse # => "fdsa" 
 ```
 
-*. Blank Slate
+* . Blank Slate
 
 ```ruby
 class C
@@ -354,7 +354,7 @@ obj.to_      # => "a Ghost Method"
 obj.to_s     # => "#<C:0xc66c5a4>"
 ```
 
-*. 类扩展 Class Extension
+* . 类扩展 Class Extension
 
 通过向类的 eigenclass 中混入模块来定义方法(是对象扩展的特例)
 
@@ -375,7 +375,7 @@ end
 C.my_method   #=> 'a class method'
 ```
 
-*. 类扩展混入 Class Extension Mixin
+* . 类扩展混入 Class Extension Mixin
 
 使一个模块可以通过**钩子方法**扩展他的包含者.
 
@@ -398,7 +398,7 @@ end
 C.my_method   #=> 'a class method'
 ```
 
-*. 类实例变量 Class Instance Variable
+* . 类实例变量 Class Instance Variable
 
 在一个 Class 对象的实例中存储类级别的状态
 
@@ -414,7 +414,7 @@ end
 C.class_attribute # => "some value"
 ```
 
-*. 类宏 Class Macro
+* . 类宏 Class Macro
 
 在类中使用一个类方法
 
@@ -433,7 +433,7 @@ end
 # => "my_macro(#arg}) called"
 ```
 
-*. 洁净室 Clean Room
+* . 洁净室 Clean Room
 
 使用对象作为执行块的上下文环境
 
@@ -445,7 +445,7 @@ end
 Clean.new.instance_eval{a_useful_method(3)}  # => 6
 ```
 
-*. 代码处理器 Code Processor
+* . 代码处理器 Code Processor
 
 处理从外部获得的字符串代码
 
