@@ -108,20 +108,20 @@ Concurrency is the key to designing high performance network services. Go's conc
 
 ### [Meet the Go team](http://www.youtube.com/watch?v=sln-gJaURzk)
 
- A panel discussion with David Symonds, Robert Griesemer, Rob Pike, Ken Thompson, Andrew Gerrand, and Brad Fitzpatrick. 
+A panel discussion with David Symonds, Robert Griesemer, Rob Pike, Ken Thompson, Andrew Gerrand, and Brad Fitzpatrick. 
 
 ### [Writing Web Apps in Go*](http://www.youtube.com/watch?v=-i0hat7pdpk)
 
- A talk by Rob Pike and Andrew Gerrand presented at Google I/O 2011. It walks through the construction and deployment of a simple web application and unveils the [Go runtime for App Engine](http://blog.golang.org/2011/05/go-and-google-app-engine.html). See the [presentation slides](http://talks.golang.org/2011/Writing_Web_Apps_in_Go.pdf). 
+A talk by Rob Pike and Andrew Gerrand presented at Google I/O 2011. It walks through the construction and deployment of a simple web application and unveils the [Go runtime for App Engine](http://blog.golang.org/2011/05/go-and-google-app-engine.html). See the [presentation slides](http://talks.golang.org/2011/Writing_Web_Apps_in_Go.pdf). 
 
 ### [Go Programming*](http://www.youtube.com/watch?v=jgVhBThJdXc)
 
- A presentation delivered by Rob Pike and Russ Cox at Google I/O 2010. It illustrates how programming in Go differs from other languages through a set of examples demonstrating features particular to Go. These include concurrency, embedded types, methods on any type, and program construction using interfaces. 
+A presentation delivered by Rob Pike and Russ Cox at Google I/O 2010. It illustrates how programming in Go differs from other languages through a set of examples demonstrating features particular to Go. These include concurrency, embedded types, methods on any type, and program construction using interfaces. 
 More
 
 ### Non-English Documentation
 
- See the [NonEnglish](http://code.google.com/p/go-wiki/wiki/NonEnglish) page at the [Go Wiki](http://code.google.com/p/go-wiki/wiki) for localized documentation. 
+See the [NonEnglish](http://code.google.com/p/go-wiki/wiki/NonEnglish) page at the [Go Wiki](http://code.google.com/p/go-wiki/wiki) for localized documentation. 
 
 ### The Go Community
 
