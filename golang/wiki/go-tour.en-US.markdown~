@@ -4,7 +4,7 @@ A Tour of the Go Programming Language
 
 An interactive tour of the Go Programming Language.
 
-The tour is [available online](http://tour.golang.org/).
+The tour is [available online](http://tour.golang.org/) and [go-tour-zh](http://go-tour-zh.appspot.com/).
 
 You can also run it locally. First [install Go](http://golang.org/doc/install) and then use [go](http://golang.org/cmd/go/) to install gotour:
 
@@ -392,3 +392,82 @@ func main() {
 	fmt.Println(sum)
 }
 ```
+
+#### For continued
+
+As in C or Java, you can leave the pre and post statements empty.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	sum := 0.2
+	for ; sum < 3; {
+		sum += sum
+		fmt.Println(sum)
+	}
+	fmt.Println(sum)
+}
+```
+
+#### For is Go's "while"
+
+At that point you can drop the semicolons: C's while is spelled for in Go.
+基于此可以省略分号： C 的 while 在 Go 中也是用 for 实现。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	sum := 1
+	for sum < 1000 {
+		sum += sum
+	}
+	fmt.Println(sum)
+}
+```
+
+### Forever(无限循环)
+
+If you omit the loop condition it loops forever, so an infinite loop is compactly 简洁地
+ expressed.
+
+```go
+package main
+
+func main() {
+	for {
+	}
+}
+```
+
+### If
+
+The if statement looks as it does in C or Java, except that the ( ) are gone (they are not even optional) and the { } are required.
+
+(Sound familiar?)
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func sqrt(x float64) string {
+	if x < 0 {
+		return sqrt(-x) + "i"
+	}
+	return fmt.Sprint(math.Sqrt(x))
+}
+
+func main() {
+	fmt.Println(sqrt(2), sqrt(-4))
+}
+```
+
