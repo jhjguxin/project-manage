@@ -431,7 +431,7 @@ func main() {
 }
 ```
 
-### Forever(无限循环)
+#### Forever(无限循环)
 
 If you omit the loop condition it loops forever, so an infinite loop is compactly 简洁地
  expressed.
@@ -445,9 +445,13 @@ func main() {
 }
 ```
 
-### If
+#### If
 
 The if statement looks as it does in C or Java, except that the ( ) are gone (they are not even optional) and the { } are required.
+
+  if 语句看起来跟 C 或者 Java 中的一样，除了没有了 ( ) 之外（甚至强制不能使用它们），而 { } 是必须的。 
+
+   （耳熟吗？）
 
 (Sound familiar?)
 
@@ -470,4 +474,1288 @@ func main() {
 	fmt.Println(sqrt(2), sqrt(-4))
 }
 ```
+
+#### If with a short statement
+
+Like for, the if statement can start with a short statement to execute before the condition.
+
+**Variables declared by the statement are only in scope until the end of the if**.
+
+(Try using v in the last return statement.)
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func pow(x, n, lim float64) (float64, string) {
+	if v := math.Pow(x, n); v < lim {
+		return v, "pow"
+	}
+	return lim, "lim"
+}
+
+func main() {
+	fmt.Println(
+		pow(3, 2, 10),
+		//pow(3, 3, 20),
+	)
+	fmt.Println(
+		//pow(3, 2, 10),
+		pow(3, 3, 20),
+	)
+	/*
+	fmt.Print(
+		pow(3, 2, 10),
+		pow(3, 3, 20),
+	)*/
+}
+```
+
+#### If and else
+
+Variables declared inside an if's short statement are also available inside any of the else blocks.
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func pow(x, n, lim float64) float64 {
+	if v := math.Pow(x, n); v < lim {
+		return v
+	} else {
+		//fmt.Printf("%g >= %g\n", v, lim)
+		fmt.Printf("%g >= %g\t", v, lim)
+	}
+	// can't use v here, though
+	return lim
+}
+
+func main() {
+	fmt.Println(
+		//pow(3, 2, 10),
+		pow(3, 3, 20),
+	)
+	fmt.Println(
+		pow(3, 2, 10),
+		pow(3, 3, 20),
+	)
+}
+```
+
+#### Basic types
+
+Go's basic types are
+
+```
+bool
+
+string
+
+int  int8  int16  int32  int64
+uint uint8 uint16 uint32 uint64 uintptr
+
+byte // alias for uint8
+
+rune // alias for int32
+     // represents a Unicode code point
+
+float32 float64
+
+complex64 complex128
+```
+
+```go
+package main
+
+import (
+	"math/cmplx"
+	"fmt"
+)
+
+var (
+	ToBe bool = false
+	MaxInt uint64 = 1<<64 - 1
+	z complex128 = cmplx.Sqrt(-5+12i)
+)
+
+func main() {
+	const f = "%T(%v)\n"
+	fmt.Printf(f, ToBe, ToBe)
+	fmt.Printf(f, MaxInt, MaxInt)
+	fmt.Printf(f, z, z)
+}
+```
+
+#### Structs
+
+A struct is a collection of fields.
+
+(And a type declaration does what you'd expect.)
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	fmt.Println(Vertex{1, 2})
+}
+```
+
+#### Struct Fields
+
+Struct fields are accessed using a dot.
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	v := Vertex{1, 2}
+	v.X = 4
+	fmt.Println(v.X)
+}
+```
+
+#### Pointers
+
+Go has pointers, but no pointer arithmetic.
+
+Struct fields can be accessed through a struct pointer. The indirection through the pointer is transparent.
+
+Go 有指针，但是没有指针运算。 
+
+  结构体字段可以通过结构体指针来访问。通过指针间接的访问是透明的。
+ 
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	p := Vertex{1, 2}
+	q := &p
+	q.X = 1e9
+	fmt.Println(p,q)
+}
+```
+
+#### Struct Literals
+
+A struct literal denotes a newly allocated struct value by listing the values of its fields.
+
+You can list just a subset of fields by using the Name: syntax. (And the order of named fields is irrelevant.)
+
+The special prefix & constructs a pointer to a struct literal.
+
+结构体文法表示通过结构体字段的值作为列表来新分配一个结构体。 
+
+  使用 Name: 语法可以仅列出部分字段。（字段名的顺序无关。） 
+
+  特殊的前缀 & 构造了指向结构体文法的指针。
+  
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	X, Y int
+}
+
+var (
+	p = Vertex{1, 2}  // has type Vertex
+	q = &Vertex{1, 2} // has type *Vertex
+	r = Vertex{X: 1}  // Y:0 is implicit
+	s = Vertex{}      // X:0 and Y:0
+)
+
+func main() {
+	fmt.Println(p, q, r, s)
+}
+```
+
+#### The new function
+
+The expression new(T) allocates a zeroed T value and returns a pointer to it.
+
+`var t *T = new(T)`
+
+or
+
+`t := new(T)`
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	X, Y int
+}
+
+func main() {
+	v := new(Vertex)
+	fmt.Println(v)
+	v.X, v.Y = 11, 9
+	fmt.Println(v)
+}
+```
+
+#### Maps
+
+A map maps keys to values.
+
+Maps must be created with make (not new) before use; the nil map is empty and cannot be assigned to.
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	Lat, Long float64
+}
+
+var m map[string]Vertex
+
+func main() {
+	m = make(map[string]Vertex)
+	m["Bell Labs"] = Vertex{
+		40.68433, -74.39967,
+	}
+	fmt.Println(m["Bell Labs"])
+}
+```
+
+#### Map literals
+
+Map literals are like struct literals, but the keys are required.
+map 的文法跟结构体文法相似，不过键名是必须的。
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	Lat, Long float64
+}
+
+var m = map[string]Vertex{
+	"Bell Labs": Vertex{
+		40.68433, -74.39967,
+	},
+	"Google": Vertex{
+		37.42202, -122.08408,
+	},
+}
+
+func main() {
+	fmt.Println(m)
+}
+```
+
+#### Map literals continued
+
+If the top-level type is just a type name, you can omit it from the elements of the literal.
+如果顶层类型只有类型名的话，可以在文法的元素中省略键名。
+
+```go
+package main
+
+import "fmt"
+
+type Vertex struct {
+	Lat, Long float64
+}
+
+var m = map[string]Vertex{
+	"Bell Labs": {40.68433, -74.39967},
+	"Google":    {37.42202, -122.08408},
+}
+
+func main() {
+	fmt.Println(m)
+}
+```
+
+#### Mutating Maps
+
+修改 map
+
+Insert or update an element in map m:
+
+`m[key] = elem`
+
+Retrieve an element:
+
+`elem = m[key]`
+
+Delete an element:
+
+`delete(m, key)`
+
+Test that a key is present with a two-value assignment:
+
+`elem, ok = m[key]`
+
+If `key` is in `m`, ok is `true`. If not, ok is `false` and `elem` is the zero value for the map's element type.
+
+Similarly, when reading from a map **if the key is not present the result is the zero value for the map's element type**.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	m := make(map[string]int)
+
+	m["Answer"] = 42
+	fmt.Println("The value:", m["Answer"])
+
+	m["Answer"] = 48
+	fmt.Println("The value:", m["Answer"])
+
+	delete(m, "Answer")
+	fmt.Println("The value:", m["Answer"])
+
+	v, ok := m["Answer"]
+	fmt.Println("The value:", v, "Present?", ok)
+}
+```
+
+#### Slices
+
+切片
+
+A slice points to an array of values and also includes a length.
+
+`[]T` is a slice with elements of type `T`.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	p := []int{2, 3, 5, 7, 11, 13}
+	fmt.Println("p ==", p)
+
+	for i := 0; i < len(p); i++ {
+		fmt.Printf("p[%d] == %d\n",
+			i, p[i])
+	}
+}
+```
+
+#### Slicing slices
+
+Slices can be re-sliced, creating a new slice value that points to the same array.
+
+The expression
+
+`s[lo:hi]`
+
+evaluates to a slice of the elements from lo through `hi-1`, inclusive. Thus
+
+`s[lo:lo]`
+
+is empty and
+
+`s[lo:lo+1]`
+
+has one element.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	p := []int{2, 3, 5, 7, 11, 13}
+	fmt.Println("p ==", p)
+	fmt.Println("p[1:4] ==", p[1:4])
+
+	// missing low index implies 0
+	fmt.Println("p[:3] ==", p[:3])
+
+	// missing high index implies len(s)
+	fmt.Println("p[4:] ==", p[4:])
+}
+```
+
+#### Making slices
+
+Slices are created with the `make` function. It works by allocating a zeroed array and returning a slice that refers to that array:
+
+`a := make([]int, 5)  // len(a)=5`
+
+Slices have length and capacity. A slice's capacity is the maximum length the slice can grow within the underlying array.
+To specify a capacity, pass a third argument to make:
+
+`b := make([]int, 0, 5) // len(b)=0, cap(b)=5`
+
+Slices can be grown by "re-slicing" (up to their capacity):
+
+```go
+b = b[:cap(b)] // len(b)=5, cap(b)=5
+b = b[1:]      // len(b)=4, cap(b)=4
+```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	a := make([]int, 5)
+	printSlice("a", a)
+	b := make([]int, 0, 5)
+	printSlice("b", b)
+	c := b[:2]
+	printSlice("c", c)
+	d := c[2:5]
+	printSlice("d", d)
+}
+
+func printSlice(s string, x []int) {
+	fmt.Printf("%s len=%d cap=%d %v\n",
+		s, len(x), cap(x), x)
+}
+```
+
+#### Nil slices
+
+The zero value of a slice is nil.
+
+A nil slice has a length and capacity of 0.
+
+(To learn more about slices, read the "[Slices: usage and internals](http://golang.org/doc/articles/slices_usage_and_internals.html)" article.)
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	var z []int
+	fmt.Println(z, len(z), cap(z))
+	if z == nil {
+		fmt.Println("nil!")
+	}
+}
+```
+
+Function values
+
+Functions are values too.
+函数也是值。
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func main() {
+	hypot := func(x, y float64) float64 {
+		return math.Sqrt(x*x + y*y)
+	}
+
+	fmt.Println(hypot(3, 4))
+}
+```
+
+#### Function closures
+
+And functions are full closures.
+
+The adder function returns a closure. Each closure is bound to its own sum variable.
+
+并且函数是完全闭包的。 
+函数 `adder` 返回一个闭包。每个闭包被绑定到了特定的 `sum` 变量上。
+
+```go
+package main
+
+import "fmt"
+
+// The adder function returns a closure
+func adder() func(int) int {
+	sum := 0
+	return func(x int) int {
+		sum += x
+		return sum
+	}
+}
+
+func main() {
+	pos, neg := adder(), adder()
+	for i := 0; i < 10; i++ {
+		fmt.Println(
+			pos(i),
+			neg(-2*i),
+			//adder(),
+		)
+	}
+}
+```
+
+#### Range
+
+The `range` form of the `for` loop iterates over a slice or map.
+`for` 循环的 range 格式可以对 `slice` 或者 `map` 进行迭代循环。
+
+
+```go
+package main
+
+import "fmt"
+
+var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
+
+func main() {
+  // i is the index, and v is pow[i]
+	for i, v := range pow {
+	    fmt.Printf("2**%d = %d\n", i, v)
+	}
+}
+```
+
+#### Range continued
+
+**You can skip the index or value by assigning to _.**
+
+If you only want the index, drop the “, value” entirely.
+如果只需要索引值，去掉“, value”的部分即可。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	pow := make([]int, 10)
+	for i := range pow {
+		pow[i] = 1 << uint(i)
+		fmt.Printf("%d\n", pow[i])
+	}
+	fmt.Printf("*********************\n")
+	pow1 := make([]int, 10)
+	for _, value := range pow1 {
+		fmt.Printf("%d\n", value)
+	}
+}
+```
+
+#### Switch
+
+You probably knew what `switch` was going to look like.
+
+A case body breaks automatically, unless it ends with a fallthrough statement.
+case 语句会自动终止，除非用 fallthrough 语句作为结尾。
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func main() {
+	fmt.Print("Go runs on ")
+	switch os := runtime.GOOS; os {
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		// freebsd, openbsd,
+		// plan9, windows...
+		fmt.Printf("%s.", os)
+	}
+}
+```
+
+#### Switch evaluation order
+
+switch 的执行顺序
+
+Switch cases evaluate cases from top to bottom, stopping when a case succeeds.
+
+(For example,
+
+```go
+switch i {
+case 0:
+case f():
+}
+```
+
+does not call f if i==0.)
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	fmt.Println("When's Saturday?")
+	today := time.Now().Weekday()
+	switch time.Saturday {
+	case today+0:
+		fmt.Println("Today.")
+	case today+1:
+		fmt.Println("Tomorrow.")
+	case today+2:
+		fmt.Println("In two days.")
+	default:
+		fmt.Println("Too far away.")
+	}
+}
+```
+
+#### Switch with no condition
+
+Switch without a condition is the same as switch true.
+
+This construct can be a clean way to write long if-then-else chains.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	t := time.Now()
+	switch {
+	case t.Hour() < 12:
+	    fmt.Println("Good morning!")
+	case t.Hour() < 17:
+	    fmt.Println("Good afternoon.")
+	default:
+	    fmt.Println("Good evening.")
+	}
+}
+```
+
+#### Exercise: Loops and Functions
+
+As a simple way to play with functions and loops, implement the square root function using Newton's method.
+
+```go
+package main
+
+
+import (
+	"fmt"
+	"math"
+)
+
+
+func Sqrt(x float64) float64 {
+	z := x
+	for i := 0.0; i < 100000000.0; i++ {
+		z = (z + x/z)/2
+	}
+	return z
+}
+
+
+func main() {
+	fmt.Println(Sqrt(2))
+	fmt.Println(math.Sqrt(2))
+}
+```
+
+#### Exercise: Maps
+
+Implement WordCount. It should return a map of the counts of each “word” in the string s. The wc.Test function runs a test suite against the provided function and prints success or failure.
+
+You might find [strings.Fields](http://golang.org/pkg/strings/#Fields) helpful.
+
+实现 WordCount。它应当返回一个含有 s 中每个 “word” 数量的 map。函数 wc.Test 针对这个函数执行一个测试用例，并打印成功或者失败。 
+
+ 你会发现 [strings.Fields](http://golang.org/pkg/strings/#Fields) 很有帮助。
+
+
+```go
+package main
+
+import (
+	"tour/wc"
+	"strings"
+)
+
+func WordCount(s string) map[string]int {
+	stringsplits := strings.Fields(s)
+	
+	m := make(map[string]int)
+	for _, value := range stringsplits {
+		m[value] += 1
+	}
+	return m
+}
+
+func main() {
+	wc.Test(WordCount)
+}
+```
+
+#### Exercise: Slices
+
+Implement Pic. It should return a slice of length dy, each element of which is a slice of dx 8-bit unsigned integers. When you run the program, it will display your picture, interpreting the integers as grayscale (well, bluescale) values.
+
+The choice of image is up to you. Interesting functions include x^y, (x+y)/2, and x*y.
+
+(You need to use a loop to allocate each []uint8 inside the [][]uint8.)
+
+(Use uint8(intValue) to convert between types.)
+
+实现 Pic。它应当接受一个 slice 的长度 dy，和 slice 中每个元素的长度的 8 位无符号整数 dx。当执行这个程序，它会将整数转换为灰度（好吧，蓝度）图片进行展示。 
+
+图片的实现已经完成。可能用到的函数包括 x^y，(x+y)/2 和 x*y。 
+
+（需要使用循环来分配 [][]uint8 中的每个 []uint8。） 
+
+（使用 uint8(intValue) 在类型之间转换。）
+
+```go
+package main
+
+import "tour/pic"
+
+func Pic(dx, dy int) [][]uint8 {
+	image := make([][]uint8, dy)
+	for i := 0; i < dy; i++ {
+		image[i] = make([]uint8, dx)
+	}
+	for i:= 0; i < dy; i++ {
+		for j := 0; j < dx; j++ {
+			image[i][j] = (uint8)(i*j)%255  // 这里的函数用要求给的三个函数可以得到图像的不同的效果
+		}
+	}
+	return image
+}
+
+func main() {
+	pic.Show(Pic)
+}
+```
+
+#### Exercise: Fibonacci closure
+
+Let's have some fun with functions.
+
+Implement a fibonacci function that returns a function (a closure) that returns successive fibonacci numbers.
+
+现在来通过函数找些乐趣。 
+
+实现一个 fibonacci 函数，返回一个函数（一个闭包）可以返回连续的斐波纳契数。
+
+```go
+package main
+
+import "fmt"
+
+// fibonacci is a function that returns
+// a function that returns an int.
+func fibonacci() func() int {
+	pre := 0
+	now := 1
+	return func() int {
+		now = pre + now
+		pre = now - pre
+		return pre
+	}
+}
+
+func main() {
+	f := fibonacci()
+	for i := 0; i < 10; i++ {
+		fmt.Println(f())
+	}
+}
+```
+
+#### Advanced Exercise: Complex cube roots
+
+Let's explore Go's built-in support for complex numbers via thecomplex64 and complex128 types. For cube roots, Newton's method amounts to repeating:
+
+
+Find the cube root of 2, just to make sure the algorithm works. There is a [Pow](http://golang.org/pkg/math/cmplx/#Pow) function in the math/cmplx package.
+
+```go
+package main
+
+import (
+"fmt"
+"math"
+)
+
+func Cbrt(x complex128) complex128 {
+	z := x
+	for i := 0; i < 100; i++ {
+		z = (2*z + x/(z*z))/3
+	}
+	return z
+}
+
+func main() {
+	fmt.Println(Cbrt(2))
+	fmt.Println(math.Cbrt(2))
+}
+```
+
+### Methods and Interfaces
+
+#### Methods
+
+**Go does not have classes. However, you can define methods on struct types.**
+
+The method receiver appears in its own argument list between the func keyword and the method name.
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type Vertex struct {
+	X, Y float64
+}
+
+func (v *Vertex) Abs() float64 {
+	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+}
+
+func main() {
+	v := &Vertex{3, 4}
+	fmt.Println(v.Abs())
+}
+```
+
+#### Methods continued
+
+In fact, you can define a method on any type you define in your package, not just structs.
+
+**You cannot define a method on a type from another package, or on a basic type.**
+
+事实上，可以对包中的任意类型定义任意方法，而不仅仅是结构体。 
+
+不能对来自其他包的类型或基础类型定义方法。
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type MyFloat float64
+
+func (f MyFloat) Abs() float64 {
+	if f < 0 {
+		return float64(-f)
+	}
+	return float64(f)
+}
+
+func main() {
+	f := MyFloat(-math.Sqrt2)
+	fmt.Println(f.Abs())
+}
+```
+
+#### Methods with pointer receivers
+
+Methods can be associated with a named type or a pointer to a named type.
+
+We just saw two Abs methods. One on the *Vertex **pointer type** and the other on the MyFloat **value** type.
+
+There are two reasons to use a pointer receiver. First, to avoid copying the value on each method call **(more efficient if the value type is a large struct)**. Second, so that the method can modify the value that its receiver points to.
+
+Try changing the declarations of the Abs and Scale methods to use Vertex as the receiver, instead of *Vertex.
+
+The Scale method has no effect when v is a Vertex. Scale mutates v. When v is a value (non-pointer) type, the method sees a copy of the Vertex and cannot mutate the original value.
+
+Abs works either way. It only reads v. It doesn't matter whether it is reading the original value (through a pointer) or a copy of that value.
+
+方法可以与命名类型或命名类型的指针关联。 
+
+刚刚看到的两个 Abs 方法。一个是在 *Vertex 指针类型上，而另一个在 MyFloat 值类型上。 
+
+有两个原因需要使用指针接收者。首先避免在每个方法调用中拷贝值（如果值类型是大的结构体的话会更有效率）。其次，方法可以修改接收者指向的值。 
+
+尝试修改 Abs 的定义，同时 Scale 方法使用 Vertex 代替 *Vertex 作为接收者。 
+
+当 v 是 Vertex 的时候 Scale 方法没有任何作用。Scale 修改 v。当 v 是一个值（非指针），方法看到的是 Vertex 的副本，并且无法修改原始值。 
+
+Abs 的工作方式是一样的。只不过，仅仅读取 v。所以读取的是原始值（通过指针）还是那个值的副本并没有关系。
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type Vertex struct {
+	X, Y float64
+}
+
+func (v *Vertex) Scale(f float64) {
+	v.X = v.X * f
+	v.Y = v.Y * f
+}
+
+func (v *Vertex) Abs() float64 {
+	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+}
+
+func main() {
+	v := &Vertex{3, 4}
+	v.Scale(5)
+	fmt.Println(v, v.Abs())
+}
+```
+
+#### Interfaces
+
+An interface type is defined by a set of methods.
+
+A value of interface type can hold any value that implements those methods.
+
+接口类型是由一组方法定义的集合。 
+
+接口类型的值可以存放实现这些方法的任何值。
+
+```go
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type Abser interface {
+	Abs() float64
+}
+
+func main() {
+	var a Abser
+	f := MyFloat(-math.Sqrt2)
+	f1 := MyFloat(1.1212)
+	fmt.Println(f,f1)
+	
+	v := Vertex{3, 4}
+
+	a = f  // a MyFloat implements Abser
+	fmt.Println(a.Abs())	
+	a = &v // a *Vertex implements Abser
+	fmt.Println(a.Abs())
+	
+	//a  = 1.1212 // cannot use 1.1212 (type float64) 
+	 //as type Abser in assignment 
+	 // float64 does not implement Abser (missing Abs method)
+	
+	//a = v  // a Vertex, does NOT
+	       // implement Abser
+        //fmt.Println(a.Abs())
+
+
+}
+
+type MyFloat float64
+
+func (f MyFloat) Abs() float64 {
+	if f < 0 {
+		return float64(-f)
+	}
+	return float64(f)
+}
+
+type Vertex struct {
+	X, Y float64
+}
+
+func (v *Vertex) Abs() float64 {
+	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+}
+```
+
+#### Interfaces are satisfied implicitly
+
+A type implements an interface by implementing the methods.
+
+  There is no explicit declaration of intent.
+
+Implicit interfaces decouple implementation packages from the packages that define the interfaces: neither depends on the other.
+
+It also encourages the definition of precise interfaces, because you don't have to find every implementation and tag it with the new interface name.
+
+[Package io](http://golang.org/pkg/io/) defines Reader and Writer; you don't have to.
+
+类型通过实现那些方法来实现接口。 
+
+  没有显式声明的必要。 
+
+隐式接口解藕了实现接口的包和定义接口的包：互不依赖。 
+
+因此，也就无需在每一个实现上增加新的接口名称，这样同时也鼓励了明确的接口定义。（对比其他语言） 
+
+[Package io](http://golang.org/pkg/io/) 定义了 `Reader` 和 `Writer`；不一定要这么做。
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+type Reader interface {
+	Read(b []byte) (n int, err error)
+}
+
+type Writer interface {
+	Write(b []byte) (n int, err error)
+}
+
+type ReadWriter interface {
+	Reader
+	Writer
+}
+
+func main() {
+	var w Writer
+
+	// os.Stdout implements Writer
+	w = os.Stdout
+
+	fmt.Fprintf(w, "hello, writer\n")
+}
+```
+
+#### Errors
+
+An error is anything that can describe itself as an error string. The idea is captured by the predefined, built-in interface type, `error`, with its single method, Error, returning a string:
+
+```go
+type error interface {
+	Error() string
+}
+```
+
+The `fmt` package's various print routines automatically know to call the method when asked to print an error.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type MyError struct {
+	When time.Time
+	What string
+}
+
+func (e *MyError) Error() string {
+	return fmt.Sprintf("at %v, %s",
+		e.When, e.What)
+}
+
+func run() error {
+	return &MyError{
+		time.Now(),
+		"it didn't work",
+	}
+}
+
+func main() {
+	if err := run(); err != nil {
+		fmt.Println(err)
+	}
+}
+```
+
+#### Web servers
+
+[Package http](http://golang.org/pkg/net/http/) serves HTTP requests using any value that implements http.Handler:
+
+```go
+package http
+
+type Handler interface {
+	ServeHTTP(w ResponseWriter, r *Request)
+}
+```
+
+In this example, the type `Hello` implements `http.Handler`.
+
+Visit http://localhost:4000/ to see the greeting.
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+type Hello struct{}
+
+func (h Hello) ServeHTTP(
+		w http.ResponseWriter,
+		r *http.Request) {
+	fmt.Fprint(w, "Hello!")
+}
+
+func main() {
+	var h Hello
+	http.ListenAndServe("localhost:4000",h)
+}
+```
+
+#### Images
+
+[Package image](http://golang.org/pkg/image/#Image) defines the Image interface:
+
+```go
+package image
+
+type Image interface {
+	ColorModel() color.Model
+	Bounds() Rectangle
+	At(x, y int) color.Color
+}
+```
+
+(See the [documentation](http://golang.org/pkg/image/#Image) for all the details.)
+
+Also, color.Color and color.Model are interfaces, but we'll ignore that by using the predefined implementations color.RGBA and color.RGBAModel.
+
+#### Exercise: Errors
+
+Copy your Sqrt function from the earlier exercises and modify it to return an error value.
+
+Sqrt should return a non-nil error value when given a negative number, as it doesn't support complex numbers.
+
+Create a new type
+
+`type ErrNegativeSqrt float64`
+
+and make it an error by giving it a
+
+`func (e ErrNegativeSqrt) Error() string`
+
+method such that `ErrNegativeSqrt(-2).Error()` returns "cannot Sqrt negative number: -2".
+
+Note: a call to `fmt.Print(e)` inside the Error method will send the program into an infinite loop. You can avoid this by converting e first: `fmt.Print(float64(e))`. Why?
+
+Change your Sqrt function to return an ErrNegativeSqrt value when given a negative number.
+
+```go
+package main
+
+import (
+  "fmt"
+)
+
+type ErrNegativeSqrt float64
+
+func (e ErrNegativeSqrt) Error() string{
+  return fmt.Sprintf("cantnot Sqrt negative number: %v", float64(e))
+}
+
+func Sqrt(f float64) (float64, error) {
+  if f < 0 {
+    return 0, ErrNegativeSqrt(f)
+  }
+	
+  z := f
+  for i := 0; i < 10; i++ {
+    z = (z + f/z)/2
+  }
+	
+  return z, nil
+}
+
+func main() {
+  if value, err := Sqrt(-2); err != nil {
+    fmt.Println(err)
+  } else {
+    fmt.Println(value)
+  }
+	
+  if value, err := Sqrt(2); err != nil {
+    fmt.Println(err)
+  } else {
+    fmt.Println(value)
+  }
+}
+```
+
+#### Exercise: HTTP Handlers
+
+Implement the following types and define ServeHTTP methods on them. Register them to handle **specific paths** in your web server.
+
+```go
+type String string
+
+type Struct struct {
+	Greeting string
+	Punct    string
+	Who      string
+}
+```
+
+For example, you should be able to register handlers using:
+
+```go
+http.Handle("/string", String("I'm a frayed knot."))
+http.Handle("/struct", &Struct{"Hello", ":", "Gophers!"})
+```
+
 
