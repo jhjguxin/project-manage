@@ -1838,3 +1838,554 @@ func main() {
 }
 ```
 
+#### Exercise: Rot13 Reader
+
+A common pattern is an [io.Reader](http://golang.org/pkg/io/#Reader) that wraps another io.Reader, modifying the stream in some way.
+
+For example, the [gzip.NewReader](http://golang.org/pkg/compress/gzip/#NewReader) function takes an `io.Reader` (a stream of gzipped data) and returns a `*gzip.Reader` that also implements `io.Reader` (a stream of the decompressed data).
+
+Implement a `rot13Reader` that implements `io.Reader` and reads from an `io.Reader`, modifying the stream by applying the [ROT13](http://en.wikipedia.org/wiki/ROT13) substitution cipher to all alphabetical characters.
+
+The `rot13Reader` type is provided for you. Make it an `io.Reader` by implementing its Read method.
+
+一般的模式是 `io.Reader` 包裹另一个 `io.Reader`，用某些途径修改特定的流。 
+
+ 例如， `gzip.NewReader` 函数输入一个 `io.Reader`（`gzip` 的数据流）并且返回一个同样实现了 `io.Reader` 的 `*gzip.Reader`（解压缩后的数据流）。 
+
+ 实现一个实现了 `io.Reader` 的 `rot13Reader`，用 `ROT13` 修改数据流中的所有的字母进行密文替换。 
+
+`rot13Reader` 已经提供。通过实现其 `Read` 方法使得它匹配 `io.Reader`。
+
+```go
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+)
+
+type rot13Reader struct {
+	r io.Reader
+}
+
+func (reader *rot13Reader) Read(p []byte) (n int, err error) {
+	n, err = reader.r.Read(p)
+	for i := 0; i < len(p); i++ {
+		if ('A' <= p[i] && p[i] < 'Z' - 12) || ('a' <= p[i] && p[i] < 'z' - 12) {
+			p[i] += 13
+		} else {
+			p[i] -= 13
+		}
+	}
+	return
+}
+
+func main() {
+	s := strings.NewReader(
+		"Lbh penpxrq gur pbqr!")
+	r := rot13Reader{s}
+	io.Copy(os.Stdout, &r)
+}
+```
+
+### Concurrency
+
+并发
+
+#### Goroutines
+
+A `goroutine` is a lightweight thread managed by the Go runtime.
+
+```go
+go f(x, y, z)
+```
+
+starts a new goroutine running
+
+```go
+f(x, y, z)
+```
+
+The evaluation of `f`, `x`, `y`, and `z` happens in the current goroutine and the execution of `f` happens in the new goroutine.
+
+Goroutines run in the same address space, so access to shared memory must be synchronized. The [sync](http://golang.org/pkg/sync/) package provides useful primitives, although you won't need them much in Go as there are other primitives. (See the next slide.)
+
+goroutine 是由 Go 运行时环境管理的轻量级线程。 
+
+```go
+go f(x, y, z)
+```
+
+ 开启一个新的 goroutine 执行 
+
+```go
+f(x, y, z)
+```
+
+`f`, `x`, `y` 和 `z` 是当前 goroutine 中定义的，但是在新的 goroutine 中运行 `f`。 
+
+goroutine 在相同的地址空间中运行，因此访问共享内存必须进行同步。 [sync](http://golang.org/pkg/sync/) 提供了这种可能，不过在 Go 中并不经常用到，因为有其他的办法。 （在接下来的内容中会涉及到。）
+
+```go
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func say(s string) {
+	for i := 0; i < 5; i++ {
+		runtime.Gosched()
+		fmt.Println(s)
+	}
+}
+
+func main() {
+	go say("world")
+	say("hello")
+}
+```
+
+#### Channels
+
+Channels are a typed conduit through which you can send and receive values with the channel operator, `<-`.
+
+```go
+ch <- v    // Send v to channel ch.
+v := <-ch  // Receive from ch, and
+           // assign value to v.
+```
+
+(The data flows in the direction of the arrow.)
+
+Like maps and slices, channels must be created before use:
+
+```go
+ch := make(chan int)
+```
+
+By default, sends and receives block until the other side is ready. This allows goroutines to synchronize without explicit locks or condition variables.
+
+channel 是有类型的管道，可以用 channel 操作符 `<-` 对其发送或者接收值。 
+
+```go
+ch <- v    // Send v to channel ch.
+v := <-ch  // Receive from ch, and
+           // assign value to v.
+```
+
+（“箭头”就是数据流的方向。） 
+
+和 map 与 slice 一样，channel 使用前必须创建： 
+
+```go
+ch := make(chan int)
+```
+
+默认情况下，在另一端准备好之前，发送和接收都会阻塞。这使得 goroutine 可以在没有明确的锁或竞态变量的情况下进行同步。
+
+
+```go
+package main
+
+import "fmt"
+
+func sum(a []int, c chan int) {
+	sum := 0
+	for _, v := range a {
+		sum += v
+	}
+	c <- sum  // send sum to c
+}
+
+func main() {
+	a := []int{7, 2, 8, -9, 4, 0}
+
+	c := make(chan int)
+	go sum(a[:len(a)/2], c)
+	go sum(a[len(a)/2:], c)
+	x, y := <-c, <-c  // receive from c
+
+	fmt.Println(x, y, x + y)
+}
+```
+
+#### Buffered Channels
+
+Channels can be buffered. Provide the buffer length as the second argument to make to initialize a buffered channel:
+
+```go
+ch := make(chan int, 100)
+```
+
+Sends to a buffered channel block only when the buffer is full. Receives block when the buffer is empty.
+
+Modify the example to overfill the buffer and see what happens.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	c := make(chan int, 2)
+	c <- 1
+	c <- 2
+	//c <- 3
+	fmt.Println(<-c)
+	fmt.Println(<-c)
+	fmt.Println(c)
+}
+```
+
+#### Range and Close
+
+A sender can close a channel to indicate that no more values will be sent. Receivers can test whether a channel has been closed by assigning a second parameter to the receive expression: after
+
+```go
+v, ok := <-ch
+```
+
+`ok` is `false` if there are no more values to receive and the channel is closed.
+
+The loop for `i := range` c receives values from the channel repeatedly until it is closed.
+
+Note: Only the sender should close a channel, never the receiver. Sending on a closed channel will cause a panic.
+
+Another note: Channels aren't like files; you don't usually need to close them. Closing is only necessary when the receiver must be told there are no more values coming, such as to terminate a range loop.
+
+发送者可以 `close` 一个 `channel` 来表示再没有值会被发送了。接收者可以通过赋值语句的第二参数来测试 `channel` 是否被关闭：当没有值可以接收并且 `channel` 已经被关闭，那么
+
+```go 
+v, ok := <-ch
+```
+
+`ok` 会被设置为 `false`。 
+
+循环 `for i := range c` 会不断从 `channel` 接收值，直到它被关闭。 
+
+注意： 只有发送者才能关闭 `channel`，而不是接收者。向一个已经关闭的 `channel` 发送数据会引起 `panic`。 
+
+还要注意：`channel` 与文件不同；通常情况下无需关闭它们。只有在需要告诉接收者没有更多的数据的时候才有必要进行关闭，例如中断一个 `range`。
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func fibonacci(n int, c chan int) {
+        x, y := 0, 1
+	for i := 0; i < n; i++ {
+		c <- x
+                x, y = y, x + y
+        }
+        close(c)
+}
+
+func main() {
+        c := make(chan int, 10)
+	go fibonacci(cap(c), c)
+        for i := range c {
+                fmt.Println(i)
+        }
+}
+```
+
+#### Select
+
+The `select` statement lets a goroutine wait on multiple communication operations.
+
+A `select` blocks until one of its `cases` can run, then it executes that `case`. **It chooses one at random if multiple are ready**.
+
+```go
+package main
+
+import "fmt"
+
+func fibonacci(c, quit chan int) {
+	x, y := 0, 1
+	for {
+		select {
+		case c <- x:
+			x, y = y, x + y
+		case <-quit:
+			fmt.Println("quit")
+			return
+		}
+	}
+}
+
+func main() {
+	c := make(chan int)
+	quit := make(chan int)
+	go func() {
+		for i := 0; i < 10; i++ {
+			fmt.Println(<-c)
+		}
+		quit <- 0
+	}()
+	fibonacci(c, quit)
+}
+```
+
+#### Default Selection
+
+The `default case` in a `select` is run if no other case is ready.
+
+Use a `default` case to try a send or receive without blocking:
+
+```go
+select {
+case i := <-c:
+	// use i
+default:
+	// receiving from c would block
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	tick := time.Tick(1e8)
+	boom := time.After(5e8)
+	for {
+		select {
+		case <-tick:
+			fmt.Println("tick.")
+		case <-boom:
+			fmt.Println("BOOM!")
+			return
+		default:
+			fmt.Println("    .")
+			time.Sleep(5e7)
+		}
+	}
+	}
+```
+
+#### Exercise: Equivalent Binary Trees
+
+There can be many different binary trees with the same sequence of values stored at the leaves. For example, here are two binary trees storing the sequence 1, 1, 2, 3, 5, 8, 13. 
+
+A function to check whether two binary trees store the same sequence is quite complex in most languages. We'll use Go's concurrency and channels to write a simple solution.
+
+This example uses the tree package, which defines the type:
+
+```go
+type Tree struct {
+	Left  *Tree
+	Value int
+	Right *Tree
+}
+```
+
+可以用多种不同的二叉树的叶子节点存储相同的数列值。例如，这里有两个二叉树保存了序列 1，1，2，3，5，8，13。  
+
+ 用于检查两个二叉树是否存储了相同的序列的函数在多数语言中都是相当复杂的。这里将使用 Go 的并发和 `channel` 来编写一个简单的解法。 
+
+ 这个例子使用了 `tree` 包，定义了类型： 
+
+```go
+type Tree struct {
+	Left  *Tree
+	Value int
+	Right *Tree
+}
+```
+
+```go
+package main
+
+import "code.google.com/p/go-tour/tree"
+
+// Walk walks the tree t sending all values
+// from the tree to the channel ch.
+func Walk(t *tree.Tree, ch chan int) {
+	walkRecur(t, ch)
+	close(ch)
+}
+
+func walkRecur(t *tree.Tree, ch chan int) {
+	if t == nil { return }
+	walkRecur(t.Left, ch)
+	ch <- t.Value
+	walkRecur(t.Right, ch)
+}
+
+// Same determines whether the trees
+// t1 and t2 contain the same values.
+func Same(t1, t2 *tree.Tree) bool {
+	chan1 := make(chan int)
+	go Walk(t1, chan1)
+	chan2 := make(chan int)
+	go Walk(t2, chan2)
+	for n := range chan1 {
+		if n != <- chan2 { return false }
+	}
+	return true
+}
+
+func main() {
+	ch := make(chan int)
+	go Walk(tree.New(1), ch)
+	for n := range ch { print(n, " ") }
+	println()
+	println(Same(tree.New(1), tree.New(1)))
+	println( Same(tree.New(1), tree.New(2)))
+}
+```
+
+#### Exercise: Web Crawler
+
+In this exercise you'll use Go's concurrency features to parallelize a web crawler.
+
+Modify the Crawl function to fetch URLs in parallel without fetching the same URL twice.
+
+在这个练习中，将会使用 Go 的并发特性来并行执行 web 爬虫。 
+
+修改 Crawl 函数来并行的抓取 URLs，并且保证不重复。
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Fetcher interface {
+	// Fetch returns the body of URL and
+	// a slice of URLs found on that page.
+	Fetch(url string) (body string, urls []string, err error)
+}
+
+func crawlConcurr(url string, depth int, fetcher Fetcher,
+		  ch chan func()([]string,int), quit chan int) {
+	if depth <= 0 {
+		quit <- 0
+		return
+	}
+	body, urls, err := fetcher.Fetch(url)
+	if err != nil {
+		fmt.Println(err)
+		quit <- 0
+		return
+	} else {
+		fmt.Printf("found: %s %q\n", url, body)
+		f := func()([]string,int) { return urls, depth }
+		ch <- f
+	}
+}
+
+var history = make(map[string]bool)
+
+// Crawl uses fetcher to recursively crawl
+// pages starting with url, to a maximum of depth.
+func Crawl(url string, depth int, fetcher Fetcher) {
+	// TODO: Fetch URLs in parallel.
+	// TODO: Don't fetch the same URL twice.
+	// This implementation doesn't do either:
+	history[url] = true
+	ch := make(chan func()([]string,int))
+	quit := make(chan int)
+	routinsNum := 1
+	go crawlConcurr(url, depth, fetcher, ch, quit)
+	for routinsNum > 0 {
+		select {
+		case f := <- ch:
+			routinsNum --
+			us, d := f()
+			for _, u := range us {
+				if history[u] != true {
+					history[u] = true;
+					routinsNum ++
+					go crawlConcurr(u, d - 1, fetcher, ch, quit)
+				}
+			}
+		case <- quit:
+			routinsNum --
+		}
+	}
+}
+
+func main() {
+	Crawl("http://golang.org/", 4, fetcher)
+}
+
+
+// fakeFetcher is Fetcher that returns canned results.
+type fakeFetcher map[string]*fakeResult
+
+type fakeResult struct {
+	body string
+	urls     []string
+}
+
+func (f *fakeFetcher) Fetch(url string) (string, []string, error) {
+	if res, ok := (*f)[url]; ok {
+		return res.body, res.urls, nil
+	}
+	return "", nil, fmt.Errorf("not found: %s", url)
+}
+
+// fetcher is a populated fakeFetcher.
+var fetcher = &fakeFetcher{
+	"http://golang.org/": &fakeResult{
+		"The Go Programming Language",
+		[]string{
+			"http://golang.org/pkg/",
+			"http://golang.org/cmd/",
+		},
+	},
+	"http://golang.org/pkg/": &fakeResult{
+		"Packages",
+		[]string{
+			"http://golang.org/",
+			"http://golang.org/cmd/",
+			"http://golang.org/pkg/fmt/",
+			"http://golang.org/pkg/os/",
+		},
+	},
+	"http://golang.org/pkg/fmt/": &fakeResult{
+		"Package fmt",
+		[]string{
+			"http://golang.org/",
+			"http://golang.org/pkg/",
+		},
+	},
+	"http://golang.org/pkg/os/": &fakeResult{
+		"Package os",
+		[]string{
+			"http://golang.org/",
+			"http://golang.org/pkg/",
+		},
+	},
+}
+```
+
+#### Where to Go from here...
+
+可以从 [installing Go](http://golang.org/doc/install/) 或者下载 [Go App Engine SDK](http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Go)。 
+
+一旦在机器上安装好了 Go， [Go Documentation](http://golang.org/doc/) 是应当继续阅读的内容 。 它包含了参考、指南、视频等等更多资料。 
+
+ 了解如何组织 Go 代码并在其上工作，参阅 [this screencast](http://www.youtube.com/watch?v=XCsL89YtqCs)  or read [如何编写 Go 代码](http://golang.org/doc/code.html)。 
+
+ 在标准库上需要帮助的话，参考 [package reference](http://golang.org/doc/code.html)。语言本身的帮助，可以阅读令人愉快的 [Language Spec](http://golang.org/ref/spec)。 
+
+ 进一步探索 Go 的并发模型，参阅 [Share Memory by Communicating](http://golang.org/doc/codewalk/sharemem/) 的代码之旅。 
+
+[First Class Functions in Go](http://golang.org/doc/codewalk/functions/) 为 Go 的函数类型提供了有趣的展示。 
+
+[Go Blog](http://blog.golang.org/) 有着众多的关于 Go 的文章信息。 
+
+访问 [golang.org](http://golang.org/) 了解更多内容。
