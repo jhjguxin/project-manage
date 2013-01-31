@@ -247,7 +247,7 @@ Within the `head` of the HTML document, the `link` element is used to define the
 
 In order for the CSS to render, the path of the `href` attribute value must directly correlate to where the CSS file is stored. In the example above the `file.css` is stored within the root directory, the same location as the HTML file.
 
-Should the CSS be within a subdirectory, the `href` attribute value would need to correlate this path accordingly. For example, if the `file.css` is stored within a subdirectory call styles the href attribute value would be `styles/file.css`, using a forward shash to indicate different directories.
+Should the CSS be within a subdirectory, the `href` attribute value would need to correlate this path accordingly. For example, if the `file.css` is stored within a subdirectory call `styles` the `href` attribute value would be `styles/file.css`, using a forward shash to indicate different directories.
 
 ### Reset
 
@@ -259,11 +259,11 @@ By default every web browser has it’s own interpretation on how different elem
   
 CSS resets include a handful of rule sets that take every common HTML element and scale them down to one unified style. These resets involve removing any sizing, margins, paddings, or additional styles. Resets need to be the very first CSS styles to be rendered to ensure that all the styles there after are being applied to the skeleton of a page.
 
-There are a ton of different resets available to use, all of which have their own forte. My personal favorite is Eric Meyers reset, which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
+There are a ton of different resets available to use, all of which have their own forte. My personal favorite is [Eric Meyers reset](http://meyerweb.com/eric/tools/css/reset/), which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
 
   ## Code Validation
 
-  As proficient as we all are, we do make mistakes. Thankfully when writing HTML and CSS we have a validator that can check our work. The W3C has built both HTML and CSS validators that will scan your code looking for mistakes. Validating your code not only helps it render properly across all browsers, it also teaches you the best practices for writing code.
+  As proficient as we all are, we do make mistakes. Thankfully when writing HTML and CSS we have a validator that can check our work. The W3C has built both [HTML](http://validator.w3.org/) and [CSS](http://jigsaw.w3.org/css-validator/) validators that will scan your code looking for mistakes. Validating your code not only helps it render properly across all browsers, it also teaches you the best practices for writing code.
   
 ### Resources & Links
 

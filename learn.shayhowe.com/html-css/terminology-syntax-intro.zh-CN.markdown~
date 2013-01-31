@@ -265,17 +265,25 @@ ul#social li.tumblr a {
 }
 ```
 
-#### Additional Selectors
+#### 其它的选择器(Additional Selectors)
 
 Selectors can be extremely powerful and the selectors outlined above are only the beginning. Many more [advanced selectors](http://coding.smashingmagazine.com/2009/08/17/taming-advanced-css-selectors/) exist and are readily available. Before dropping classes or IDs on random elements check and see if there might be a better selector to do the job for you. It is also worth mentioning that not all advance selectors work in every browser, particularly with new selectors introduced in CSS3. If a selector doesn’t seem to be working properly check its browser support.
 
-### Referencing CSS
+选择器可以极其强大, 选择器上面的概述仅仅是个开始. 更多 [高级选择器](http://coding.smashingmagazine.com/2009/08/17/taming-advanced-css-selectors/) 已经可以准备好了. 在确定类或者 IDs 为随机元素之前看看这里可能有选择器能更好工作. 值得一提的是不是所有的高级选择器在每个浏览器都能工作, 尤其在 CSS3 中介绍到的选择器. 如果选择器看起来不能正确的工作检查浏览器是否支持.
+
+### 引用 CSS(Referencing CSS)
 
 Once content is in place you may begin to style the HTML with CSS. There are a handful of different ways to reference CSS, some of which are better than others.
 
+一旦内容已经就位了你可能从 CSS 开始 HTML 的样式. 这里有写不同的方式来引用 CSS, 其中一些会更好一些.
+
 The best practice for referencing CSS is to include all of your styles within a single external stylesheet, referenced within the heading of a page. Using an external stylesheet allows you to use the same styles across an entire website and quickly make changes site wide.
 
+引用 CSS 的最佳实践是包含你所有的样式到一个单个外部样式表, 在一个页面的头部引用. 使用一个外部样式表允许你在整个站点中使用相同的样式并且快速的改变站点风格.
+
 Other options include internal and inline styles. These options are generally frowned upon as they make updating websites cumbersome and unwieldy.
+
+其它的选择是包含内部和行间样式. 这些选项通常在更新网站的时候显得很笨重和繁琐让人头大.
 
 ```html
 <!-- External CSS File -->
@@ -291,29 +299,45 @@ p {
 <p style="color: #f60; font-size: 16px;">Lorem ipsum dolor sit amet...</p>
 ```
 
-#### Using External CSS Stylesheets
+#### 使用外部 CSS 样式表(Using External CSS Stylesheets)
 
 As mentioned above, the best way to reference CSS is with an extrenal stylesheet. Doing so allows you to use one set of styles across an entire website. Making changes to the style of a website becomes painless, and users download less data overall to properly render the styles.
 
+正如上面提到的, 引用 CSS 的最好方式是使用一个外部样式表. 这样允许你将一种样式在整个站点中使用. 修改网站样式变得十分轻松, 并且用户下载少量的数据便可以合适的渲染整个样式.
+
 Within the `head` of the HTML document, the `link` element is used to define the relationship between the HTML file and the CSS file. Since you are linking to CSS the `rel` attribute with a value of `stylesheet` is used to specify the relationship. Furthermore, the `href` attribute is used to identify the location, or path, of the CSS file.
+
+在 HTML 文档的 `head` 中, `link` 元素用来定义 CSS 文件和 HTML 文件的关系. 此外, `href` 属性用于表示的 CSS 文件的 location 或者 path.
 
 In order for the CSS to render, the path of the `href` attribute value must directly correlate to where the CSS file is stored. In the example above the `file.css` is stored within the root directory, the same location as the HTML file.
 
-Should the CSS be within a subdirectory, the `href` attribute value would need to correlate this path accordingly. For example, if the `file.css` is stored within a subdirectory call styles the href attribute value would be `styles/file.css`, using a forward shash to indicate different directories.
+为了渲染 CSS, `href` 属性的值必须直接关联到 CSS 文件的存放位置. 在上面例子中 `file.css` 被存放在(站点)根目录, 与 HTML 文件的位置相同.
 
-### Reset
+Should the CSS be within a subdirectory, the `href` attribute value would need to correlate this path accordingly. For example, if the `file.css` is stored within a subdirectory call `styles` the `href` attribute value would be `styles/file.css`, using a forward shash to indicate different directories.
+
+CSS 应该放在一个子目录中, 于是 `href` 属性值应该关联到相应位置. 例如, 如果 `file.css` 被存放在一个名叫 `styles` 的子目录中属性 `href` 的值应该为 `styles/file.css`, 使用一个斜线来分割不同的目录.
+
+### 重置(Reset)
 
 By default every web browser has it’s own interpretation on how different elements are to be stylized. How Chrome decides to render an input field is likely going to be much different than how Internet Explorer renders an input field. To combat for **cross browser compatibility** CSS resets have become widely used.
 
-  **Cross Browser Compatibility & Testing**
+默认情况下每个浏览器对不同的元素附加样式都有着它自己的解释. Chrome 渲染的的输入框和 Internet Explorer 渲染的输入框有很大的不同. 与 **跨浏览器兼容** 作战 CSS 重置被广泛的使用.
+
+  **跨浏览器兼容 & 测试(Cross Browser Compatibility & Testing)**
 
   As mentioned, different browsers render pages in different ways. Its important to recognize the value in cross browser compatibility and testing. Websites don’t need to look the same in every browser but they should be close. What browsers you wish to support and to what degree is a decisions you will need to make in accordance with what is best for your website.
   
+  正如上面提到的, 不同浏览器渲染页面的方式并不相同的. 认识到跨浏览器兼容和测试的价值十分重要. 网站不需要在每个浏览器中看起来完全相同但是它们应该接近. 你希望支持哪种浏览器并且到何种程度对你的网站最合适是你需要商榷的事情.
+  
 CSS resets include a handful of rule sets that take every common HTML element and scale them down to one unified style. These resets involve removing any sizing, margins, paddings, or additional styles. Resets need to be the very first CSS styles to be rendered to ensure that all the styles there after are being applied to the skeleton of a page.
 
-There are a ton of different resets available to use, all of which have their own forte. My personal favorite is Eric Meyers reset, which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
+CSS 重置包含一系列的规则和设定它会对所有的公共的 HTML 元素缩减它们为统一的样式. 这些重置包括移除任何 sizing, margins, paddings. 重置复要的作为第一个CSS样式呈现, 以确保所有的样式在其之后, 被应用到一个页面的骨架.
 
-  ## Code Validation
+There are a ton of different resets available to use, all of which have their own forte. My personal favorite is [Eric Meyers reset](http://meyerweb.com/eric/tools/css/reset/), which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
+
+这里有一大堆的重置 CSS 方法, 每个都有其长处. 我个人喜欢的是 [Eric Meyers reset](http://meyerweb.com/eric/tools/css/reset/), 其适用于包含新 HTML5 元素的 CSS 重置. Eric’s reset 短小精悍, 但是你可以自由的寻找你自己的重置方法并且找到你习惯使用的重置方法.
+
+  ## 代码检测(Code Validation)
 
   As proficient as we all are, we do make mistakes. Thankfully when writing HTML and CSS we have a validator that can check our work. The W3C has built both HTML and CSS validators that will scan your code looking for mistakes. Validating your code not only helps it render properly across all browsers, it also teaches you the best practices for writing code.
   
