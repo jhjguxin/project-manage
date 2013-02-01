@@ -155,3 +155,91 @@ Creating an on page link is accomplished by specifying an ID on the element you 
 ### HTML5 Structural Elements
 
 HTML5 provides a handful of [new elements](http://dev.opera.com/articles/view/new-structural-elements-in-html5/), all of which are focused around improving semantics. Before, if you wanted to declare a block level section of a page you were likely to use a `div`. With HTML5 you have a handful of new block level elements that allow you to write more semantic code.
+
+**Fig. 2.01**
+
+The new HTML5 structural elements outline.
+
+![Fig. 2.01](pr.png)
+
+#### Header
+
+The `header`, just as it sounds, is used to identify the heading of a page, `article`, `section`, or other segment of a page. In general, a `header` may include a heading, introduction text, or navigation. You can use more than one `header` on a page. Depending on the website, you will ideally include a `header` at the beginning of the page. Additionally, a header may reappear as the `header` of an article or section as necessary.
+
+```html
+<header>...</header>
+```
+
+  ##### Clarification on the header Element
+
+  The `header` element should not be confused with the head or headings, `h1` through `h6`.
+
+  The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.
+
+  Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.
+  
+#### Navigation
+
+The `nav` is a block level element used to denote a section of major navigational links on a page. Not all links should be wrapped within a `nav` element. The `nav` should be reserved for primary navigation sections including universal navigation, a table of contents, breadcrumbs, previous/next links, or other noteworthy groups of links.
+
+Most commonly links included within the `nav` element will link to other parts of the same website or web page. Miscellaneous one off links should not be wrapped within the `nav` element, and should only use the a element.
+
+```html
+<nav>
+  <ul>
+    <li><a href="#">...</a></li>
+    <li><a href="#">...</a></li>
+  </ul>
+</nav>
+```
+
+#### Article
+
+The `article` block level element is very similar to that of a `div` or `section` however it is specifically defined as an element which should include independent, self-contained content that may be independently distributable or reusable. Most often `article` will fall within blogs and other publishing websites as a block of published content. When deciding to use the `article` element determine if the content within the element could be replicated elsewhere without any confusion. The content within the `article` alone must make sense, and be able to be distrbuted elsewhere, such as within an RSS feed.
+
+```html
+<article>...</article>
+```
+
+#### Section
+
+A `section` is more likely to get confused with a `div` than an `article`. As a block level element, `section` is defined to represent a generic document or application section. Where a `section` differentiates itself from a `div` is that a `section` is not to be used as a convenience for styling or scripting purposes.
+
+That said – you can apply styles to a `section` however you shouldn’t be using a `section` aimlessly with the sole purpose of adding styles. Reserve the `section` element for large parts of a page worthy of the element.
+
+```html
+<section>...</section>
+```
+
+  ##### Deciding When to Use a section or div
+
+  The best way to determine when to use a `section` versus a `div` is to look at the actual content at hand. If the block of content could exist as a record within a database and isn’t explicitly needed as a CSS styling hook then the `section` element is most applicable. Sections should be used to break a page up, providing a natural hierarchy, and most commonly will have a proper heading.
+
+  A `div` on the other hand may be used to specifically tie styles to a block of content. As an example, if a couple paragraphs need to stand out above the rest of the content on on a page they should be wrapped in a `div`. That `div` then may have the proper styles applied to it, perhaps a background, border, or the alike.
+  
+#### Aside
+
+To accompany the `header` and `footer` elements there is also the `aside` block level element. An `aside` defines content related to the document or section surrounding it. As with `header` and `footer` elements, the `aside` can be used multiple times per page, so long as each use is practical.
+
+Please keep in mind that the `aside` is a block level element, in which it will appear on a new line and occupy the full width of the page or any container. If you would like to get the `aside` to appear to the right or left of a block of content you will need to `float` the `aside` element. Don’t worry about floats right now, we will learn about [floating and positioning](http://learn.shayhowe.com/html-css/box-model) content in an upcoming lesson.
+
+```html
+<aside>...</aside>
+```
+
+#### Footer
+
+The `footer` is identical to that of the `header` however for the bottom of a page, `article`, `section`, or other segment of a page. A `footer` should not stem away from the document or `section` at hand and its context should include relative information.
+
+#### D.R.Y. – Don’t Repeat Yourself
+
+One principle of development is **D.R.Y.**, also known as don’t repeat yourself. Within CSS this principle can speak volumes as it is easy to continually write the same styles over and over again. Don’t. CSS was designed in a way to allow you to cascade styles and use classes so that you easily apply and inherent styles. The end goal is to write clean and light code, of which is semantic and easily managed.
+
+#### Resources & Links
+
+* [Semantic code: What? Why? How?](http://boagworld.com/dev/semantic-code-what-why-how/) via Boagworld
+* [HTML5 Doctor](http://html5doctor.com/)
+* [The i, b, em, & strong Elements](http://html5doctor.com/i-b-em-strong-element/) via HTML5 Doctor
+* [The Full mailto Link Syntax](http://yoast.com/guide-mailto-links/) via Joost de Valk
+* [New Structural Elements in HTML5](http://dev.opera.com/articles/view/new-structural-elements-in-html5/) via Dev.Opera
+
