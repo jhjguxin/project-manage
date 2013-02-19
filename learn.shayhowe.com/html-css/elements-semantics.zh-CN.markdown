@@ -101,7 +101,7 @@ Headings are often followed with supporting paragraphs. Paragraphs are defined b
 <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
 ```
 
-  **Paragraphs Demo**
+  **段落示例Paragraphs Demo**
   
   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
   <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
@@ -110,7 +110,7 @@ Headings are often followed with supporting paragraphs. Paragraphs are defined b
 
 To make text bold, and to note it as important, the `strong` inline level element is used. It is important to understand the [semantic difference](http://html5doctor.com/i-b-em-strong-element/) between `strong` and `b`, both of which will make text bold. `strong` is semantically used to denote text with a strong importance, as is mostly the case when wanting to bold text. `b` on the other hand semantically means stylistically offset, which isn’t always the best case for text deserving prominent attention. Gauge the significance of the text you are looking to set as bold and choose an element accordingly.
 
-要使文本加粗, 并且备注它为重要内容, `strong` 行内元素被使用. 明白 `strong` 和 `b` 之间的 [semantic difference](http://html5doctor.com/i-b-em-strong-element/) 很重要, 它们都使文本加粗. `strong` 是语义上表示文本很重要, 如同大多数希望文本加粗的情况. `b` 是另一种语言意思是风格上的偏移, 其通常适用于让文本显得醒目. 依据你打算设置为粗体文本的意义从而选择一个元素.
+`strong` 行内元素被使用来使文本加粗, 并且备注它为重要内容. 明白 `strong` 和 `b` 之间的 [semantic difference](http://html5doctor.com/i-b-em-strong-element/) 很重要, 它们都使文本加粗. `strong` 是语义上表示文本很重要, 如同大多数希望文本加粗的情况. `b` 是另一种语言意思是风格上的偏移, 其通常适用于让文本显得醒目. 依据你打算设置为粗体文本的意义从而选择一个元素.
 
 ```html
 <p>Duis in <strong>voluptate</strong> velit esse cillum.</p>
@@ -118,27 +118,35 @@ To make text bold, and to note it as important, the `strong` inline level elemen
 
 #### Italicize Text with Emphasis
 
-To italicize text and place a stressed emphasis on it the `em` inline level element is used. As with strong, there are two different tags used to italicize text, each with a slightly different semantic meaning. `em` semantically means to place a stressed emphasis on text and thus is the most popular option for italicizing text. The other option is `i`, which semantically values text to be rendered in an alternate voice. Again, you will need to gauge the significance of the text you want to italicize and choose an element accordingly.
+To italicize text and place a stressed emphasis on it the `em` inline level element is used. As with `strong`, there are two different tags used to italicize text, each with a slightly different semantic meaning. `em` semantically means to place a stressed emphasis on text and thus is the most popular option for italicizing text. The other option is `i`, which semantically values text to be rendered in an alternate voice. Again, you will need to gauge the significance of the text you want to italicize and choose an element accordingly.
+
+`em` 行内元素被使用来,将强调语气其置于文本并且使文本倾斜. 如同 `strong` 这里有两种不同的标签来倾斜文本, 每一个都有稍显不同的语义含义. `em` 语义含义是将强调语气置于文本并且这也是倾斜文本的最通常的用途. 另一个选择是 `i`, 其语义是文本作为引申含义显示. 再一次的, 你将会需要评估你需要倾斜的文本的目从而选择一个元素.
 
 ```html
 <p>Quae ars <em>putanda</em> est, expeteretur si nih.</p>
 ```
 
-#### Hyperlinks
+#### 超链接(Hyperlinks)
 
 One of the core elements of the internet is the hyperlink, established by using an anchor. Hyperlinks are defined using the `a` inline element however they require a source to direct the link. The `href` attribute, known as hyperlink reference, is used to set the destination of a link.
 
-By nature the a element is an inline element, however with the introduction of HTML5, a elements now have the ability to wrap block or inline level elements. This is a break from the standard convention yet permissible to turn entire blocks of content on a page into a link.
+互联网上的核心元素之一是超链接, 通过一个锚点建立. 超链接被定义为 `a` 行内元素然而它们需要一个直接链接的源. `href` 属性, 是超链接的引用, 其用于设定一个链接的目的地.
+
+By nature the `a` element is an inline element, however with the introduction of HTML5, a elements now have the ability to wrap block or inline level elements. This is a break from the standard convention yet permissible to turn entire blocks of content on a page into a link.
+
+通常情况 `a` 元素是一个行内元素, 然而在 HTML5 的介绍中, 元素现在可以包含块或者行内级别的元素了. 这是于标准惯例的突变允许将一个页面的内容的全部版块包装到一个链接.
 
 ```html
 <a href="http://shayhowe.com">Shay</a>
 ```
 
-##### Relative & Absolute Paths
+##### 相对 & 绝对路径(Relative & Absolute Paths)
 
 The two most common types of links include links to other pages within a website and links to other websites. How these links are identified is by their path, also known as the value of their `href` attribute.
 
-Links pointing to other pages within the same website should have a **relative path**, in which the domain is not in the href attribute value. Since the link is pointing to another page on the same website the href attribute value only needs to include the page being linked to, `/about.html` for example. Should the page being linked to reside within a subdirectory the `href` attribute value needs to reflect this as well. Say the `about.html` page resides within the pages directory, the relative path would then be `/pages/about.html`.
+最通常的链接类型包含链接到一个站点的其它页面和链接到其它站点. 怎样区别这些链接是通过它们的路径, 也就是众所周知的 `href` 属性的值.
+
+Links pointing to other pages within the same website should have a **relative path**, in which the domain is not in the `href` attribute value. Since the link is pointing to another page on the same website the href attribute value only needs to include the page being linked to, `/about.html` for example. Should the page being linked to reside within a subdirectory the `href` attribute value needs to reflect this as well. Say the `about.html` page resides within the pages directory, the relative path would then be `/pages/about.html`.
 
 Linking to other websites outside of the current one requires an absolute path, where the href attribute value must include the full domain. A link to Google would need the href attribute value of `http://google.com`, starting with http and including the domain, `.com` in this case.
 
@@ -149,9 +157,11 @@ Linking to other websites outside of the current one requires an absolute path, 
 <a href="http://www.google.com/">Google</a>
 ```
 
-##### Linking to an Email Address
+##### 链接到 Email 地址(Linking to an Email Address)
 
 Occasionally you will encounter a link to an email address. When clicked, this link opens the default email client and populates some information. At a minimum the email address where the message is being sent is populated, however other information such as a subject and body text may also be populated.
+
+通常你将会遇到一个链接到一个 Email 地址. 当点击链接, 这个链接打开默认的 Email 客户端并且填充一些信息. 至少消息被发送的 email 地址会被填充, 然而其它信息例如主题和正文文本也可以被填充.
 
 To create an email link the `href` attribute value needs to start with `mailto:` followed by the email address to where the email should be sent. To create an email link to `shay@awesome.com` the href attribute value would be `mailto:shay@awesome.com`.
 
@@ -165,7 +175,7 @@ For more information on building email links, including how to add multiple emai
 <a href="mailto:shay@awesome.com?subject=Still%20Awesome&body=This%20is%20awesome">Email Me</a>
 ```
 
-#### Opening Links in a New Window
+#### 在一个新窗口中打开链接(Opening Links in a New Window)
 
 One feature available with hyperlinks is the ability to determine where the link is opened once clicked. Typically links open in the same window from which they are clicked, however links may open in a new window. To trigger the action of opening a link in a new window the `target` attribute is used with a value of `_blank`. The target attribute determines where the link is displayed, and the `_blank` value specifies a new window.
 
@@ -173,7 +183,7 @@ One feature available with hyperlinks is the ability to determine where the link
 <a href="http://shayhowe.com/" target="_blank">Shay Howe</a>
 ```
 
-#### Linking to Elements within the Same Page
+#### 链接到相同页面中的元素(Linking to Elements within the Same Page)
 
 Periodically you will see links that simply link to another portion of the same page. In the case of this guide, links found within the "In this Lesson" section link down the page to the appropriate section. Perhaps more commonly found online are "Back to Top" links that return users to the top of a page.
 
@@ -188,13 +198,15 @@ Creating an on page link is accomplished by specifying an ID on the element you 
 
 HTML5 provides a handful of [new elements](http://dev.opera.com/articles/view/new-structural-elements-in-html5/), all of which are focused around improving semantics. Before, if you wanted to declare a block level section of a page you were likely to use a `div`. With HTML5 you have a handful of new block level elements that allow you to write more semantic code.
 
+HTML5 提供一系列的的 [new elements](http://dev.opera.com/articles/view/new-structural-elements-in-html5/), 所有的一切皆是为了提高语义. 以前, 如果你想要声明一个页面的块级别的部分你可能会使用一个 `div`. 通过 HTML5 你有一系列的新的块级别的元素使你写出更语义化的代码.
+
 **Fig. 2.01**
 
 The new HTML5 structural elements outline.
 
 ![Fig. 2.01](pr.png)
 
-#### Header
+#### 头部(Header)
 
 The `header`, just as it sounds, is used to identify the heading of a page, `article`, `section`, or other segment of a page. In general, a `header` may include a heading, introduction text, or navigation. You can use more than one `header` on a page. Depending on the website, you will ideally include a `header` at the beginning of the page. Additionally, a header may reappear as the `header` of an article or section as necessary.
 
@@ -202,17 +214,19 @@ The `header`, just as it sounds, is used to identify the heading of a page, `art
 <header>...</header>
 ```
 
-  ##### Clarification on the header Element
+  ##### 澄清 `header` 元素(Clarification on the `header` Element)
 
   The `header` element should not be confused with the head or headings, `h1` through `h6`.
-
-  The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.
-
-  Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.
   
-#### Navigation
+  `header` 元素不应该与页面的 `head`, `h1` 到 `h6` 混淆.
 
-The `nav` is a block level element used to denote a section of major navigational links on a page. Not all links should be wrapped within a `nav` element. The `nav` should be reserved for primary navigation sections including universal navigation, a table of contents, breadcrumbs, previous/next links, or other noteworthy groups of links.
+  **The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.**
+
+  **Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.**
+  
+#### 导航(Navigation)
+
+The `nav` is a block level element used to denote a section of major navigational links on a page. **Not all links should be wrapped within a `nav` element**. The `nav` should be reserved for primary navigation sections including universal navigation, a table of contents, breadcrumbs, previous/next links, or other noteworthy groups of links.
 
 Most commonly links included within the `nav` element will link to other parts of the same website or web page. Miscellaneous one off links should not be wrapped within the `nav` element, and should only use the a element.
 
@@ -229,6 +243,8 @@ Most commonly links included within the `nav` element will link to other parts o
 
 The `article` block level element is very similar to that of a `div` or `section` however it is specifically defined as an element which should include independent, self-contained content that may be independently distributable or reusable. Most often `article` will fall within blogs and other publishing websites as a block of published content. When deciding to use the `article` element determine if the content within the element could be replicated elsewhere without any confusion. The content within the `article` alone must make sense, and be able to be distrbuted elsewhere, such as within an RSS feed.
 
+`atricle` 块级别元素与 `div` 或者 `section` 非常相似然而它特别的定义为一个应该包含独立的, 自包含用来分派或者重用的内容. 通常 `article` 将会出现在博客以及其它的出版社网站作为一个发布内容的部分. 当决定使用 `article` 元素确定元素中的内容是否可以被复制并且没有任何混淆. 在 `article` 中的内容必须有意义, 并且能够分派到其他地方, 例如在 RSS 订阅中.
+
 ```html
 <article>...</article>
 ```
@@ -237,17 +253,21 @@ The `article` block level element is very similar to that of a `div` or `section
 
 A `section` is more likely to get confused with a `div` than an `article`. As a block level element, `section` is defined to represent a generic document or application section. Where a `section` differentiates itself from a `div` is that a `section` is not to be used as a convenience for styling or scripting purposes.
 
+`section` 比 `article` 与 `div` 产生混淆. 作为一个块级别的元素, `section` 被定义用来代表一个常规的文档或者应用程序部分. `section` 与 `div` 的一个不同之处是 `section` 被用于样式化和脚本化目的.
+
 That said – you can apply styles to a `section` however you shouldn’t be using a `section` aimlessly with the sole purpose of adding styles. Reserve the `section` element for large parts of a page worthy of the element.
 
 ```html
 <section>...</section>
 ```
 
-  ##### Deciding When to Use a section or div
+  ##### 决定何时使用 `section` 或者 `div`(Deciding When to Use a `section` or `div`)
 
   The best way to determine when to use a `section` versus a `div` is to look at the actual content at hand. If the block of content could exist as a record within a database and isn’t explicitly needed as a CSS styling hook then the `section` element is most applicable. Sections should be used to break a page up, providing a natural hierarchy, and most commonly will have a proper heading.
+  
+  最好的方式决定使用一个 `section` 对应于 `div` 是查看实际处理的内容. 如果块内容以一条记录存在再数据库中并且不明确的需要相应的钩子用于CSS 样式那么 `section` 元素是最合适的. Sections 应该用来中断页面前部分, 提供一个自然的层级, 并且通常会有一个适当的头部.
 
-  A `div` on the other hand may be used to specifically tie styles to a block of content. As an example, if a couple paragraphs need to stand out above the rest of the content on on a page they should be wrapped in a `div`. That `div` then may have the proper styles applied to it, perhaps a background, border, or the alike.
+  **A `div` on the other hand may be used to specifically tie styles to a block of content.** As an example, if a couple paragraphs need to stand out above the rest of the content on on a page they should be wrapped in a `div`. That `div` then may have the proper styles applied to it, perhaps a background, border, or the alike.
   
 #### Aside
 
@@ -265,7 +285,7 @@ The `footer` is identical to that of the `header` however for the bottom of a pa
 
 #### D.R.Y. – Don’t Repeat Yourself
 
-One principle of development is **D.R.Y.**, also known as don’t repeat yourself. Within CSS this principle can speak volumes as it is easy to continually write the same styles over and over again. Don’t. CSS was designed in a way to allow you to cascade styles and use classes so that you easily apply and inherent styles. The end goal is to write clean and light code, of which is semantic and easily managed.
+One principle of development is **D.R.Y.**, also known as don’t repeat yourself. Within CSS this principle can speak volumes as it is easy to continually write the same styles over and over again. Don’t. CSS was designed in a way to allow you to cascade styles and use classes so that you easily apply and **inherent styles**. The end goal is to write clean and light code, of which is semantic and easily managed.
 
 #### Resources & Links
 

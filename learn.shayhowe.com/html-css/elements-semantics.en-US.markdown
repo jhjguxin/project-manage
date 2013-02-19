@@ -86,7 +86,7 @@ To make text bold, and to note it as important, the `strong` inline level elemen
 
 #### Italicize Text with Emphasis
 
-To italicize text and place a stressed emphasis on it the `em` inline level element is used. As with strong, there are two different tags used to italicize text, each with a slightly different semantic meaning. `em` semantically means to place a stressed emphasis on text and thus is the most popular option for italicizing text. The other option is `i`, which semantically values text to be rendered in an alternate voice. Again, you will need to gauge the significance of the text you want to italicize and choose an element accordingly.
+To italicize text and place a stressed emphasis on it the `em` inline level element is used. As with `strong`, there are two different tags used to italicize text, each with a slightly different semantic meaning. `em` semantically means to place a stressed emphasis on text and thus is the most popular option for italicizing text. The other option is `i`, which semantically values text to be rendered in an alternate voice. Again, you will need to gauge the significance of the text you want to italicize and choose an element accordingly.
 
 ```html
 <p>Quae ars <em>putanda</em> est, expeteretur si nih.</p>
@@ -106,7 +106,7 @@ By nature the a element is an inline element, however with the introduction of H
 
 The two most common types of links include links to other pages within a website and links to other websites. How these links are identified is by their path, also known as the value of their `href` attribute.
 
-Links pointing to other pages within the same website should have a **relative path**, in which the domain is not in the href attribute value. Since the link is pointing to another page on the same website the href attribute value only needs to include the page being linked to, `/about.html` for example. Should the page being linked to reside within a subdirectory the `href` attribute value needs to reflect this as well. Say the `about.html` page resides within the pages directory, the relative path would then be `/pages/about.html`.
+Links pointing to other pages within the same website should have a **relative path**, in which the domain is not in the `href` attribute value. Since the link is pointing to another page on the same website the href attribute value only needs to include the page being linked to, `/about.html` for example. Should the page being linked to reside within a subdirectory the `href` attribute value needs to reflect this as well. Say the `about.html` page resides within the pages directory, the relative path would then be `/pages/about.html`.
 
 Linking to other websites outside of the current one requires an absolute path, where the href attribute value must include the full domain. A link to Google would need the href attribute value of `http://google.com`, starting with http and including the domain, `.com` in this case.
 
@@ -170,13 +170,13 @@ The `header`, just as it sounds, is used to identify the heading of a page, `art
 <header>...</header>
 ```
 
-  ##### Clarification on the header Element
+  ##### Clarification on the `header` Element
 
-  The `header` element should not be confused with the head or headings, `h1` through `h6`.
+  The `header` element should not be confused with the `head` or headings, `h1` through `h6`.
 
-  The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.
+  **The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.**
 
-  Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.
+  **Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.**
   
 #### Navigation
 
