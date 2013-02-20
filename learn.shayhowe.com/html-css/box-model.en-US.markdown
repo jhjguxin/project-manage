@@ -1,0 +1,162 @@
+###### LESSON 3
+
+### Box Model & Positioning
+
+One principle necessary to fully understand HTML and CSS is the box model. The box model concept states that every element on a page is a rectangular box, and may include margins, padding, and borders.
+
+That’s worth repeating. **Every element on a page is a rectangular box.**
+
+Having a general understanding of the box model is crucial as websites are primarily built around it. Gaining an understanding of the box mode can be frustrating and difficult, but necessary in order to build prevalent websites. Additionally, knowing how to position elements on a page to build a layout is equally important. There are a few different ways to position elements, each of which depend on the content and circumstance.
+
+#### Box Sizing
+
+By now you are fully aware that every element on a page, block or inline level, is a rectangular box. These boxes can come in different sizes and may have margins, padding, and borders to alter their size. The formation of all of these properties together is referred to as the box model. Let’s take a look at the box model, along with these CSS properties to better understand what we are working with.
+
+**Fig. 3.01**
+> Looking at each element individual you can see how they are rectangular, reguardless of their actual presented shape.
+
+![Fig. 3.01](square-elements.jpg)
+
+### The Box Model
+
+As we know, every element is a rectangular box, of which includes a height and width, and may consist of different margins, padding, and borders. All of these values put together build what is known as the [box model](http://css-tricks.com/the-css-box-model/).
+
+The box starts with the `height` and `width` of an element, which may be determined by the type of element, the contents of the element, or by specified `height` and `width` properties. The `height` and `width` is then followed by the `padding` and `border`. The `margin` follows the border, however it is not technically included within the actual size of the box. Although it’s not included within the size of the box, the `margin` does help define the box model.
+
+```css
+div {
+  background: #fff;
+  border: 6px solid #ccc;
+  height: 100px;
+  margin: 20px;
+  padding: 20px;
+  width: 400px;
+}
+```
+
+To break down the total width of an element, including the box model, use the formula:
+`margin-right` + `border-right` + `padding-right` + `width` + `padding-left` + b`order-left` + `margin-left`
+
+In comparison, the total height of an element, including the box model, can be found using the formula:
+`margin-top` + `border-top` + `padding-top` + `height` + `padding-bottom` + `border-bottom` + `margin-bottom`
+
+Fig. 3.02
+> The box model broken down.
+
+![Fig. 3.02](box-model.png)
+
+Using the formulas and box context above we can find the total height and width of our example.
+
+Width: `492px` = `20px` + `6px` + `20px` + `400px` + `20px` + `6px` + `20px`
+Height: `192px` = `20px` + `6px` + `20px` + `100px` + `20px` + `6px` + `20px`
+
+Let’s take a close look at all of the properties that go into forming the box model.
+
+#### Height & Width
+
+Every element has an inherited `height` and `width`. Depending on the purpose of the element the default `height` and `width` may be adequate. If an element is key to the layout and design of a page it may require a specified `height` and `width`. In this case the default values for **block level elements** may be overridden.
+
+#### CSS Height Property
+
+The default `height` of an element is determined by its content. An element will expand and contract vertically as necessary to accommodate its content. To set a specific height for a **block level** element the **height** property is used.
+
+```css
+div {
+  height: 100px;
+}
+```
+
+#### Margin & Padding
+
+Every browser applies a general `margin` and `padding` to elements to help with legibility and discourse. The default values for these properties differ from browser to browser and element to element. In lesson one we discussed using a [CSS reset](http://learn.shayhowe.com/html-css/terminology-syntax-intro#reset) to tune all of these default values down to zero. Using a reset allows us to work from a common ground and allows us to specify our own values.
+
+#### CSS Margin Property
+
+The `margin` property allows us to set the length of space surrounding an element. Margins fall outside of any border and are completely transparent. Margins can be used to help position elements within a particular place on a page or to simply provide breathing room, keeping all other elements a safe distance away.
+
+```css
+div {
+  margin: 20px;
+}
+```
+
+#### CSS Padding Property
+
+The `padding` property is very similar to that of the `margin` property, however it falls within any elements border. Paddings will also inherit any backgrounds of an element. **Padding is used to provide spacing within an element, not for positioning an element like the margin property.**
+
+```css
+div {
+  padding: 20px;
+}
+```
+
+Fig. 3.03
+> A box model breakdown using margins for spacing between elements and padding for spacing inside of an element.
+
+![Fig. 3.03](http://learn.shayhowe.com/assets/courses/html-css-guide/box-model/margin-padding.png)
+
+#### Margin & Padding Declarations
+
+The values for `margin` and `padding` come in both long and short hand form. To set one value for all four sides of an element simply specify one value.
+
+```css
+div {
+  margin: 20px;
+}
+```
+
+To set one value for the top and bottom and another value for the left and right of an element specify two values, **top and bottom first then left and right**.
+
+```css
+div {
+  margin: 10px 20px;
+}
+```
+
+To set unique values for all four sides specify them in the order of **top, right, bottom, and left**
+
+```css
+div {
+  margin: 10px 20px 0 15px;
+}
+```
+
+Additionally, you can set the value for one side at a time using a unique property. Each property starts with `margin` or `padding` respectfully and is then followed with a dash and the side of the box to which the value is to be applied, `top`, `right`, `bottom`, or `left`. As an example, the `padding-left` property takes one value and will set the left padding for that element.
+
+```css
+div {
+  margin-top: 10px;
+  padding-left: 6px;
+}
+```
+
+#### Borders
+
+Borders fall between the `padding` and `margin` and provide an outline around an element. Every border needs three values, a `size`, `style`, and `color`. Shorthand values fall in the order of `size`, `style` and `color`. Longhand, these three values can be broken up into `border-size`, `border-type`, and `border-color`.
+
+Most commonly you will see one sized, solid, single colored borders. Borders do however have the capability to come in [numerous](http://www.quackit.com/html/codes/html_borders.cfm) sizes, shapes, and colors.
+
+```css
+div {
+  border: 6px solid #ccc;
+}
+```
+
+  ##### Length Values
+
+  There are a handful of [length values](https://developer.mozilla.org/en/CSS/length) available to use with margins, padding, and borders, including **relative** and **absolute** values.
+
+  **Relative values** are correlative to the element of which the value is being applied. These values may include `em` and percentages.
+
+  **Absolute values** are fixed units of measurement regardless of the element. These values may include pixels, points, inches, centimeters, and more.
+  
+#### Floating Elements
+
+Outlining elements within the box model is only half the battle to coding a page layout. The other half involves knowing how to properly align all of the different elements on the page. One way to position elements along side one another is to use the `float` property. The `float` property allows you to take elements and float them `right` or `left`, positioning them directly next to or opposite each other.
+
+Take the common page layout with a `section` and an `aside.` The `section` and `aside`, as block level elements, will be stacked on top of one another by default. However, we want them to sit side by side. By giving each element a specific `width` and floating one of them left and the other to the right we can position them correctly.
+
+Fig. 3.04
+> A common page layout including floats and clears.
+
+![Fig. 3.04](floats.png)
