@@ -150,4 +150,97 @@ div {
 
   **Absolute values** are fixed units of measurement regardless of the element. These values may include pixels, points, inches, centimeters, and more.
   
+#### Floating Elements
 
+Outlining elements within the box model is only half the battle to coding a page layout. The other half involves knowing how to properly align all of the different elements on the page. One way to position elements along side one another is to use the `float` property. The `float` property allows you to take elements and float them `right` or `left`, positioning them directly next to or opposite each other.
+
+Take the common page layout with a `section` and an `aside.` The `section` and `aside`, as block level elements, will be stacked on top of one another by default. However, we want them to sit side by side. By giving each element a specific `width` and floating one of them left and the other to the right we can position them correctly.
+
+Fig. 3.04
+> A common page layout including floats and clears.
+
+![Fig. 3.04](floats.png)
+
+There are a few important things to note when [floating elements](http://coding.smashingmagazine.com/2007/05/01/css-float-theory-things-you-should-know/). The first being, when floating an element it is going to float all the way to the edge of its parent container. If there isn’t a parent element it will float all the way to the edge of the page. Additionally, when floating an element other elements will begin to line up around it within the natural flow of the page.
+
+```css
+section {
+  float: left;
+  margin: 10px;
+  width: 600px;
+}
+aside {
+  float: right;
+  margin: 10px;
+  width: 320px;
+}
+```
+
+#### Clearing Floated Elements
+
+Whenever an element is floated, it breaks the normal flow of a page and other elements will wrap around the floated one as necessary. Sometimes this is good, such as when floating an image to the side of a block of content, and sometimes this is bad.
+
+To float an element, or handful of elements, and then return the document to its normal flow you use the `clear` property. The `clear` property acts on the element it is applied to and returns the document back to its normal flow, clearing every floated element up to that point.
+
+In the example above, with the `section` and `aside` floated, we want to apply a clear to the `footer` to force it to fall below the two floated elements.
+
+```css
+footer {
+  clear: both;
+}
+```
+
+#### Positioning Elements
+
+Apart from floating elements you can also use the `position` property to align elements. The `position` property comes with a couple of different values, all of which have [different functionalities](http://www.alistapart.com/articles/css-positioning-101/) behind them.
+
+The default `position` value is `static`, which keeps elements within their normal flow. The `relative` value allows you to use box offset properties such as `top`, `right`, `bottom` and `left`. The `absolute` and `fixed` values work with box offset properties too, but break the element from the normal flow of a document. These values, `absolute` and `fixed`, correspond directly with an elements parent who has a `position` value of `relative`.
+
+Fig. 3.05
+> Absolutely positioning an unordered list within a header.
+
+![Fig. 3.05](http://learn.shayhowe.com/assets/courses/html-css-guide/box-model/position.png)
+
+Taking the example above, the `header` element has been assigned a `position` of `relative` making it function as a static element yet act as the primary container to any absolutely positioned element within it. The `ul` is then absolutely positioned `10px` way from the top right of the `header` element.
+
+Altogether the code for this example would look as follows.
+
+```html
+<header>
+  <ul>...</ul>
+</header>
+```
+
+```css
+header {
+  position: relative;
+}
+ul {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+```
+
+#### Box Offset Properties
+
+So long as an element’s `position` is not set to `static` the box offset properties may be used. These offset properties include `top`, `right`, `bottom` and `left`. Depending on the property, they position an element in the direction specified, `top`, `right`, `bottom` or `left`.
+
+For example, `bottom: 32px`; will position an element 32 pixels from the bottom of its parent element with a position value of `relative`. In contrast, `bottom: -32px`; will position an element 32 pixels below its parent element with a position value of `relative`.
+
+  ##### Grids & Frameworks
+
+  There are numerous tools and practices to consider when building the layout of a site. Grids and frameworks have risen to the forefront.
+
+  **Grids**, both vertical and baseline, provide a great way to add cadence to your website and keep everything aligned. There are a handful of different [recommended grids](http://vandelaydesign.com/blog/design/resources-grid-based-design/) that have become popular over the years. You can pick from one of them or implement your own, whatever works best for your project.
+
+  **Frameworks** provide a way to rapidly build a website based on a set of predetermined standards. Depending on the project, frameworks can provide a great starting point or even a complete solution. They can also cause more trouble than they’re worth. Before getting too far over your head, research the framework and make sure you are comfortable working with it and editing it.
+  
+#### Resources & Links
+
+* [CSS Length Values](https://developer.mozilla.org/en/CSS/length) via Mozilla Developer Network
+* [HTML Borders](http://www.quackit.com/html/codes/html_borders.cfm) via Quackit.com
+[The CSS Box Model](http://coding.smashingmagazine.com/2007/05/01/css-float-theory-things-you-should-know/) via CSS-Tricks
+[CSS Float Theory](http://coding.smashingmagazine.com/2007/05/01/css-float-theory-things-you-should-know/) via Smashing Magazine
+[CSS Positioning 101](http://www.alistapart.com/articles/css-positioning-101/) via A List Apart
+[Resources for Grid-Based Design](http://vandelaydesign.com/blog/design/resources-grid-based-design/) via Vandelay Design
