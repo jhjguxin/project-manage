@@ -4,27 +4,42 @@
 
 Typography on the web has grown substantially over the last few years. There are a couple of different reasons for this rise in popularity, however none more recognized than the ability to embed your own web fonts on a website.
 
+最近几年 web 排版有显著的增长. 人气的增长有几个不同的原因, 但是公认的 (原因是) 能够在你的 web 站点中 嵌入你自己的 web 字体.
+
 In the past designers were limited to a small number of typefaces they could use on a website. These typefaces were based off what were the most commonly installed fonts on a computer, thus most likely to render properly on screen. Now with the ability to embed fonts designers have a much larger palette of typefaces to choose from.
 
+过去的设计者限制于在 web 只能使用很少的字体. 这些字体来自基于电脑上通常安装的, 很容易在屏幕上渲染的字体. 现在通过嵌入字体设计者有了很多字体供选择.
+
 While the ability to embed fonts opens up a door to all new typefaces it also requires designers to know the basic principles of typography. Translating these basic principles of typography into HTML and CSS helped build the core of online typography and [text styling](http://dev.opera.com/articles/view/29-text-styling-with-css/).
+
+
+在通过嵌入字体敲开所有新字体的大门的时候它也需要设计者知道排版的基本原则. 转换这些排版的基础原则到 HTML 和 CSS 有助于构建在线排版和文本样式的核心.
 
   ##### Typeface vs. Font
 
   The terms typeface and font are often interchanged, causing confusion. Below is a breakdown of exactly what each term stands for, hopefully adding context to how the two terms should be used.
+  
+  术语 typeface 和 font 经常互换, 产生混淆. 下面是指出了每个术语的标准含义, 添加了内容希望能够说明如何使用这个两个术语.
 
   A **typeface** is what you see. It is the artistic impression of how text looks, feels, and reads.
+  
+  **typeface** 是你所看到的. 它是艺术家所实现的文字的外形, 感受和阅读性.
 
   A **font** is a file that includes a typeface. Using a font on a computer allows that computer to access the typeface.
+  
+  **font** 是包含字体的文件. 在一台电脑使用一个字体允许电脑访问这个字体.
 
   One way to help distinguish the difference between a typeface and font is to compare them to a song and MP3. A typeface is very similar to a song in that it is a work of art. It is created by an artist, or artists, and is open to interpretation. A font on the other hand is very similar to an MP3 in that it is not the artistic impression, only a method of delivering the artistic value.
-  
+
 #### Formatting Content
 
 Within the previous lesson, [Elements & Semantics](http://learn.shayhowe.com/html-css/elements-semantics/), we talked about how to semantically add content to a page. This lesson is worth reviewing as it will play a part in our discussion on typography. As a brief review let’s recap headings, paragraphs, and how to bold or italicize text.
 
+在先前的课程中, [Elements & Semantics](http://learn.shayhowe.com/html-css/elements-semantics/), 我们讨论了关于怎样语义化的添加内容到页面. 这节课程值得回顾的因为它的一部分也是我们的在排版中需要讨论的内容. 在一个简要的回顾后我们来概述 headings, paragraphs, 以及怎样加粗和倾斜文字.
+
 ##### Headings
 
-Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The h1 heading should be reserved for larger, more important headings while the other headings should support the h1 above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
+Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The `h1` heading should be reserved for larger, more important headings while the other headings should support the `h1` above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
 
 ```html
 <h1>Lorem ipsum dolor sit amet...</h1>
@@ -75,7 +90,7 @@ body {
 
 CSS provides a lot of different properties to edit the look and feel of text on a page. The properties to do so are broken down into two categories, `font` based properties and `text` based properties. Most properties corresponding to these categories will be prefaced with either `font-*` or `text-*`. To begin we’ll discuss the `font` based properties.
 
-##### 字体系列(Font Family)
+##### 字体家族(Font Family)
 
 The `font-family` property is used to declare which font, and fallback fonts, should be used to display text. The value of the `font-family` property contains multiple font names, all comma separated. The first font declared, all the way to the left, is the primary font choice. Should the first font not be available alternative fallback fonts are declared from left to right. Font names including two or more words need to be wrapped in quotation marks. Additionally, the last font should be a keyword value, which will pick the system default font in the specified type.
 
@@ -85,16 +100,16 @@ p {
 }
 ```
 
-##### Font Size
+##### 字体尺寸(Font Size)
 
 Using the `font-size` property provides the ability to set the size of text using common [length values](http://css-tricks.com/css-font-size/), including pixels, em, percents, points, and `font-size` keywords. More and more often the pixel value is used as it provides the most control over a font’s size. Previously, em and percentage values used to be fairly popular because they allow the text to scale relatively when a user would zoom in on a page within the browser. Now most browsers are able to scale pixels as well, eliminating a large need for em and percentage values.
 
 
-##### Font Style
+##### 字体样式(Font Style)
 
 To change text to italicized and vice versa the `font-style` property is utilized. The font-style property accepts four keyword values, including `normal`, `italic`, `oblique`, and `inherit`. Of these four, most commonly used are normal and `italic`. `italic` being used to set text to italic and `normal` being used to return text to its normal style.
 
-##### 字体变体(Font Variant)
+##### 字体变形(Font Variant)
 
 It isn’t often but occasionally text will need to be set in small capitals, or small caps. For this specific case the `font-variant` property has been created. The `font-variant` property accepts three values, including `normal`, `small-caps`, and `inherit`. The most typically seen values are `normal` and `small-caps` to switch between `normal` and `small-caps`, and vice versa. If the typeface being used does not support small caps the variant of the font will not change. Always double check support for a typeface before using this property.
 
@@ -116,9 +131,11 @@ p {
 }
 ```
 
-##### Line Height
+##### 行高(Line Height)
 
-Line height, the distance between two lines of text known as leading, is declared using the `line-height` property. The `line-height` takes all general length and numeral values, as mentioned above within `font-size`. The best practice for legibility is to set the `line-height` to around one and half times that of your font-size. This could be quickly accomplished by setting the `line-height` to `150%`. However, if you are working with a baseline grid having a little more control over your `line-height` using pixels may be preferred.
+Line height, the distance between two lines of text known as leading, is declared using the `line-height` property. The `line-height` takes all general length and numeral values, as mentioned above within `font-size`. The best practice for legibility is to set the `line-height` to around one and half times that of your `font-size`. This could be quickly accomplished by setting the `line-height` to `150%`. However, if you are working with a baseline grid having a little more control over your `line-height` using pixels may be preferred.
+
+行高, 按照字面意思就是两行间的距离, 被声明使用 `line-height` 属性. `line-height` 接收所有通常的长度和数量值, 如同上面提到的 `font-size`. 为了易读性是设定 `line-height` 为你的 `font-size` 的一倍半. 这可以通过设定 `line-height` 为 `150%` 快速达成. 然而如果你基于基线网格为了便于控制使用像素是首选.
 
 **Line height may also be used to vertical center single lines of text within an element**. Setting an element’s `line-height` to the same value as the element’s `height` will vertically center the text. This technique is commonly seen within buttons, alert messages, and other single line text blocks.
 
@@ -128,7 +145,7 @@ p {
 }
 ```
 
-##### Shorthand Font Properties
+##### 字体属性短操作(Shorthand Font Properties)
 
 All of the font based properties listed above may be combined and rolled into one `font` property and [shorthand value](http://www.impressivewebs.com/css-font-shorthand-property-cheat-sheet/). The order of these properties should fall as follows from left to right: `font-style`, `font-variant`, `font-weight`, `font-size`, `line-height`, and `font-family`. As a shorthand value these property values can be stacked from `left` to `right` without the use of a comma, except for font names. A forward slash, `/`, separator is needed between the `font-size` and `line-height` property values.
 
@@ -172,11 +189,11 @@ h2 {
 }
   ```
   
-#### Text Properties
+#### 文本属性(Text Properties)
 
 Knowing how to set the family, size, style, variant, weight, and line height of a font is only half the battle. Additionally you can decide how to align, decorate, indent, transform, and space text.
 
-##### Text Align
+##### 文本对齐(Text Align)
 
 Aligning text is an important part of building a rhythm and flow to a page, using the `text-align` property such alignment can be set. The `text-align` property has five values, `comprising` of `left`, `right`, `center`, `justify`, and `inherit`. All of these values are fairly straightforward and behave as expected. The `text-align` property, however should not be confused with the float property. The `text-align` values `left` and `right` will align text within an element, where the `float` values `left` and `right` will move the entire element. More information on the `float` property can be found in the [Box Model & Positioning](http://learn.shayhowe.com/html-css/box-model) lesson.
 
@@ -291,7 +308,7 @@ p a {
   ```
 
 
-#### Web Safe Fonts
+#### 网络安全字体(Web Safe Fonts)
 
 By default there a few specific fonts that are pre-installed on every computer, tablet, cell phone, or other browsing capable device. Being installed on every device allows these fonts to be used freely online knowing that no matter what device is browsing the site, the font will render properly. These fonts have become known as “web safe fonts.” There are only a handful of web safe fonts, of which the safest ones to use are listed below.
 
@@ -304,7 +321,7 @@ By default there a few specific fonts that are pre-installed on every computer, 
 * Trebuchet
 * Verdana
 
-#### Embedding Web Fonts
+#### 嵌入字体(Embedding Web Fonts)
 
 In recent years an alternative to web safe fonts has arisen. Now the ability exists to upload fonts to a server and include them on a website via the CSS `@font-face` property. This ability has done wonders to online typography. Now, more than ever, type is coming to life online.
 

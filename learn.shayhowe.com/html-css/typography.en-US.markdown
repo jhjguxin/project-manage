@@ -24,7 +24,7 @@ Within the previous lesson, [Elements & Semantics](http://learn.shayhowe.com/htm
 
 ##### Headings
 
-Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The h1 heading should be reserved for larger, more important headings while the other headings should support the h1 above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
+Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The `h1` heading should be reserved for larger, more important headings while the other headings should support the `h1` above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
 
 ```html
 <h1>Lorem ipsum dolor sit amet...</h1>
@@ -118,7 +118,7 @@ p {
 
 ##### Line Height
 
-Line height, the distance between two lines of text known as leading, is declared using the `line-height` property. The `line-height` takes all general length and numeral values, as mentioned above within `font-size`. The best practice for legibility is to set the `line-height` to around one and half times that of your font-size. This could be quickly accomplished by setting the `line-height` to `150%`. However, if you are working with a baseline grid having a little more control over your `line-height` using pixels may be preferred.
+Line height, the distance between two lines of text known as leading, is declared using the `line-height` property. The `line-height` takes all general length and numeral values, as mentioned above within `font-size`. The best practice for legibility is to set the `line-height` to around one and half times that of your `font-size`. This could be quickly accomplished by setting the `line-height` to `150%`. However, if you are working with a baseline grid having a little more control over your `line-height` using pixels may be preferred.
 
 **Line height may also be used to vertical center single lines of text within an element**. Setting an element’s `line-height` to the same value as the element’s `height` will vertically center the text. This technique is commonly seen within buttons, alert messages, and other single line text blocks.
 

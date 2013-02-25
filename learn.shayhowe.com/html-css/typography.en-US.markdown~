@@ -24,7 +24,7 @@ Within the previous lesson, [Elements & Semantics](http://learn.shayhowe.com/htm
 
 ##### Headings
 
-Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The h1 heading should be reserved for larger, more important headings while the other headings should support the h1 above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
+Heading elements come in six different levels, `h1` through `h6`, each of which act as a supplementary heading to the one above it. The `h1` heading should be reserved for larger, more important headings while the other headings should support the `h1` above it. Using the HTML5 document structure elements we have the ability to reuse these headings, however we must use proper judgement in doing so.
 
 ```html
 <h1>Lorem ipsum dolor sit amet...</h1>
@@ -334,6 +334,83 @@ Writing online may lead to citing different titles of work or quotations. Additi
 
 Knowing when to use which elements and attributes to properly markup citations and quotes takes a bit of practice. In general remember, the `cite` element is used to reference a title of work, the `q` element is used for short, inline quotations, and the `blockquote` is used for longer, external quotations.
 
-#### Citing a Title of Work
+##### Citing a Title of Work
 
-The cite element is used within HTML to specifically cite a title of work. The cite element should not be confused with the cite attribute. The element provides semantic context to the title of work, where the attribute has a URI value that serves as a reference source. The cite element should be specifically reserved for a title of work and shouldn’t include any other context about the source. A title of work may include a book, movie, song, or so forth. For additional reference, it helps to include a hyperlink to the original source if relevant.
+The `cite` element is used within HTML to specifically cite a title of work. The `cite` element **should not** be confused with the cite attribute. The **element** provides semantic context to the title of work, where the **attribute** has a URI value that serves as a reference source. The `cite` element should be specifically reserved for a title of work and shouldn’t include any other context about the source. A title of work may include a book, movie, song, or so forth. For additional reference, it helps to include a hyperlink to the original source if relevant.
+
+```html
+<p><cite><a href="http://www.amazon.com/Steve-Jobs-Walter-Isaacson/dp/1451648537" title="Steve Jobs">Steve Jobs</a></cite> by Walter Isaacson is truly inspirational.</p>
+```
+
+##### Dialog & Prose Quotation
+
+Quoting dialog or prose happens quite often inline amongst other text. For this particular case the `q` inline element, better known as quote, should be applied. The `q` element is used to semantically note dialog or prose and shouldn’t be used for any other quotation purposes.
+
+```html
+<p>Steve Jobs once said, <q>“One home run is much better than two doubles.”</q></p>
+```
+
+##### Dialog & Prose Citation
+
+An optional attribute to include on the `q` element is the `cite` attribute. The `cite` attribute acts as a citation to the quote in the form of a URI. This attribute doesn’t alter the appearance of the element, it simply adds value to screen readers and other devices. Since the attribute isn’t viewable within the browser it is recommended to provide a hyperlink including this source next to the actual quotation if available.
+
+
+```html
+<p><a href="http://www.businessweek.com/magazine/content/06_06/b3970001.htm" title="Steve Jobs' Magic Kingdom">Steve Jobs</a> once said, <q cite="http://www.businessweek.com/magazine/content/06_06/b3970001.htm">“One home run is much better than two doubles.”</q></p>
+```
+
+##### External Quotation
+
+To quote a large block of text, most commonly from an external source and spanning several lines, the `blockquote` element is used. The `blockquote` is a block level element that may include other block level elements nested inside of it including headings and paragraphs.
+
+```html
+<blockquote>
+  <p>“In most people’s vocabularies, design is a veneer. It’s interior decorating. It’s the fabric of the curtains, of the sofa. But to me, nothing could be further from the meaning of design. Design is the fundamental soul of a human-made creation that ends up expressing itself in successive outer layers of the product.”</p>
+  <p>— Steve Jobs in Fortune Magazine</p>
+</blockquote>
+```
+
+##### External Citation
+
+Longer quotes used within the `blockquote` element should always include a citation. This citation may be extremely simple, such as an author or source, however there may also be fairly more information including multiple citations and links to additional references.
+
+A longer quotation may include a mix of both the `cite` attribute and `cite` element. The `cite` attribute can be included within the `blockquote` element the same as used within the `q` element above. The `cite` element can fall after the actual quote itself and help specify the title of work from which the quote comes from if relevant.
+
+Since the `cite` attribute and `cite` element are purely semantic and don’t add any visual reference for users hyperlinks are also preferred when available. These hyperlinks should highlight both the origin of the quote (author, artist, etcetera) and the title of work in which it first appeared.
+
+```html
+<blockquote cite="http://money.cnn.com/magazines/fortune/
+fortune_archive/2000/01/24/272277/index.htm">
+  <p>“In most people’s vocabularies, design is a veneer. It’s interior decorating. It’s the fabric of the curtains, of the sofa. But to me, nothing could be further from the meaning of design. Design is the fundamental soul of a human-made creation that ends up expressing itself in successive outer layers of the product.”</p>
+  <p>— <a href="http://en.wikipedia.org/wiki/Steve_Jobs" title="Steve Jobs">Steve Jobs</a> in <cite><a href="http://money.cnn.com/magazines/fortune/fortune_archive/2000/01/24/272277/index.htm" title="Apple's One-Dollar-a-Year Man">Fortune Magazine</a></cite></p>
+</blockquote>
+```
+
+  ###### Automating Quotation Marks with CSS
+
+  Rather than adding in your own quotation marks in HTML there is the ability to add them in automatically with CSS. In the past support to get quotation marks to display properly with CSS has been weak, due to browser language support, however with more modern browsers language support is getting better.
+
+  To automatically add quotation marks within CSS the `before` and `after` pseudo-elements are used. These pseudo-elements use the `quotes` and `content` properties to dynamically add quotation marks as necessary.
+
+  Below is an example how these pseudo-elements and properties work to add quotation marks to the `q` element. For more information please take a deeper look into both [pseudo-elements](http://css-tricks.com/pseudo-element-roundup/) and [how to use quotation marks](http://html5doctor.com/blockquote-q-cite/).
+  
+```css
+q {
+  quotes: '“' '”' '‘' '’';
+}
+q:before {
+  content: '“';
+  content: open-quote;
+}
+q:after {
+  content: '”';
+  content: close-quote;
+}
+```
+
+### Resources & Links
+
+* [Text styling with CSS](http://dev.opera.com/articles/view/29-text-styling-with-css/) via Dev.Opera
+* [Quoting and citing with blockquote, q, cite, and the cite attribute](http://html5doctor.com/blockquote-q-cite/) via HTML5 Doctor
+* [CSS Font Shorthand Property Cheat Sheet](http://www.impressivewebs.com/css-font-shorthand-property-cheat-sheet/) via Impressive Webs
+* [The Elements of Typographic Style](http://www.amazon.com/Elements-Typographic-Style-Robert-Bringhurst/dp/0881791326) by Robert Bringhurst
