@@ -34,31 +34,39 @@ Rails 现在使用一个 `Gemfile` 在应用程序的根目录中来决定你开
 
 More information: [Bundler homepage](http://gembundler.com)
 
-### Living on the Edge
+### 活在边缘
 
 `Bundler` and `Gemfile` makes freezing your Rails application easy as pie with the new dedicated `bundle` command. If you want to bundle straight from the Git repository, you can pass the `--edge` flag:
 
-```
+`Bundler` 和 `Gemfile` 通过专属的 `bundle` 命令冻结你的应用程序的(依赖)易如反掌. 如果你希望直接绑定到 Git 仓库, 你可以传递 `--edge`:
+
+```shell
 $ rails new myapp --edge
 ```
 
 If you have a local checkout of the Rails repository and want to generate an application using that, you can pass the `--dev` flag:
 
-```
+如果你有一个 checkout 到本地的 Rails 仓库并且希望生成使用它的应用程序来, 你可以传递 `--dev`:
+
+```shell
 $ ruby /path/to/rails/railties/bin/rails new myapp --dev
 ```
 
-Major Features
+主要的 Featured
 --------------
 
 TODO. Give a list and then talk about each of them briefly. We can point to relevant code commits or documentation from these sections.
 
-![Rails 4.0](images/rails4_features.png)
+TODO. 提供一个列表并且简要的讨论它们每个. 我们可以指出来源于代码提交或者文档的关联.
 
-Extraction of features to gems
+![Rails 4.0](http://edgeguides.rubyonrails.org/images/rails4_features.png)
+
+提取一些功能到 gems(Extraction of features to gems)
 ---------------------------
 
 In Rails 4.0, several features have been extracted into gems. You can simply add the extracted gems to your `Gemfile` to bring the functionality back.
+
+在 Rails 4.0 中一些功能被提取到 gem 中. 你可以很简单的添加这些提取的 gem 到你的 `Gemfile` 来找回这些功能.
 
 * Hash-based & Dynamic finder methods ([Github](https://github.com/rails/activerecord-deprecated_finders))
 * Mass assignment protection in Active Record models ([Github](https://github.com/rails/protected_attributes), [Pull Request](https://github.com/rails/rails/pull/7251))
@@ -70,7 +78,7 @@ In Rails 4.0, several features have been extracted into gems. You can simply add
 * Sprockets ([Github](https://github.com/rails/sprockets-rails))
 * Performance tests ([Github](https://github.com/rails/rails-perftest), [Pull Request](https://github.com/rails/rails/pull/8876))
 
-Documentation
+文档
 -------------
 
 * Guides are rewritten in GitHub Flavored Markdown.
@@ -82,15 +90,15 @@ Railties
 
 Please refer to the [Changelog](https://github.com/rails/rails/blob/master/railties/CHANGELOG.md) for detailed changes.
 
-### Notable changes
+### 显著变更
 
 *   New test locations `test/models`, `test/helpers`, `test/controllers`, and `test/mailers`. Corresponding rake tasks added as well. ([Pull Request](https://github.com/rails/rails/pull/7878))
 
 * Your app's executables now live in the `bin/` dir. Run `rake rails:update:bin` to get `bin/bundle`, `bin/rails`, and `bin/rake`.
 
-* Threadsafe on by default
+* 默认 Threadsafe
 
-### Deprecations
+### 弃用
 
 * `config.threadsafe!` is deprecated in favor of `config.eager_load` which provides a more fine grained control on what is eager loaded.
 
@@ -99,51 +107,51 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/master/railt
 Action Mailer
 -------------
 
-Please refer to the [Changelog](https://github.com/rails/rails/blob/master/actionmailer/CHANGELOG.md) for detailed changes.
+详细变更请参考 [Changelog](https://github.com/rails/rails/blob/master/actionmailer/CHANGELOG.md).
 
-### Notable changes
+### 显著变更
 
-### Deprecations
+### 弃用
 
 Active Model
 ------------
 
 Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activemodel/CHANGELOG.md) for detailed changes.
 
-### Notable changes
+### 显著变更
 
 *   Add `ActiveModel::ForbiddenAttributesProtection`, a simple module to protect attributes from mass assignment when non-permitted attributes are passed.
 
 *   Added `ActiveModel::Model`, a mixin to make Ruby objects work with AP out of box.
 
-### Deprecations
+### 弃用
 
 Active Support
 --------------
 
 Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activesupport/CHANGELOG.md) for detailed changes.
 
-### Notable changes
+### 显著变更
 
-*   Replace deprecated `memcache-client` gem with `dalli` in ActiveSupport::Cache::MemCacheStore.
+*   Replace deprecated `memcache-client` gem with `dalli` in `ActiveSupport::Cache::MemCacheStore`.
 
-*   Optimize ActiveSupport::Cache::Entry to reduce memory and processing overhead.
+*   优化 `ActiveSupport::Cache::Entry` 去减少内存和执行开销.
 
 *   Inflections can now be defined per locale. `singularize` and `pluralize` accept locale as an extra argument.
 
-*   `Object#try` will now return nil instead of raise a NoMethodError if the receiving object does not implement the method, but you can still get the old behavior by using the new `Object#try!`.
+*   `Object#try` 现在将会返回 `nil` 替代抛出一个  `NoMethodError` 如果接收的对象没有实现这个方法, 但是你仍然可以通过是使用 `Object#try!` 来得到旧的习惯.
 
-### Deprecations
+### 弃用
 
 *   Deprecate `ActiveSupport::TestCase#pending` method, use `skip` from MiniTest instead.
 
-*   ActiveSupport::Benchmarkable#silence has been deprecated due to its lack of thread safety. It will be removed without replacement in Rails 4.1.
+*   `ActiveSupport::Benchmarkable#silence` has been deprecated due to its lack of thread safety. It will be removed without replacement in Rails 4.1.
 
 *   `ActiveSupport::JSON::Variable` is deprecated. Define your own `#as_json` and `#encode_json` methods for custom JSON string literals.
 
-*   Deprecates the compatibility method Module#local_constant_names, use Module#local_constants instead (which returns symbols).
+*   Deprecates the compatibility method `Module#local_constant_names`, use `Module#local_constants` instead (which returns symbols).
 
-*   BufferedLogger is deprecated.  Use ActiveSupport::Logger, or the logger from Ruby stdlib.
+*   `BufferedLogger` is deprecated.  Use `ActiveSupport::Logger`, or the `logger` from Ruby stdlib.
 
 *   Deprecate `assert_present` and `assert_blank` in favor of `assert object.blank?` and `assert object.present?`
 
@@ -152,11 +160,11 @@ Action Pack
 
 Please refer to the [Changelog](https://github.com/rails/rails/blob/master/actionpack/CHANGELOG.md) for detailed changes.
 
-### Notable changes
+### 显著变更
 
 * Change the stylesheet of exception pages for development mode. Additionally display also the line of code and fragment that raised the exception in all exceptions pages.
 
-### Deprecations
+### 弃用
 
 
 Active Record
@@ -164,12 +172,12 @@ Active Record
 
 Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activerecord/CHANGELOG.md) for detailed changes.
 
-### Notable changes
+### 显著变更
 
-*   Improve ways to write `change` migrations, making the old `up` & `down` methods no longer necessary.
+*   提高编写 `change` 迁移的方法, 旧的  `up` & `down` 不再是必须的.
 
-    * The methods `drop_table` and `remove_column` are now reversible, as long as the necessary information is given.
-      The method `remove_column` used to accept multiple column names; instead use `remove_columns` (which is not revertible).
+    * 方法 `drop_table` 和 `remove_column` 现在是可逆的, 只要必要的信息被提供.
+      方法 `remove_column` 用来接收多个字段名, 替代使用 `remove_columns`(这是不可逆的)
       The method `change_table` is also reversible, as long as its block doesn't call `remove`, `change` or `change_default`
 
     * New method `reversible` makes it possible to specify code to be run when migrating up or down.
@@ -207,7 +215,7 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activ
 
 *   Allows PostgreSQL hstore records to be created.
 
-### Deprecations
+### 弃用
 
 *   Deprecated the old-style hash based finder API. This means that methods which previously accepted "finder options" no longer do.
 
