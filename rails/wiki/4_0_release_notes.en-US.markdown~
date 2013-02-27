@@ -5,8 +5,9 @@ Highlights in Rails 4.0:
 
 * Ruby 2.0 preferred; 1.9.3+ required
 * Strong Parameters
-* Turbolinks
-* Russian Doll Caching
+* [Turbolinks](https://github.com/rails/turbolinks) 
+    [introducing-turbolinks-for-rails-4-0](http://geekmonkey.org/articles/28-introducing-turbolinks-for-rails-4-0)
+* [Russian Doll Caching](http://blog.remarkablelabs.com/2012/12/russian-doll-caching-cache-digests-rails-4-countdown-to-2013)
 
 These release notes cover only the major changes. To know about various bug fixes and changes, please refer to the change logs or check out the [list of commits](https://github.com/rails/rails/commits/master) in the main Rails repository on GitHub.
 
@@ -202,7 +203,7 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activ
 
 *   Adds `ActiveRecord::NullRelation` and `ActiveRecord::Relation#none` implementing the null object pattern for the Relation class.
 
-*   Added `create_join_table` migration helper to create HABTM join tables.
+*   Added `create_join_table` migration helper to create has_and_belongs_to_many(HABTM) join tables.
 
 *   Allows PostgreSQL hstore records to be created.
 

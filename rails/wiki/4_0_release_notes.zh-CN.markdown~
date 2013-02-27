@@ -178,49 +178,52 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activ
 
     * 方法 `drop_table` 和 `remove_column` 现在是可逆的, 只要必要的信息被提供.
       方法 `remove_column` 用来接收多个字段名, 替代使用 `remove_columns`(这是不可逆的)
-      The method `change_table` is also reversible, as long as its block doesn't call `remove`, `change` or `change_default`
+      方法 `change_table` 也是可逆的, 只要它的块没有调用 `remove`, `change` 或者 `change_default`
 
     * New method `reversible` makes it possible to specify code to be run when migrating up or down.
-      See the [Guide on Migration](https://github.com/rails/rails/blob/master/guides/source/migrations.md#using-the-reversible-method)
+    * 新方法 `reversible` 使得它可能在迁移或者回滚时运行指定代码.
+      阅读 [Guide on Migration](https://github.com/rails/rails/blob/master/guides/source/migrations.md#using-the-reversible-method)
 
-    * New method `revert` will revert a whole migration or the given block.
-      If migrating down, the given migration / block is run normally.
+    * 新方法 `revert` 将会撤销整个迁移或者给定的块.
+      如果回滚迁移, 给定的 migration / block 正常运行.
       See the [Guide on Migration](https://github.com/rails/rails/blob/master/guides/source/migrations.md#reverting-previous-migrations)
 
-*   Adds some metadata columns to `schema_migrations` table.
+*   添加一些元数据字段到 `schema_migrations` 表.
 
     * `migrated_at`
     * `fingerprint` - an md5 hash of the migration.
     * `name` - the filename minus version and extension.
 
-*   Adds PostgreSQL array type support. Any datatype can be used to create an array column, with full migration and schema dumper support.
+*   添加 PostgreSQL array 类型支持. 任意数据类型可以被使用来创建一个数组字段, 以及全 migration 和 schema dumper 支持.
 
 *   Add `Relation#load` to explicitly load the record and return `self`.
 
-*   `Model.all` now returns an `ActiveRecord::Relation`, rather than an array of records. Use `Relation#to_a` if you really want an array. In some specific cases, this may cause breakage when upgrading.
+*   `Model.all` 现在返回一个 `ActiveRecord::Relation`, 而不是一个记录的数组. 如果你真的希望得到一个数组使用 `Relation#to_a`. 在某些特定情况, 这可能会产生损坏在更新的时候.
 
-*   Added `ActiveRecord::Migration.check_pending!` that raises an error if migrations are pending.
+*   添加 `ActiveRecord::Migration.check_pending!` 如果需要迁移的时候会抛出错误.
 
-*   Added custom coders support for `ActiveRecord::Store`. Now you can set your custom coder like this:
+*   添加对 `ActiveRecord::Store` 定制的代码支持. 现在你可以设定你自己的代码像这样:
 
         store :settings, accessors: [ :color, :homepage ], coder: JSON
 
-*   `mysql` and `mysql2` connections will set `SQL_MODE=STRICT_ALL_TABLES` by default to avoid silent data loss. This can be disabled by specifying `strict: false` in your `database.yml`.
+*   `mysql` 和 `mysql2` 连接将会默认设定 `SQL_MODE=STRICT_ALL_TABLES` 避免 silent data 丢失. 也可以通过在你的 `database.yml` 中指定 `strict: false` 来禁用它.
 
 *   Remove IdentityMap.
 
 *   Adds `ActiveRecord::NullRelation` and `ActiveRecord::Relation#none` implementing the null object pattern for the Relation class.
+*   添加 `ActiveRecord::NullRelation` 以及 `ActiveRecord::Relation#none` 实现关系类的空对象模式.
 
-*   Added `create_join_table` migration helper to create HABTM join tables.
+*   Added `create_join_table` migration helper to create has_and_belongs_to_many(HABTM) join tables.
+*   添加 `create_join_table` migration helper 来创建 has_and_belongs_to_many(HABTM) join 表.
 
-*   Allows PostgreSQL hstore records to be created.
+*   允许创建 PostgreSQL [hstore](http://www.postgresql.org/docs/9.1/static/hstore.html)(存储hash,能够支持查询 hash) 记录.
 
 ### 弃用
 
-*   Deprecated the old-style hash based finder API. This means that methods which previously accepted "finder options" no longer do.
+*   弃用旧式的基于 hash 的查找 API. 这就是说以前接收 "查找选项" 的方法不再使用.
 
-*   All dynamic methods except for `find_by_...` and `find_by_...!` are deprecated. Here's
-    how you can rewrite the code:
+*   所有除了 `find_by_...` 和 `find_by_...!` 的动态方法被弃用.它们是
+    你可以这样重写代码:
 
       * `find_all_by_...` can be rewritten using `where(...)`.
       * `find_last_by_...` can be rewritten using `where(...).last`.

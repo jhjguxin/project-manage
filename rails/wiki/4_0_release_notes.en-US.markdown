@@ -203,9 +203,9 @@ Please refer to the [Changelog](https://github.com/rails/rails/blob/master/activ
 
 *   Adds `ActiveRecord::NullRelation` and `ActiveRecord::Relation#none` implementing the null object pattern for the Relation class.
 
-*   Added `create_join_table` migration helper to create HABTM join tables.
+*   Added `create_join_table` migration helper to create has_and_belongs_to_many(HABTM) join tables.
 
-*   Allows PostgreSQL hstore records to be created.
+*   Allows PostgreSQL [hstore](http://www.postgresql.org/docs/9.1/static/hstore.html) records to be created.
 
 ### Deprecations
 
