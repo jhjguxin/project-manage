@@ -172,16 +172,20 @@
 
 *   Add support for routing constraints other than Regexp and String.
     For example this now allows the use of arrays like this:
+    添加路由 `constraints` 对正则表达式和字符串之外的支持. 例如这里可以允许像这样使用数组:
 
         get '/foo/:action', to: 'foo', constraints: { subdomain: %w[www admin] }
 
     or constraints where the request method returns an Fixnum like this:
+    或者请求方法需要返回 Fixnum 的 `constraints`:
 
         get '/foo', to: 'foo#index', constraints: { port: 8080 }
 
     Note that this only applies to constraints on the request - path constraints
     still need to be specified as Regexps as the various constraints are compiled
     into a single Regexp.
+    注意这里仅仅应用 `constraints` 到请求的路径, `constraints` 仍然需要被指定
+    为正则表达式被编译成一个单一的正则表达式。
 
     *Andrew White*
 
@@ -275,12 +279,12 @@
 
     *Andrew White*
 
-*   Extract support for email address obfuscation via `:encode`, `:replace_at`, and `replace_dot`
+*   Extract support for email address obfuscation via `:encode`, `:replace_at`, and `:replace_dot`
     options from the `mail_to` helper into the `actionview-encoded_mail_to` gem.
 
     *Nick Reed + DHH*
 
-*   Handle `:protocol` option in `stylesheet_link_tag` and `javascript_include_tag`
+*   **Handle `:protocol` option in `stylesheet_link_tag` and `javascript_include_tag`**
 
     *Vasiliy Ermolovich*
 
@@ -293,9 +297,10 @@
 
 *   Prevent raising `EOFError` on multipart GET request (IE issue). *Adam Stankiewicz*
 
-*   Rename all action callbacks from *_filter to *_action to avoid the misconception that these
-    callbacks are only suited for transforming or halting the response. With the new style,
+*   **Rename all action callbacks from *_filter to *_action to avoid the misconception that these**
+    **callbacks are only suited for transforming or halting the response.** With the new style,
     it's more inviting to use them as they were intended, like setting shared ivars for views.
+    **重命名 *_filter 为 *_action 避免误解, 这些 callback 仅仅用来改造或者中止响应.**
 
     Example:
 
@@ -315,11 +320,12 @@
             end
         end
 
-    The old *_filter methods still work with no deprecation notice.
+    **The old *_filter methods still work with no deprecation notice.**
 
     *DHH*
 
 *   Add `cache_if` and `cache_unless` for conditional fragment caching:
+    添加 `cache_if` 和 `cache_unless` 用于条件缓存片段:
 
     Example:
 
@@ -360,6 +366,7 @@
     *Yves Senn*
 
 *   Sweepers was extracted from Action Controller as `rails-observers` gem.
+    Sweepers 被从 Action Controller 提取到 `rails-observers` gem.
 
     *Rafael Mendonça França*
 
@@ -384,12 +391,14 @@
     *Roberto Soares*
 
 *   Allow setting a symbol as path in scope on routes. This is now allowed:
+    允许在路由中设置一个 symbol 做为一个路径(的一部分). 现在允许这样:
 
         scope :api do
           resources :users
         end
 
     It is also possible to pass multiple symbols to scope to shorten multiple nested scopes:
+    这里也可以传递多个 symbol 到 scope 到快捷的嵌套 scope:
 
         scope :api do
           scope :v1 do
@@ -465,7 +474,7 @@
 
     *Josh Peek*
 
-*   `assert_template` can be used to assert on the same template with different locals
+*   **`assert_template` can be used to assert on the same template with different locals**
     Fix #3675.
 
     *Yves Senn*
@@ -476,12 +485,12 @@
 
 *   Accept `:remote` as symbolic option for `link_to` helper. *Riley Lynch*
 
-*   Warn when the `:locals` option is passed to `assert_template` outside of a view test case
+*   **Warn when the `:locals` option is passed to `assert_template` outside of a view test case**
     Fix #3415.
 
     *Yves Senn*
 
-*   The `Rack::Cache` middleware is now disabled by default. To enable it,
+*   **The `Rack::Cache` middleware is now disabled by default**. To enable it,
     set `config.action_dispatch.rack_cache = true` and add `gem rack-cache` to your Gemfile.
 
     *Guillermo Iguaran*
@@ -491,8 +500,8 @@
 
     *Francesco Rodriguez*
 
-*   Action and Page caching has been extracted from Action Dispatch
-    as `actionpack-action_caching` and `actionpack-page_caching` gems.
+*   **Action and Page caching has been extracted from Action Dispatch**
+    **as `actionpack-action_caching` and `actionpack-page_caching` gems.**
     Please read the `README.md` file on both gems for the usage.
 
     *Francesco Rodriguez*
@@ -528,7 +537,7 @@
     with the template name.
 
     Before when we have a template `/layout/hello.html.erb`, `assert_template`
-    was passing with any string that matches. This behavior allowed false
+    was passing with any string that matches. This behavior allowed **false**
     positive like:
 
         assert_template "layout"
@@ -541,10 +550,11 @@
 
     Fixes #3849.
 
-    *Hugolnx*
+    *[Hugolnx](https://github.com/HugoLnx/rails/commit/19dff78d0202303f7559921f24b9801722695f33)*
 
 *   `image_tag` will set the same width and height for image if numerical value
     passed to `size` option.
+    如果设置 `size` 值为数字则 `image_tag` 将会设定相同的宽度和高度.
 
     *Nihad Abbasov*
 
@@ -555,10 +565,10 @@
 
 *   `ActionDispatch::Http::UploadedFile` now delegates `close` to its tempfile. *Sergio Gil*
 
-*   Add `ActionController::StrongParameters`, this module converts `params` hash into
-    an instance of ActionController::Parameters that allows whitelisting of permitted
-    parameters. Non-permitted parameters are forbidden to be used in Active Model by default
-    For more details check the documentation of the module or the
+*   **Add `ActionController::StrongParameters`, this module converts `params` hash into**
+    **an instance of ActionController::Parameters that allows whitelisting of permitted**
+    **parameters. Non-permitted parameters are forbidden to be used in Active Model by default**
+    **For more details check the documentation of the module or the**
     [strong_parameters gem](https://github.com/rails/strong_parameters)
 
     *DHH + Guillermo Iguaran*
@@ -578,13 +588,13 @@
 
     *Tima Maslyuchenko*
 
-*   Sprockets integration has been extracted from Action Pack to the `sprockets-rails`
-    gem. `rails` gem is depending on `sprockets-rails` by default.
+*   **Sprockets integration has been extracted from Action Pack to the `sprockets-rails`**
+    **gem. `rails` gem is depending on `sprockets-rails` by default.**
 
     *Guillermo Iguaran*
 
-*   `ActionDispatch::Session::MemCacheStore` now uses `dalli` instead of the deprecated
-    `memcache-client` gem.
+*   **`ActionDispatch::Session::MemCacheStore` now uses `dalli` instead of the deprecated**
+    **`memcache-client` gem.**
 
     *Arun Agrawal + Guillermo Iguaran*
 
@@ -607,6 +617,7 @@
     *Sergey Nartimov*
 
 *   Add `.ruby` template handler, this handler simply allows arbitrary Ruby code as a template. *Guillermo Iguaran*
+    添加 `.ruby` template 处理器, 这个处理器能够很容易允许任意 Ruby 代码作为 template. *Guillermo Iguaran*
 
 *   Add `separator` option for `ActionView::Helpers::TextHelper#excerpt`:
 
@@ -615,7 +626,7 @@
 
     *Guirec Corbel*
 
-*   Added controller-level etag additions that will be part of the action etag computation *Jeremy Kemper/DHH*
+*   **Added controller-level etag additions that will be part of the action etag computation** *Jeremy Kemper/DHH*
 
         class InvoicesController < ApplicationController
           etag { current_user.try :id }
@@ -656,9 +667,9 @@
 
     *Vasiliy Ermolovich*
 
-*   `ActiveRecord::SessionStore` is extracted out of Rails into a gem `activerecord-session_store`.
-    Setting `config.session_store` to `:active_record_store` will no longer work and will break
-    if the `activerecord-session_store` gem isn't available. *Prem Sichanugrist*
+*   **`ActiveRecord::SessionStore` is extracted out of Rails into a gem `activerecord-session_store`.**
+    **Setting `config.session_store` to `:active_record_store` will no longer work and will break**
+    **if the `activerecord-session_store` gem isn't available. *Prem Sichanugrist***
 
 *   Fix `select_tag` when `option_tags` is nil.
     Fixes #7404.
@@ -680,8 +691,8 @@
 
     *DHH*
 
-*   Add Routing Concerns to declare common routes that can be reused inside
-    others resources and routes.
+*   **Add Routing Concerns to declare common routes that can be reused inside**
+    **others resources and routes.**
 
     Code before:
 
@@ -756,8 +767,8 @@
 
 *   Fixed issue with where digest authentication would not work behind a proxy. *Arthur Smith*
 
-*   Added `ActionController::Live`.  Mix it in to your controller and you can
-    stream data to the client live.  For example:
+*   **Added `ActionController::Live`.  Mix it in to your controller and you can**
+    **stream data to the client live.  For example:**
 
         class FooController < ActionController::Base
           include ActionController::Live
@@ -776,7 +787,7 @@
 
 *   Remove `ActionDispatch::Head` middleware in favor of `Rack::Head`. *Santiago Pastorino*
 
-*   Deprecate `:confirm` in favor of `data: { confirm: "Text" }` option for `button_to`, `button_tag`, `image_submit_tag`, `link_to` and `submit_tag` helpers.
+*   **Deprecate `:confirm` in favor of `data: { confirm: "Text" }` option for `button_to`, `button_tag`, `image_submit_tag`, `link_to` and `submit_tag` helpers**.
 
     *Carlos Galdino + Rafael Mendonça França*
 
@@ -784,7 +795,7 @@
 
     *Richard Schneeman + Mattt Thompson + Yves Senn*
 
-*   Add `ActionController::Flash.add_flash_types` method to allow people to register their own flash types. e.g.:
+*   **Add `ActionController::Flash.add_flash_types` method to allow people to register their own flash types. e.g.:**
 
         class ApplicationController
           add_flash_types :error, :warning
@@ -796,7 +807,7 @@
 
 *   Remove Active Model dependency from Action Pack. *Guillermo Iguaran*
 
-*   Support unicode characters in routes. Route will be automatically escaped, so instead of manually escaping:
+*   **Support unicode characters in routes. Route will be automatically escaped, so instead of manually escaping:**
 
         get Rack::Utils.escape('こんにちは') => 'home#index'
 
@@ -843,17 +854,17 @@
 
     *Piotr Sarnacki*
 
-*   `truncate` now always returns an escaped HTML-safe string. The option `:escape` can be used as
-    false to not escape the result.
+*   **`truncate` now always returns an escaped HTML-safe string. The option `:escape` can be used as**
+    **false to not escape the result.**
 
     *Li Ellis Gallardo + Rafael Mendonça França*
 
-*   `truncate` now accepts a block to show extra content when the text is truncated. *Li Ellis Gallardo*
+*   **`truncate` now accepts a block to show extra content when the text is truncated**. *Li Ellis Gallardo*
 
-*   Add `week_field`, `week_field_tag`, `month_field`, `month_field_tag`, `datetime_local_field`,
-    `datetime_local_field_tag`, `datetime_field` and `datetime_field_tag` helpers. *Carlos Galdino*
+*   **Add `week_field`, `week_field_tag`, `month_field`, `month_field_tag`, `datetime_local_field`,**
+    **`datetime_local_field_tag`, `datetime_field` and `datetime_field_tag` helpers.** *Carlos Galdino*
 
-*   Add `color_field` and `color_field_tag` helpers. *Carlos Galdino*
+*   **Add `color_field` and `color_field_tag` helpers**. *Carlos Galdino*
 
 *   `assert_generates`, `assert_recognizes`, and `assert_routing` all raise
     `Assertion` instead of `RoutingError` *David Chelimsky*
@@ -862,18 +873,18 @@
 
 *   Malformed query and request parameter hashes now raise `ActionController::BadRequest`. *Andrew White*
 
-*   Add `divider` option to `grouped_options_for_select` to generate a separator
-    `optgroup` automatically, and deprecate `prompt` as third argument, in favor
-    of using an options hash. *Nicholas Greenfield*
+*   **Add `divider` option to `grouped_options_for_select` to generate a separator**
+    **`optgroup` automatically, and deprecate `prompt` as third argument, in favor**
+    **of using an options hash**. *Nicholas Greenfield*
 
-*   Add `time_field` and `time_field_tag` helpers which render an `input[type="time"]` tag. *Alex Soulim*
+*   **Add `time_field` and `time_field_tag` helpers which render an `input[type="time"]` tag**. *Alex Soulim*
 
 *   Removed old text helper apis from `highlight`, `excerpt` and `word_wrap`. *Jeremy Walker*
 
 *   Templates without a handler extension now raises a deprecation warning but still
     defaults to ERB. In future releases, it will simply return the template contents. *Steve Klabnik*
 
-*   Deprecate `:disable_with` in favor of `data: { disable_with: "Text" }` option from `submit_tag`, `button_tag` and `button_to` helpers.
+*   **Deprecate `:disable_with` in favor of `data: { disable_with: "Text" }` option from `submit_tag`, `button_tag` and `button_to` helpers.**
 
     *Carlos Galdino + Rafael Mendonça França*
 
@@ -901,7 +912,7 @@
 *   Make current object and counter (when it applies) variables accessible when
     rendering templates with :object / :collection. *Carlos Antonio da Silva*
 
-*   JSONP now uses mimetype `text/javascript` instead of `application/json`. *omjokine*
+*   **JSONP now uses mimetype `text/javascript` instead of `application/json`**. *omjokine*
 
 *   Allow to lazy load `default_form_builder` by passing a `String` instead of a constant. *Piotr Sarnacki*
 
@@ -921,13 +932,13 @@
     so if you need such behavior, you can either set it to `true` or explicitly pass
     `authenticity_token: true` in form options.
 
-*   Added `ActionDispatch::SSL` middleware that when included force all the requests to be under HTTPS protocol. *Rafael Mendonça França*
+*   **Added `ActionDispatch::SSL` middleware that when included force all the requests to be under HTTPS protocol**. *Rafael Mendonça França*
 
 *   Add `include_hidden` option to select tag. With `include_hidden: false` select with `multiple` attribute doesn't generate hidden input with blank value. *Vasiliy Ermolovich*
 
-*   Removed default `size` option from the `text_field`, `search_field`, `telephone_field`, `url_field`, `email_field` helpers. *Philip Arndt*
+*   **Removed default `size` option from the `text_field`, `search_field`, `telephone_field`, `url_field`, `email_field` helpers**. *Philip Arndt*
 
-*   Removed default `cols` and `rows` options from the `text_area` helper. *Philip Arndt*
+*   **Removed default `cols` and `rows` options from the `text_area` helper**. *Philip Arndt*
 
 *   Adds support for layouts when rendering a partial with a given collection. *serabe*
 
@@ -937,7 +948,7 @@
 
 *   For resources, both PATCH and PUT are routed to the `update` action. *fxn*
 
-*   Don't ignore `force_ssl` in development. This is a change of behavior - use a `:if` condition to recreate the old behavior.
+*   **Don't ignore `force_ssl` in development. This is a change of behavior - use a `:if` condition to recreate the old behavior.**
 
         class AccountsController < ApplicationController
           force_ssl if: :ssl_configured?
@@ -962,13 +973,13 @@
 
 *   Integration tests support the `OPTIONS` method. *Jeremy Kemper*
 
-*   `expires_in` accepts a `must_revalidate` flag. If true, "must-revalidate"
-    is added to the Cache-Control header. *fxn*
+*   **`expires_in` accepts a `must_revalidate` flag. If true, "must-revalidate"**
+    **is added to the Cache-Control header**. *fxn*
 
-*   Add `date_field` and `date_field_tag` helpers which render an `input[type="date"]` tag *Olek Janiszewski*
+*   **Add `date_field` and `date_field_tag` helpers which render an `input[type="date"]` tag** *Olek Janiszewski*
 
-*   Adds `image_url`, `javascript_url`, `stylesheet_url`, `audio_url`, `video_url`, and `font_url`
-    to assets tag helper. These URL helpers will return the full path to your assets. This is useful
+*   **Adds `image_url`, `javascript_url`, `stylesheet_url`, `audio_url`, `video_url`, and `font_url`**
+    **to assets tag helper**. These URL helpers will return the full path to your assets. This is useful
     when you are going to reference this asset from external host. *Prem Sichanugrist*
 
 *   Default responder will now always use your overridden block in `respond_with` to render your response. *Prem Sichanugrist*
@@ -980,7 +991,7 @@
 
     *Carlos Antonio da Silva + Rafael Mendonça França*
 
-*   Add `collection_check_boxes` form helper, similar to `collection_select`:
+*   **Add `collection_check_boxes` form helper, similar to `collection_select`**:
     Example:
 
         collection_check_boxes :post, :author_ids, Author.all, :id, :name
@@ -995,7 +1006,7 @@
 
     *Carlos Antonio da Silva + Rafael Mendonça França*
 
-*   Add `collection_radio_buttons` form helper, similar to `collection_select`:
+*   **Add `collection_radio_buttons` form helper, similar to `collection_select`**:
     Example:
 
         collection_radio_buttons :post, :author_id, Author.all, :id, :name
@@ -1039,9 +1050,9 @@
     not submitted with the form. This is a behavior change, previously the hidden
     tag had a value of the disabled checkbox. *Tadas Tamosauskas*
 
-*   `favicon_link_tag` helper will now use the favicon in app/assets by default. *Lucas Caton*
+*   **`favicon_link_tag` helper will now use the favicon in app/assets by default**. *Lucas Caton*
 
-*   `ActionView::Helpers::TextHelper#highlight` now defaults to the
-    HTML5 `mark` element. *Brian Cardarella*
+*   **`ActionView::Helpers::TextHelper#highlight` now defaults to the**
+    **HTML5 `mark` element**. *Brian Cardarella*
 
 Please check [3-2-stable](https://github.com/rails/rails/blob/3-2-stable/actionpack/CHANGELOG.md) for previous changes.
