@@ -679,8 +679,8 @@
 
     *Yves Senn*
 
-*   **`ActiveRecord::AttributeMethods#[]` raises `ActiveModel::MissingAttributeError`**
-    **error if the given attribute is missing.** Fixes #5433.
+*   `ActiveRecord::AttributeMethods#[]` raises `ActiveModel::MissingAttributeError`
+    error if the given attribute is missing. Fixes #5433.
 
         class Person < ActiveRecord::Base
           belongs_to :company
@@ -710,8 +710,8 @@
 
     *Shawn Veader*
 
-*   **Add `find_or_create_by`, `find_or_create_by!` and**
-    **`find_or_initialize_by` methods to `Relation`.**
+*   Add `find_or_create_by`, `find_or_create_by!` and
+    `find_or_initialize_by` methods to `Relation`.
 
     These are similar to the `first_or_create` family of methods, but
     the behaviour when a record is created is slightly different:
@@ -762,7 +762,7 @@
 
     *Arturo Pie*
 
-*   **Learn ActiveRecord::QueryMethods#order work with hash arguments**
+*   Learn ActiveRecord::QueryMethods#order work with hash arguments
 
     When symbol or hash passed we convert it to Arel::Nodes::Ordering.
     If we pass invalid direction(like name: :DeSc) ActiveRecord::QueryMethods#order will raise an exception
