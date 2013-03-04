@@ -1642,7 +1642,7 @@
 
     *Aaron Patterson*
 
-*   **PostgreSQL hstore types are automatically deserialized from the database.**
+*   PostgreSQL hstore types are automatically deserialized from the database.
 
     *Aaron Patterson*
 
