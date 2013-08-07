@@ -24,14 +24,14 @@ Sails.js 一个主要的有点是它的灵活性. 如同大多数的 MVC 框架,
 
 ```javascript
 // Configure installed adapters
-// If you define an adapter in your model definition, 
+// If you define an adapter in your model definition,
 // it will override anything from this global config.
 module.exports.adapters = {
 
-	// If you leave the adapter config unspecified 
+	// If you leave the adapter config unspecified
 	// in a model definition, 'default' will be used.
 	'default': 'disk',
-	
+
 	// In-memory adapter for DEVELOPMENT ONLY
 	// (data is NOT preserved when the server shuts down)
 	memory: {
@@ -59,7 +59,7 @@ module.exports.adapters = {
 };
 ```
 
-Okay, so the first thing you may have noticed is the _default_ setting.  This is set to _disk_ by default.  Disk means that the data is stored on the local file system instead of in a database.  You can change this to any of the other defined options below that.  This is the default that will be used throughtout your entire app.  If you need to override this on a per model basis, you can do that inside the model itself.  See [Models](Models).
+好的, 因此你可能注意到的第一件事是 `default` 设置. 默认设置为 `disk`. 磁盘意思是数据被存储在本地文件系统中而不是在数据库中. 你可以更改为下面的惹和其他选项. 这是贯穿你整个应用的默认设置. 如果你需要在单个 model 中该覆盖它, 你可以在这个 model 中修改. 查看 [Models](Models).
 
 _**memory:**_  This is an option for _'default':_ .  Memory stores all data in memory.  This memory is erased when the server is shutdown.
 
