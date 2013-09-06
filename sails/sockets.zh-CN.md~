@@ -82,9 +82,11 @@ Sails 暴露了一些常用的存取方法来执行通用 `publish/subscribe` �
 
 #### The "class room"
 
-如果有一个访客整个 sokcet 订阅到 `class room`(e.g. `User.subscribe( req.socket ))`), 它将会收到消息当 `User.publishCreate()` 被调用的任何时候.
+如果你有一个访客其 sokcet 订阅到 `class room` (e.g. `User.subscribe( req.socket ))`), 当 `User.publishCreate()` 被调用的任何时候它将会收到消息.
 
 Subscribe the request object's socket (`req.socket`) to this model's class room. Your subscribed socket on the client will receive a message every time a new instance of the specified model is created. Any time `publishCreate` is called, sockets subscribed to the class room are automatically subscribed to newly created models' instance rooms (more on that below).
+
+订阅请求对象的 socket (`req.socket`) 到这个 model 的 class room. 当这个 model 的实例被创建的时候你通过 sokect 订阅的客户端将会收到一个消息. 任何时候 `publishCreate` 被调用, 订阅到 class room 的 sockets (客户端) 会自动订阅到 最新创建的 model instances rooms (更多如下).
 
 e.g. `User.subscribe( req.socket )`
 
@@ -93,6 +95,8 @@ e.g. `User.subscribe( req.socket )`
 #### "instance rooms"
 
 If the visitor is subscribed to one or more "instance rooms" (e.g. `User.subscribe( req.socket, listOfUserInstances )` ), she'll receive messages when `User.publishUpdate()` or `User.publishDestroy()` is called involving one of the instances she cares about.
+
+如果访问者订阅到一个或者多个 "instance room" (e.g. `User.subscribe( req.socket, listOfUserInstances )`), 她将会收到消息当 `User.publishUpdate()` 或者 `User.publishDestroy()` 被调用的
 
 Subscribe the request object's socket (`req.socket`) to the specified model, id OR array of `models` or ids. Subscribed sockets will receive a message every time the specified model(s) are updated or destroyed from here on out.
 
