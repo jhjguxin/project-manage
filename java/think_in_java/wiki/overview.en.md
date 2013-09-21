@@ -85,3 +85,45 @@ It’s by far the best material I have come across to help me learn Java and I j
 The book is great. It’s the third book on Java I’ve started and I’m about two-thirds of the way through it now. I plan to finish this one. I found out about it because it is used in some internal classes at Lucent Technologies and a friend told me the book was on the Net. Good work. **Jerry Nowlin, MTS, Lucent Technologies**
 
 Of the six or so Java books I’ve accumulated to date, your Thinking in Java is by far the best and clearest. **Michael Van Waas, Ph.D., President, TMR Associates**
+
+I just want to say thanks for Thinking in Java. What a wonderful book you’ve made here! Not to mention downloadable for free! As a student I find your books invaluable (I have a copy of C++ Inside Out, another great book about C++), because they not only teach me the how-to, but also the whys, which are of course very important in building a strong foundation in languages such as C++ or Java. I have quite a lot of friends here who love programming just as I do, and I’ve told them about your books. They think it’s great! Thanks again! By the way, I’m Indonesian and I live in Java. **Ray Frederick Djajadinata, Student at Trisakti University, Jakarta**
+
+The mere fact that you have made this work free over the Net puts me into shock. I thought I’d let you know how much I appreciate and respect what you’re doing. **Shane LeBouthillier, Computer Engineering student, University of Alberta, Canada**
+
+I have to tell you how much I look forward to reading your monthly column. As a newbie to the world of object oriented programming, I appreciate the time and thoughtfulness that you give to even the most elementary topic. I have downloaded your book, but you can bet that I will purchase the hard copy when it is published. Thanks for all of your help. **Dan Cashmer, B. C. Ziegler & Co.**
+
+Just want to congratulate you on a job well done. First I stumbled upon the PDF version of _Thinking in Java_. Even before I finished reading it, I ran to the store and found _Thinking in C++_. Now, I have been in the computer business for over eight years, as a consultant, software engineer, teacher/trainer, and recently as self-employed, so I’d like to think that I have seen enough (not “have seen it all,” mind you, but enough). However, these books cause my girlfriend to call me a "geek". Not that I have anything against the concept—it is just that I thought this phase was well beyond me. But I find myself truly enjoying both books, like no other computer book I have touched or bought so far. Excellent writing style, very nice introduction of every new topic, and lots of wisdom in the books. Well done. **Simon Goland, simonsez@smartt.com, Simon Says Consulting, Inc.**
+
+I must say that your _Thinking in Java_ is great! That is exactly the kind of documentation I was looking for. Especially the sections about good and poor software design using Java. **Dirk Duehr, Lexikon Verlag, Bertelsmann AG, Germany**
+
+Thank you for writing two great books (Thinking in C++, Thinking in Java). You have helped me immensely in my progression to object oriented programming. **Donald Lawson, DCL Enterprises**
+
+Thank you for taking the time to write a really helpful book on Java. If teaching makes you understand something, by now you must be pretty pleased with yourself. **Dominic Turner, GEAC Support**
+
+It’s the best Java book I have ever read—and I read some. **Jean-Yves MENGANT, Chief Software Architect NAT-SYSTEM, Paris, France**
+
+Thinking in Java gives the best coverage and explanation. Very easy to read, and I mean the code fragments as well. **Ron Chan, Ph.D., Expert Choice, Inc., Pittsburgh, Pa.** 
+
+Your book is great. I have read lots of programming books and your book still adds insights to programming in my mind. **Ningjian Wang, Information System Engineer, The Vanguard Group**
+
+Thinking in Java is an excellent and readable book. I recommend it to all my students. **Dr. Paul Gorman, Department of Computer Science, University of Otago, Dunedin, New Zealand**
+
+With your book, I have now understood what object oriented programming means. ... I believe that Java is much more straightforward and often even easier than Perl. **Torsten Römer, Orange Denmark**
+
+You make it possible for the proverbial free lunch to exist, not just a soup kitchen type of lunch but a gourmet delight for those who appreciate good software and books about it. **Jose Suriol, Scylax Corporation**
+
+Thanks for the opportunity of watching this book grow into a masterpiece! IT IS THE BEST book on the subject that I’ve read or browsed. **Jeff Lapchinsky, Programmer, Net Results Technologies**
+
+Your book is concise, accessible and a joy to read. **Keith Ritchie, Java Research & Development Team, KL Group Inc.**
+
+It truly is the best book I’ve read on Java! **Daniel Eng**
+
+The best book I have seen on Java! **Rich Hoffarth, Senior Architect, West Group**
+
+Thank you for a wonderful book. I’m having a lot of fun going through the chapters. **Fred Trimble, Actium Corporation**
+
+You have mastered the art of slowly and successfully making us grasp the details. You make learning VERY easy and satisfying. Thank you for a truly wonderful tutorial. **Rajesh Rau, Software Consultant**
+
+Thinking in Java rocks the free world! **Miko O’Sullivan, President, Idocs Inc.**
+
+
