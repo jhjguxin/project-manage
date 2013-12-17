@@ -8,19 +8,19 @@ Before beginning our journey to learn HTML and CSS it is important to understand
 
 As an overview, **HTML** is a hyper text markup language created to give content structure and meaning. **CSS**, also known as cascading style sheets, is a presentation language created to give content style and appearance.
 
-总的来说, **HTML** 是一种典型的文本标记语言通过给定内容结构和含义来创建. **CSS** 也叫做 `cascading style sheets`(层叠样式表), 它是一种 presentation language 通过给定的内容样式和形式来创建.
+总的来说, **HTML** 是一种典型的文本标记语言通过给定内容结构和含义来创建. **CSS** 也叫做 `cascading style sheets`(层叠样式表), 它是一种 presentation language(呈现语言) 通过给定的内容样式和形式来创建.
 
 To put this into laymen terms, HTML determines the structure and meaning of content on a web page while CSS determines the style and appearance of this content. The two languages are independent of one another. CSS should not reside within an HTML document and vice versa.
 
-用外行(通常)的(话来说)就是, HTML 决定了一个 web 页面的结构和内容的含义而 CSS 决定了内容的样式和形式. 这两种语言是相互依存的. CSS 不应该存在于 HTML 文档中 反之亦然.
+用外行(通常)的(话来说)就是, HTML 决定了 web 页面的结构和内容的含义而 CSS 决定了内容的样式和形式. 这两种语言是相互依存的. CSS 不应该存在于 HTML 文档中反之亦然.
 
-Taking this concept a bit further, the HTML `p` element is used to display a paragraph of text on a web page. The `p` element is specifically used here as it is provides the most value for the content, thus being the most semantic element. CSS then uses a type selector of p which can determine the color, font size, font weight, and other stylistic properties of the paragraph. More on this to come.
+Taking this concept a bit further, the HTML `p` element is used to display a paragraph of text on a web page. The `p` element is specifically used here as it is provides the most value for the content, thus being the most semantic element. CSS then uses a type selector of `p` which can determine the color, font size, font weight, and other stylistic properties of the paragraph. More on this to come.
 
-用后面的(内容)来说明这个原则, HTML 的 `p` 元素是用来在一个 web 页面上面显示一段文本. `p` 元素在这里是专门选用的它提供了内容大多数的(属性)值, 这是大多数语义的元素. CSS 然后使用一种 `p` 的选择器它可以决定颜色, 字体尺寸, 字体粗细, 以及其它图像化的样式属性. 远超过这里提到的.
+用后面的(内容)来说明这个原则, HTML 的 `p` 元素是用来在一个 web 页面上面显示一段文本. `p` 元素在这里是专门选用的它提供了内容大多数的(属性)值, 这是大多数语义的元素. CSS 然后使用一类 `p` 的选择器它可以决定颜色, 字体尺寸, 字体粗细, 以及其它图像化的样式属性. (实际上)远超过这里提到的.
 
 ### 常见 HTML 术语(Common HTML Terms)
 
-When getting started with HTML you are likely to hear new, and often strange, terms. Over time you will become more and more familiar with all of them but three terms you should learn today include tags, elements, and attributes.
+When getting started with HTML you are likely to hear new, and often strange, terms. Over time you will become more and more familiar with all of them but three terms you should learn today include **tags**, **elements**, and **attributes**.
 
 当开始 HTML 之旅之前你可能会听到一些新的, 通常很奇怪的**术语(terms)**. 随着时间的推移你会变得越来越了解它们全部而今天你会学到包含 标签(tag), 元素(element) 和属性(attribute).
 
@@ -72,7 +72,7 @@ The `doctype` declaration is used to instruct web browsers which version of HTML
 
 The `head` of the document is used to outline any `meta` data, the document `title`, and links to any external files. Any context included within the `head` tags is not visible within the actual web page itself. All of the content visible within the web page will fall within the body tags.
 
-文档的 `head` 用来突出所有的 `meta` 数据, 文档的 `title` 以及链接到任何外部文件的链接,包含在 `head` 标签里面的任何内容在实际 web 页面中都是不可见的. 所有在 web 页面中可见的内容都填充在 `body` 标签中.
+文档的 `head` 用来突出所有的 `meta`(`元`) 数据, 文档的 `title` 以及链接到任何外部文件的链接,包含在 `head` 标签里面的任何内容在实际 web 页面中都是不可见的. 所有在 web 页面中可见的内容都填充在 `body` 标签中.
 
 A general HTML document structure looks like the following:
 
@@ -109,9 +109,9 @@ p { ... }
 
 #### 属性(Properties)
 
-A property determines the style that will be applied to an element. Properties can be identified as the text coming immediately before a colon. There are an abundance number of properties you can use, and new ones are continually being added.
+A property determines the style that will be applied to an element. Properties can be identified as the text coming immediately before a colon (`:`). There are an abundance number of properties you can use, and new ones are continually being added.
 
-属性决定了样式将会被应用于一个元素. 属性可以被认为是冒号之前的文字. 这里有丰富的属性供你使用, 并且还有新的不断在添加.
+属性决定了样式将会被应用于一个元素. 属性可以被认为是冒号 (`:`) 之前的文字. 这里有丰富的属性供你使用, 并且还有新的不断在添加.
 
 ```css
 p {
@@ -122,9 +122,9 @@ p {
 
 #### 值(Values)
 
-A value determines the behavior of a property. Values can be identified as the text in-between the colon and semicolon.
+A value determines the behavior of a property. Values can be identified as the text in-between the colon (`:`) and semicolon (`;`).
 
-值决定了一个属性的行为(具体呈现). 值可以被认为是在冒号和分号之间的文字.
+值决定了一个属性的行为(具体呈现). 值可以被认为是在冒号(`:`)和分号(`;`)之间的文字.
 
 ```css
 p {
@@ -170,6 +170,7 @@ In CSS there are multiple different ways to declare values for a property. With 
 
 ```css
 /* Long Hand */
+/* 顺时针方向 */
 p {
   padding-top: 10px;
   padding-right: 20px;
@@ -195,7 +196,7 @@ HTML 和 CSS 让你可以在代码中留下注释. 这些注释可以有助于�
 
 HTML comments wrap the content starting with `<!--` and end with `-->`. CSS comments wrap the content starting with `/*` and end with `*/`.
 
-HTML 注释包含的内容开始于 `<!--` 结束于 `-->`. CSS 注释包含内容开始于 `/*`并且结束于 `*/`. 
+HTML 注释包含的内容开始于 `<!--` 结束于 `-->`. CSS 注释包含内容开始于 `/*`并且结束于 `*/`.
 </pre>
 
 ### Selectors
@@ -208,7 +209,7 @@ Selectors, as mentioned earlier, are the determining factor as to which elements
 
 Type selectors are the most basic selector. Simply enough, elements without any necessary attributes are targeted to apply styles. Type selectors are preferred whenever possible as they require less code and are easy to manage.
 
-类型选择器是最基本的选择器. 足够简单, 元素不需要任何必须的属性被标记来应用样式. 只要可能类型选择器是首选的它们需要更少的代码并且方便管理.
+类型选择器是最基本的选择器. 足够简单, 元素不需要任何必须的属性被标记来应用样式. 无论如何只要有可能类型选择器是首选(因为)它们需要更少的代码并且方便管理.
 
 ```html
 <p>...</p>
@@ -326,12 +327,12 @@ By default every web browser has it’s own interpretation on how different elem
   **跨浏览器兼容 & 测试(Cross Browser Compatibility & Testing)**
 
   As mentioned, different browsers render pages in different ways. Its important to recognize the value in cross browser compatibility and testing. Websites don’t need to look the same in every browser but they should be close. What browsers you wish to support and to what degree is a decisions you will need to make in accordance with what is best for your website.
-  
+
   正如上面提到的, 不同浏览器渲染页面的方式并不相同的. 认识到跨浏览器兼容和测试的价值十分重要. 网站不需要在每个浏览器中看起来完全相同但是它们应该接近. 你希望支持哪种浏览器并且到何种程度对你的网站最合适是你需要商榷的事情.
-  
+
 CSS resets include a handful of rule sets that take every common HTML element and scale them down to one unified style. These resets involve removing any sizing, margins, paddings, or additional styles. Resets need to be the very first CSS styles to be rendered to ensure that all the styles there after are being applied to the skeleton of a page.
 
-CSS 重置包含一系列的规则和设定它会对所有的公共的 HTML 元素缩减它们为统一的样式. 这些重置包括移除任何 sizing, margins, paddings. 重置复要的作为第一个CSS样式呈现, 以确保所有的样式在其之后, 被应用到一个页面的骨架.
+CSS 重置包含一系列的规则和设定它会对所有的公共的 HTML 元素缩减它们的样式为统一的样式. 这些重置包括移除任何 sizing, margins, paddings. 重置需要作为首要 CSS 渲染, 以确保所有的样式在其之后, 被应用到一个页面的骨架.
 
 There are a ton of different resets available to use, all of which have their own forte. My personal favorite is [Eric Meyers reset](http://meyerweb.com/eric/tools/css/reset/), which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
 
@@ -340,9 +341,9 @@ There are a ton of different resets available to use, all of which have their ow
   ## 代码检测(Code Validation)
 
   As proficient as we all are, we do make mistakes. Thankfully when writing HTML and CSS we have a validator that can check our work. The W3C has built both [HTML](http://validator.w3.org/) and [CSS](http://jigsaw.w3.org/css-validator/) validators that will scan your code looking for mistakes. Validating your code not only helps it render properly across all browsers, it also teaches you the best practices for writing code.
-  
+
   在我们逐渐称为高手的期间, 我们也犯错误, 在编写 HTML 和 CSS 的时候感激有一个检测器来检查我们的工作. W3C 以及创建了它们 [HTML](http://validator.w3.org/) 和 [CSS](http://jigsaw.w3.org/css-validator/) 检测器会浏览你的代码查找错误. 检测你的代码不仅有助于它在所有的浏览器中适当的渲染, 它还教授你编写代码的最佳实践.
-  
+
 ### Resources & Links
 
 * [Common HTML Terms](http://www.scriptingmaster.com/html/HTML-terms-glossary.asp) via Scripting Master

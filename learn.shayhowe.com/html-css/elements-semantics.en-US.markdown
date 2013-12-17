@@ -16,7 +16,7 @@ Semantics have been mentioned a number of times thus far, so exactly what are se
 
 Divisions, or divs, and spans are HTML elements that act as a container for different content. As a generic container they do not come with any overarching meaning or semantic value. Paragraphs are semantic in that when content is wrapped within a `p` element it is known as a paragraph. Divs and spans do not hold such meaning and are simply containers. Both divs and spans, however, are extremely valuable when building a website in that they give you the ability to apply targeted CSS styles.
 
-A `div` is a block level element commonly used to identify large sections of a website, helping build the layout and design. A `span` on the other hand, is an inline element commonly used to identify smaller sections of text within a block level element, such as a paragraph.
+A `div` is a **block level element** commonly used to identify large sections of a website, helping build the layout and design. A `span` on the other hand, is an **inline element** commonly used to identify smaller sections of text within a block level element, such as a paragraph.
 
   **Block vs. Inline Elements**
 
@@ -25,7 +25,7 @@ A `div` is a block level element commonly used to identify large sections of a w
   **Block level** elements begin on a new line on a page and occupy the full available width. Block level elements may be nested inside one another, as well as wrap inline level elements.
 
   **Inline level** elements do not begin on a new line and fall into the normal flow of a document, maintaining their necessary width. Inline level elements cannot nest a block level element, however they can nest another inline level element.
-  
+
 Divs and spans can have added value when given a `class` or `id`. A `class` or `id` is typically added for styling purposes and to signify the difference between another `div` or `span`. Choosing a `class` or `id` name is where semantics can come into play. When choosing a `class` or `id` attribute value it is important to choose something that has value to the actual context of that element.
 
 For example, if you have a `div` with an orange background that contains social media links your first inclination might be to give the `div` a class of “orange.” What happens if that orange background is later changed to blue? Having a class of “orange” no longer makes sense. A better, more semantic, choice for a class would be “social” as it pertains to the contents of the `div` not the style.
@@ -61,7 +61,7 @@ Headings should be used in the order relevant to the content. The primary headin
   <h1>This is a Level 1 Heading</h1>
   <h2>This is a Level 2 Heading</h2>
   <h3>This is a Level 3 Heading</h3>
-  
+
 #### Paragraphs
 
 Headings are often followed with supporting paragraphs. Paragraphs are defined by using the `p` block level element. Numerous paragraphs can appear one after the other, adding information to a page.
@@ -72,10 +72,10 @@ Headings are often followed with supporting paragraphs. Paragraphs are defined b
 ```
 
   **Paragraphs Demo**
-  
+
   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
   <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
-  
+
 #### Bold Text with Strong
 
 To make text bold, and to note it as important, the `strong` inline level element is used. It is important to understand the [semantic difference](http://html5doctor.com/i-b-em-strong-element/) between `strong` and `b`, both of which will make text bold. `strong` is semantically used to denote text with a strong importance, as is mostly the case when wanting to bold text. `b` on the other hand semantically means stylistically offset, which isn’t always the best case for text deserving prominent attention. Gauge the significance of the text you are looking to set as bold and choose an element accordingly.
@@ -96,7 +96,7 @@ To italicize text and place a stressed emphasis on it the `em` inline level elem
 
 One of the core elements of the internet is the hyperlink, established by using an anchor. Hyperlinks are defined using the `a` inline element however they require a source to direct the link. The `href` attribute, known as hyperlink reference, is used to set the destination of a link.
 
-By nature the a element is an inline element, however with the introduction of HTML5, a elements now have the ability to wrap block or inline level elements. This is a break from the standard convention yet permissible to turn entire blocks of content on a page into a link.
+**By nature the `a` element is an inline element, however with the introduction of HTML5, a elements now have the ability to wrap block or inline level elements.**  This is a break from the standard convention yet permissible to turn entire blocks of content on a page into a link.
 
 ```html
 <a href="http://shayhowe.com">Shay</a>
@@ -177,7 +177,7 @@ The `header`, just as it sounds, is used to identify the heading of a page, `art
   **The `header` element is a structural element that outlines a heading on a page, of which falls within the `body` element on a page. The `head` element is not displayed on the page and is used to outline meta data, the document title, and links to external files.**
 
   **Headings, `h1` through `h6`, are used to represent multiple levels of text headings throughout a page.**
-  
+
 #### Navigation
 
 The `nav` is a block level element used to denote a section of major navigational links on a page. Not all links should be wrapped within a `nav` element. The `nav` should be reserved for primary navigation sections including universal navigation, a table of contents, breadcrumbs, previous/next links, or other noteworthy groups of links.
@@ -216,7 +216,7 @@ That said – you can apply styles to a `section` however you shouldn’t be usi
   The best way to determine when to use a `section` versus a `div` is to look at the actual content at hand. If the block of content could exist as a record within a database and isn’t explicitly needed as a CSS styling hook then the `section` element is most applicable. Sections should be used to break a page up, providing a natural hierarchy, and most commonly will have a proper heading.
 
   A `div` on the other hand may be used to specifically tie styles to a block of content. As an example, if a couple paragraphs need to stand out above the rest of the content on on a page they should be wrapped in a `div`. That `div` then may have the proper styles applied to it, perhaps a background, border, or the alike.
-  
+
 #### Aside
 
 To accompany the `header` and `footer` elements there is also the `aside` block level element. An `aside` defines content related to the document or section surrounding it. As with `header` and `footer` elements, the `aside` can be used multiple times per page, so long as each use is practical.
@@ -242,4 +242,3 @@ One principle of development is **D.R.Y.**, also known as don’t repeat yoursel
 * [The i, b, em, & strong Elements](http://html5doctor.com/i-b-em-strong-element/) via HTML5 Doctor
 * [The Full mailto Link Syntax](http://yoast.com/guide-mailto-links/) via Joost de Valk
 * [New Structural Elements in HTML5](http://dev.opera.com/articles/view/new-structural-elements-in-html5/) via Dev.Opera
-

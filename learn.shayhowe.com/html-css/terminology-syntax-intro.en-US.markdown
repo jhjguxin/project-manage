@@ -4,7 +4,7 @@
 
 Before beginning our journey to learn HTML and CSS it is important to understand the differences between the two languages, their syntax, and some common terminology.
 
-As an overview, **HTML** is a hyper text markup language created to give content structure and meaning. **CSS**, also known as cascading style sheets, is a presentation language created to give content style and appearance.
+As an overview, **HTML** is a hyper text markup language created to give content structure and meaning. **CSS**, also known as `cascading style sheets`, is a presentation language created to give content style and appearance.
 
 To put this into laymen terms, HTML determines the structure and meaning of content on a web page while CSS determines the style and appearance of this content. The two languages are independent of one another. CSS should not reside within an HTML document and vice versa.
 
@@ -256,7 +256,7 @@ By default every web browser has it’s own interpretation on how different elem
   **Cross Browser Compatibility & Testing**
 
   As mentioned, different browsers render pages in different ways. Its important to recognize the value in cross browser compatibility and testing. Websites don’t need to look the same in every browser but they should be close. What browsers you wish to support and to what degree is a decisions you will need to make in accordance with what is best for your website.
-  
+
 CSS resets include a handful of rule sets that take every common HTML element and scale them down to one unified style. These resets involve removing any sizing, margins, paddings, or additional styles. Resets need to be the very first CSS styles to be rendered to ensure that all the styles there after are being applied to the skeleton of a page.
 
 There are a ton of different resets available to use, all of which have their own forte. My personal favorite is [Eric Meyers reset](http://meyerweb.com/eric/tools/css/reset/), which has been adapted to include a reset for the new HTML5 elements. Eric’s reset is short and to the point, but feel free to research your own resets and find what you’re comfortable using.
@@ -264,7 +264,7 @@ There are a ton of different resets available to use, all of which have their ow
   ## Code Validation
 
   As proficient as we all are, we do make mistakes. Thankfully when writing HTML and CSS we have a validator that can check our work. The W3C has built both [HTML](http://validator.w3.org/) and [CSS](http://jigsaw.w3.org/css-validator/) validators that will scan your code looking for mistakes. Validating your code not only helps it render properly across all browsers, it also teaches you the best practices for writing code.
-  
+
 ### Resources & Links
 
 * [Common HTML Terms](http://www.scriptingmaster.com/html/HTML-terms-glossary.asp) via Scripting Master
